@@ -1,6 +1,7 @@
 import React from 'react';
-import SignIn from './components/SignIn';
-import './App.css'; // Optional: if you have any global styles
+import SignIn from './components/onboarding/signIn/SignIn';
+import './App.css';
+
 
 const App = () => {
   return (
