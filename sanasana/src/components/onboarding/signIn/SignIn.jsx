@@ -6,7 +6,7 @@ const SignIn = () => {
     <div className="signInContainer">
       <div className="leftPanel">
         <div className="iconContainer">
-          <img src="https://path-to-your-icon.com/icon.png" alt="Icon" className="icon" />
+          <img src="https://path-to-your-icon.com/icon.pn" alt="Icon" className="icon" />
           <h2>Sign in or create an account</h2>
         </div>
       </div>
