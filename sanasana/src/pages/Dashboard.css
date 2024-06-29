@@ -1,0 +1,11 @@
+.dashboard {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  
