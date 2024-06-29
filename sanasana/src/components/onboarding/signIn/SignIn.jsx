@@ -1,12 +1,21 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
 
 const SignIn = () => {
+  const navigate = useNavigate();
+
+  const handleContinue = (e) => {
+    e.preventDefault();
+    // Here you can add any authentication logic if needed
+    navigate('/dashboard');
+  };
+
   return (
     <div className="signInContainer">
       <div className="leftPanel">
         <div className="iconContainer">
-          <img src="https://path-to-your-icon.com/icon.pn" alt="Icon" className="icon" />
+          <img src="https://path-to-your-icon.com/icon.png" alt="Icon" className="icon" />
           <h2>Sign in or create an account</h2>
         </div>
       </div>
@@ -14,7 +23,7 @@ const SignIn = () => {
         <div className="formContainer">
           <h2>Sign In</h2>
           <p>New user? <a href="/create-account" className="createAccountLink">Create an account</a></p>
-          <form>
+          <form onSubmit={handleContinue}>
             <div className="formGroup">
               <label htmlFor="email">Email Address</label>
               <input 
@@ -39,3 +48,4 @@ const SignIn = () => {
 }
 
 export default SignIn;
+
