@@ -1,5 +1,5 @@
 import React from 'react';
-import './CreateAccountForm.css';
+import './Step2.css';
 
 const CreateAccountForm = () => {
   return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import './CreateAccount.css';
+import './Step1.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
