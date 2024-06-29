@@ -13,8 +13,8 @@ const App = () => {
         <Routes>
           <Route path="/sign-in" component={SignIn} />
           <Route path="/step1" component={Step1} />
-          <Route path="/step2" component={Step2} />
-          <Route path="/" component={SignIn} /> {/* Default route */}
+          <Route path="/step2" component={Step2} /> 
+          {/* {/* <Route path="/" component={SignIn} /> Default route */}
         </Routes>
       </div>
     </Router>
