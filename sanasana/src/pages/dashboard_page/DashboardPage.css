@@ -1,0 +1,16 @@
+.dashboard-container {
+    background-color: #E0E9FF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+
+
+@media screen and (min-width: 768px) {
+    .dashboard-container {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}

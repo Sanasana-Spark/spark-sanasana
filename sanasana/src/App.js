@@ -1,21 +1,26 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SignIn from './components/onboarding/signIn/SignIn';
-import Step1 from './components/onboarding/signUp/Step1';
-import Step2 from './components/onboarding/signUp/Step2';
-import Dashboard from './components/dashboardMain/DashboardMain';
+// import SignIn from './components/onboarding/signIn/SignIn';
+// import Step1 from './components/onboarding/signUp/Step1';
+// import Step2 from './components/onboarding/signUp/Step2';
+// import Dashboard from './components/dashboardMain/DashboardMain';
 import './App.css';
+import DashboardPage from './pages/dashboard_page/DashboardPage';
 
 const App = () => {
   return (
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/sign-in" element={<SignIn />} />
+          {/* <Route path="/sign-in" element={<SignIn />} />
           <Route path="/step1" element={<Step1 />} />
-          <Route path="/step2" element={<Step2 />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/" element={<SignIn />} /> {/* Default route */}
+          <Route path="/step2" element={<Step2 />} /> */}
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          {/* <Route path="/" element={<SignIn />} />  */}
+
+
+
+          <Route path="/" element={<DashboardPage />} />
         </Routes>
       </div>
     </Router>
