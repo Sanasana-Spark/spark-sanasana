@@ -22,37 +22,37 @@ const SideNav = () => {
                     <NavLink>Home</NavLink>
                     <ul className="sidenav-links">
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/dashboard' className="sidenav-link">
                                 <GoHomeFill />
                                 Dashboard
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/assets' className="sidenav-link">
                                 <FaRegBuilding />
                                 Assets
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/maintenance' className="sidenav-link">
                                 <IoMdTime />
                                 Maintenance
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/routes' className="sidenav-link">
                                 <LiaRouteSolid />
                                 Routes
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/fuel' className="sidenav-link">
                                 <BsFuelPumpDiesel />
                                 Fuel
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/reports' className="sidenav-link">
                                 <TbReport />
                                 Reports
                             </NavLink>
@@ -65,13 +65,13 @@ const SideNav = () => {
                 </div>
                 <ul className="sidenav-links">
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/settings' className="sidenav-link">
                                 <IoSettingsOutline />
                                 Settings
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink className="sidenav-link">
+                            <NavLink to='/help' className="sidenav-link">
                                 <IoMdHelpCircleOutline />
                                 Help Center
                             </NavLink>

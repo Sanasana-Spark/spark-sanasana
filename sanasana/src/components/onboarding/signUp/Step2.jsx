@@ -1,7 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Step2.css';
 
 const CreateAccountForm = () => {
+
+  const navigate = useNavigate();
+
+  const handleContinue = (e) => {
+    e.preventDefault();
+    // Here you can add any authentication logic if needed
+    navigate('/signin');
+  };
+
   return (
     <div className="createAccountContainer">
       <div className="leftPanel">
@@ -14,7 +24,7 @@ const CreateAccountForm = () => {
         <div className="formContainer">
           <h2>Welcome to Sana Sana</h2>
           <p>Please take a moment to complete your account</p>
-          <form>
+          <form onSubmit={(e) => {handleContinue(e)}}>
             <div className="formRow">
               <div className="formGroup">
                 <label htmlFor="name">Name</label>

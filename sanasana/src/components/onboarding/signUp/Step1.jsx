@@ -1,9 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Step1.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 
 const CreateAccount = () => {
+
+  const navigate = useNavigate();
+
+  const handleContinue = (e) => {
+    e.preventDefault();
+    // Here you can add any authentication logic if needed
+    navigate('/step');
+  };
+
   return (
     <div className="createAccountContainer">
       <div className="leftPanel">
@@ -23,7 +33,7 @@ const CreateAccount = () => {
           <div className="orSeparator">Or</div>
           <h4>Sign up with email</h4>
           <p>Already have an account? <a href="/sign-in" className="signInLink">Sign In</a></p>
-          <form>
+          <form onSubmit={(e) => handleContinue(e)}>
             <div className="formGroup">
               <label htmlFor="email">Email Address</label>
               <input 

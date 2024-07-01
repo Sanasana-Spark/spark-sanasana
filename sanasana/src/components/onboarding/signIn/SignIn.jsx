@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignIn.css';
+import {FaGoogle} from 'react-icons/fa'
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -15,7 +16,8 @@ const SignIn = () => {
     <div className="signInContainer">
       <div className="leftPanel">
         <div className="iconContainer">
-          <img src="https://path-to-your-icon.com/icon.png" alt="Icon" className="icon" />
+          <FaGoogle />
+          {/* <img src="https://path-to-your-icon.com/icon.png" alt="Icon" className="icon" /> */}
           <h2>Sign in or create an account</h2>
         </div>
       </div>
@@ -38,7 +40,7 @@ const SignIn = () => {
           </form>
           <div className="orSeparator">Or</div>
           <button className="googleButton">
-            <img src="https://path-to-google-icon.com/google-icon.png" alt="Google Icon" className="googleIcon" />
+            <FaGoogle />
             Continue with Google
           </button>
         </div>
