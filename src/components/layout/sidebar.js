@@ -8,7 +8,7 @@ import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import ListItemWithLink from './ListItemWithLink'
 import { Typography } from '@mui/material'
-// import Logo from '../../assets/logo.png'
+import Logo from '../../assets/logo.png'
 import Dashboard_icon from '../../assets/dashboard_icon.png'
 import Asset_icon from '../../assets/asset_icon.png'
 import Maintenance_icon  from '../../assets/maintenance_icon.png'
@@ -16,6 +16,9 @@ import Helpcenter_icon from '../../assets/helpcenter_icon.png'
 import Reports_icon from '../../assets/reports_icon.png'
 import Settings_icon from '../../assets/settings_icon.png'
 import Logout_icon from '../../assets/logout_icon.png'
+import Operator_icon from '../../assets/operator_icon.png'
+import Fuel_icon from '../../assets/fuel_icon.png'
+import Routes_icon from '../../assets/routes_icon.png'
 
 const drawerWidth = 300
 
@@ -48,12 +51,11 @@ export default function VerticalSidebar({ children }) {
           variant='persistent'
           anchor='left'>
           <DrawerHeader sx={{ display: 'flex', justifyContent: 'center' }}>
-            {/* <img src={Logo} alt='' style={{ maxWidth: '100%' }} /> */}
-            <Typography variant='h4' gutterBottom> Sana Sana</Typography>
+            <img src={Logo} alt='' style={{ maxWidth: '80%' }} />
           </DrawerHeader>
    
           <List>
-            <Typography variant='h5' gutterBottom> HOME</Typography>
+            <Typography variant='h6' gutterBottom> HOME</Typography>
 
             <ListItemWithLink
               label='Dashboard'
@@ -65,6 +67,26 @@ export default function VerticalSidebar({ children }) {
               icon={ <img src={Asset_icon} alt="Custom Icon" />}
               to='/assets'
             />
+
+<ListItemWithLink
+              label='Operators'
+              icon={ <img src={Operator_icon} alt="Custom Icon" />}
+              to='/operators'
+            />
+
+<ListItemWithLink
+              label='Fuel'
+              icon={ <img src={Fuel_icon} alt="Custom Icon" />}
+              to='/fuel'
+            />
+
+<ListItemWithLink
+              label='Routes'
+              icon={ <img src={Routes_icon} alt="Custom Icon" />}
+              to='/routes'
+            />
+
+
             <ListItemWithLink
               label='Maintenance'
               icon={ <img src={Maintenance_icon} alt="Custom Icon" />}
