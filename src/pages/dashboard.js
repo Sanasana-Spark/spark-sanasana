@@ -3,12 +3,12 @@ import './MainPage.css';
 import { IoMdMenu } from "react-icons/io";
 import { MdExpandMore } from "react-icons/md";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import userImg from '../../assets/user.png';
-import analytic1 from '../../assets/analytic1.png';
+import userImg from '../assets/user.png';
+import analytic1 from '../assets/analytic1.png';
 import CanvasJSReact from '@canvasjs/react-charts';
-import Chart from '../chart/Chart';
+import Chart from './Chart';
  
-var CanvasJS = CanvasJSReact.CanvasJS;
+// var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const MainPage = () => {
