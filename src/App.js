@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
+import Operators from './pages/operators'
+import Fuel from './pages/fuel'
+import MapRoutes from './pages/routes'
 import Maintenance from './pages/maintenance'
 import Reports from './pages/reports'
 import Settings from './pages/settings'
@@ -31,7 +34,10 @@ const App = () => {
 
 
        <Route path="/dashboard" element={<SignedOut> <Layout> <DashboardPage /> </Layout> </SignedOut>} />
-      <Route path="/assets" element={<SignedOut>  <Layout> <Assets/> </Layout> </SignedOut> } />     
+      <Route path="/assets" element={<SignedOut>  <Layout> <Assets/> </Layout> </SignedOut> } />  
+      <Route path="/operators" element={<SignedOut>  <Layout> <Operators/> </Layout> </SignedOut> } /> 
+      <Route path="/fuel" element={<SignedOut>  <Layout> <Fuel/> </Layout> </SignedOut> } />      
+      <Route path="/routes" element={<SignedOut>  <Layout> <MapRoutes/> </Layout> </SignedOut> } />         
       <Route path="/maintenance" element={<SignedOut> <Layout> <Maintenance/> </Layout> </SignedOut>   } />
       <Route path="/reports" element={<SignedOut> <Layout> <Reports/> </Layout> </SignedOut>   } />
       <Route path="/settings" element={<SignedOut> <Layout> <Settings/> </Layout> </SignedOut>   } />
