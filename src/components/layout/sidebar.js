@@ -20,7 +20,7 @@ import Operator_icon from '../../assets/operator_icon.png'
 import Fuel_icon from '../../assets/fuel_icon.png'
 import Routes_icon from '../../assets/routes_icon.png'
 
-const drawerWidth = 300
+const drawerWidth = 250
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -50,12 +50,12 @@ export default function VerticalSidebar({ children }) {
           }}
           variant='persistent'
           anchor='left'>
-          <DrawerHeader sx={{ display: 'flex', justifyContent: 'center' }}>
+          <DrawerHeader sx={{ display: 'flex', justifyContent: 'left' }}>
             <img src={Logo} alt='' style={{ maxWidth: '80%' }} />
           </DrawerHeader>
    
           <List>
-            <Typography variant='h6' gutterBottom> HOME</Typography>
+            <Typography variant='subtitle1' gutterBottom> HOME</Typography>
 
             <ListItemWithLink
               label='Dashboard'
@@ -100,7 +100,7 @@ export default function VerticalSidebar({ children }) {
           </List>
           <Divider />
 
-          <Typography variant='h5' gutterBottom> GENERAL</Typography>
+          <Typography variant='subtitle1' gutterBottom> GENERAL</Typography>
 
           <ListItemWithLink
               label='Settings'
