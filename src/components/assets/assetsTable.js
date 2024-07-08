@@ -15,9 +15,9 @@ import {
 import actionicon from '@mui/icons-material/Add';
 
 
-const AssetsTable = ({ properties, onAddClick, onViewUnitsClick }) => {
+const AssetsTable = ({ assets, onAddClick, onViewUnitsClick }) => {
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(Array(properties.length).fill(false));
+  const [isDropdownOpen, setIsDropdownOpen] = useState(Array(assets.length).fill(false));
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => {
       const newDropdowns = [...prevState];
@@ -53,29 +53,30 @@ const AssetsTable = ({ properties, onAddClick, onViewUnitsClick }) => {
 
           <TableRow>
             <TableCell>Image</TableCell>
-            <TableCell>ID</TableCell>
-            <TableCell>Name</TableCell>
+            <TableCell>Action</TableCell>
+            <TableCell>Plate</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Make</TableCell>
             <TableCell>Model </TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Value</TableCell>
-            <TableCell>Deprecition </TableCell>
+            <TableCell>Fuel type</TableCell>
+            <TableCell>Engine size</TableCell>
+            <TableCell>Efficiency </TableCell>
+            <TableCell>Dep</TableCell>
             
            
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* Render a TableRowItem for each property in the properties array */}
-          {properties.map((property) => (
-                <TableRow key={property.p_id}>
+          {/* Render a TableRowItem for each asset in the assets array */}
+          {assets.map((asset) => (
+                <TableRow key={asset.id}>
 
-       <TableCell onClick={() => handleCellClick(property.p_id)}>
-              {!isDropdownOpen[[property.p_id]] && (
+       <TableCell onClick={() => handleCellClick(asset.id)}>
+              {!isDropdownOpen[[asset.id]] && (
                  <CardMedia
                  component="img"
                  image={actionicon}
-                 alt={property.p_id}
+                 alt={asset.id}
                  height="40"
                  width="40"
                  sx={{flex: "0 0 40px",  }}
@@ -84,7 +85,7 @@ const AssetsTable = ({ properties, onAddClick, onViewUnitsClick }) => {
 
               )}
 
-              {isDropdownOpen[property.p_id] && (
+              {isDropdownOpen[asset.id] && (
                 <>
     
                   <Typography
@@ -92,7 +93,7 @@ const AssetsTable = ({ properties, onAddClick, onViewUnitsClick }) => {
                     color="text.secondary"
                     noWrap
                     onClick={() =>
-                      handleMenuItemClick("viewDetails", property.p_id)
+                      handleMenuItemClick("viewDetails", asset.id)
                     }
                   >
                     view details
@@ -101,14 +102,15 @@ const AssetsTable = ({ properties, onAddClick, onViewUnitsClick }) => {
                 </>
               )}
             </TableCell>
-      <TableCell>{property.p_name}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_city}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
+      <TableCell>{asset.a_image}</TableCell>
+      <TableCell>{asset.a_license_plate}</TableCell>  
+      <TableCell>{asset.a_status}</TableCell>
+      <TableCell>{asset.a_make}</TableCell>
+      <TableCell>{asset.a_model}</TableCell>
+      <TableCell>{asset.a_fuel_type}</TableCell>
+      <TableCell>{asset.a_engine_size}</TableCell>
+      <TableCell>{asset.a_efficiency_rate}</TableCell>
+      <TableCell>{asset.a_accumulated_dep}</TableCell>
     
     </TableRow>
           ))}

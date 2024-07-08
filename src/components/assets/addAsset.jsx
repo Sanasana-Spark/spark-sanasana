@@ -48,15 +48,14 @@ const AddAssetForm = ({ onSubmit, onCancel }) => {
   return (
     <Paper className={'classes.paper'}>
       <Typography variant="h6" gutterBottom>
-        Add Asset
+        Add Assets to track
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
               required
-              fullWidth
-              label="Property Name"
+              label="Asset Name"
               name="p_name"
               value={property.p_name}
               onChange={handleChange}
@@ -66,7 +65,7 @@ const AddAssetForm = ({ onSubmit, onCancel }) => {
             <TextField
               required
               fullWidth
-              label="Number of Units"
+              label="Type"
               name="p_num_units"
               type="number"
               value={property.p_num_units}
