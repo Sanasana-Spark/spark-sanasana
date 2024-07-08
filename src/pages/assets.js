@@ -15,10 +15,10 @@ const Assets = () => {
   const baseURL = process.env.REACT_APP_BASE_URL
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
-  const [properties, setProperties] = useState([]);
+  const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const apiUrl = `${baseURL}/properties`;
+    const apiUrl = `${baseURL}/assets`;
     // to be corrected to dynamic
     fetch(apiUrl)
       .then((response) => {
@@ -28,7 +28,7 @@ const Assets = () => {
         return response.json();
       })
       .then((data) => {
-        setProperties(data);
+        setAssets(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -37,11 +37,13 @@ const Assets = () => {
       });
   }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
 
+    console.log(assets)
+
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
   const handleSubmit = (propertyData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/properties/create`;
+    const url = `${baseURL}/assets/create`;
     const data = {
       p_name: propertyData.p_name,
       p_num_units: propertyData.p_num_units,
@@ -89,7 +91,7 @@ const Assets = () => {
         <div className="fluidGrid">
           <div>
             <ActionNav
-              title="Properties"
+              title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Asset"
@@ -102,7 +104,7 @@ const Assets = () => {
             )}
           </div>
           <AssetsTable
-            properties={properties}
+            assets={assets}
             onViewUnitsClick={handleViewDetailsClick}
           />
         </div>
@@ -168,7 +170,7 @@ const Assets = () => {
   console.log(currentView, selectedTicket);
 
   return (
-    <>{setProperties.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
+    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
   );
 };
 
