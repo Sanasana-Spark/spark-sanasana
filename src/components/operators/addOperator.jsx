@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
   TextField,
   Grid,
-  Typography,
   Paper,
+  FormControl,
+  FormLabel,
 } from '@mui/material';
 
-const AddAssetForm = ({ onSubmit, onCancel }) => {
+const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 //   const classes = useStyles();
-  const [property, setProperty] = useState({
+  const [operator, setOperator] = useState({
     p_name: '',
     p_num_units: '',
     p_manager_id: '',
@@ -23,128 +28,195 @@ const AddAssetForm = ({ onSubmit, onCancel }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProperty((prevProperty) => ({
-      ...prevProperty,
+    setOperator((prevOperator) => ({
+      ...prevOperator,
       [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(property);
+    onSubmit(operator);
     // Optionally, you can reset the form after submission
-    setProperty({
-      p_name: '',
-      p_num_units: '',
-      p_manager_id: '',
-      p_country: '',
-      p_city: '',
-      p_address: '',
-      p_zipcode: '',
-      p_state: '',
+    setOperator({
+      o_email: '',
+      o_expirence: '',
+      o_role: '',
+      o_lincense_expiry: '',
+      o_lincense_id: '',
+      o_payment_card_id: '',
+      o_lincense_type: '',
+      o_phone: '',
+      o_status: '',
     });
   };
 
+  const handleFileChange = (e) => {
+    setOperator({
+      ...operator,
+      [e.target.name]: e.target.files[0]
+    });
+  };
+
+
   return (
-    <Paper className={'classes.paper'}>
-      <Typography variant="h6" gutterBottom>
-        Add Asset
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Property Name"
-              name="p_name"
-              value={property.p_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Number of Units"
-              name="p_num_units"
-              type="number"
-              value={property.p_num_units}
-              onChange={handleChange}
-            />
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Property Manager ID"
-              name="p_manager_id"
-              value={property.p_manager_id}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Country"
-              name="p_country"
-              value={property.p_country}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="City"
-              name="p_city"
-              value={property.p_city}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Address"
-              name="p_address"
-              value={property.p_address}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Zip Code"
-              name="p_zipcode"
-              value={property.p_zipcode}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="State"
-              name="p_state"
-              value={property.p_state}
-              onChange={handleChange}
-            />
-          </Grid>
-        </Grid>
-        <Button type="submit" variant="contained" color="primary">
-          Submit
-        </Button>
+<Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Add Operator</DialogTitle>
+      <DialogContent>
+        <Paper className={'classes.paper'}>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                  <FormLabel>Profile</FormLabel>
+                <input
+                  accept="image/*"
+                  type="file"
+                  onChange={handleFileChange}
+                  name="o_image"
+                />
+                 </FormControl>
+              </Grid>
 
-        <Button  variant="contained" color="primary" onClick={onCancel}>
-          cancel
-        </Button>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Operators Name"
+                  name="o_name"
+                  value={operator.o_name}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Email"
+                  name="o_email"
+                  type = "email"
+                  value={operator.o_email}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Phone"
+                  name="o_phone"
+                  value={operator.o_phone}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="National id"
+                  name="o_national_id"
+                  value={operator.o_national_id}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="License Id"
+                  name="o_lincense_id"
+                  value={operator.o_lincense_id}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Lincense Type"
+                  name="o_lincense_type"
+                  value={operator.o_lincense_type}
+                  onChange={handleChange}
+                />
+              </Grid>
+              
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Assign card"
+                  name="o_payment_card_id"
+                  value={operator.o_payment_card_id}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Role"
+                  name="o_role"
+                  value={operator.o_role}
+                  onChange={handleChange}
+                />
+              </Grid>
 
-      </form>
-    </Paper>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Experince(in years)"
+                  name="o_expirence"
+                  type="number"
+                  value={operator.o_expirence}
+                  onChange={handleChange}
+                />
+              </Grid>
+              
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Status"
+                  name="o_status"
+                  type="number"
+                  value={operator.o_status}
+                  onChange={handleChange}
+                />
+              </Grid>
+             
+             
+
+             
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Lincense Expiry"
+                  name="o_lincense_expiry"
+                  type="date"
+                  value={operator.o_lincense_expiry}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel>Attachment </FormLabel>
+                  <input
+                    accept="application/pdf"
+                    type="file"
+                    onChange={handleFileChange}
+                    name="o_attachment1"
+                  />
+                </FormControl>
+              </Grid>
+                   
+              
+
+              
+            </Grid>
+            <DialogActions>
+              <Button type="submit" variant="contained" color="primary">
+                Submit
+              </Button>
+              <Button variant="contained" color="primary" onClick={onCancel}>
+                Cancel
+              </Button>
+            </DialogActions>
+          </form>
+        </Paper>
+      </DialogContent>
+    </Dialog>
   );
 };
 

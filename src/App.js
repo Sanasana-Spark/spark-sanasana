@@ -1,6 +1,7 @@
 import React from 'react';
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './components/onboarding/authProvider';
 import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
@@ -23,19 +24,20 @@ const App = () => {
   return (
     <Router>
       <div className="App">
+      <AuthProvider>
         <Routes>
 
-        <Route path="" element={<SignedIn><UserButton /></SignedIn>}  />
-        <Route path="" element={<SignedOut> <SignInButton /></SignedOut>}  />
+        <Route path="/" element={<SignedIn> <UserButton /></SignedIn>}  />
+        <Route path="/login" element={<SignedOut> <SignInButton /></SignedOut>}  />
 
-        <Route path="/" element={<SignedOut>    <Step1 /> </SignedOut>} /> 
+        <Route path="/dfdv" element={<SignedOut>    <Step1 /> </SignedOut>} /> 
         <Route path="/step" element={ <SignedOut> <Step2 /> </SignedOut>} /> 
         <Route path="/signin" element={<SignedOut> <SignIn /> </SignedOut> } /> 
 
 
-       <Route path="/dashboard" element={<SignedOut> <Layout> <DashboardPage /> </Layout> </SignedOut>} />
-      <Route path="/assets" element={<SignedOut>  <Layout> <Assets/> </Layout> </SignedOut> } />  
-      <Route path="/operators" element={<SignedOut>  <Layout> <Operators/> </Layout> </SignedOut> } /> 
+       <Route path="/dashboard" element={<SignedIn> <Layout> <DashboardPage /> </Layout> </SignedIn>} />
+      <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
+      <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
       <Route path="/fuel" element={<SignedOut>  <Layout> <Fuel/> </Layout> </SignedOut> } />      
       <Route path="/routes" element={<SignedOut>  <Layout> <MapRoutes/> </Layout> </SignedOut> } />         
       <Route path="/maintenance" element={<SignedOut> <Layout> <Maintenance/> </Layout> </SignedOut>   } />
@@ -45,6 +47,7 @@ const App = () => {
       <Route path="/logout" element={<SignedIn> <Layout> <Logout/> </Layout>  </SignedIn>  } />
 
         </Routes>
+        </AuthProvider>
       </div>
     </Router>
   );

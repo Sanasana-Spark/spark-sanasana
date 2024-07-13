@@ -6,13 +6,16 @@ import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/assets/actionAssetNav";
 import AssetsTable from "../components/assets/assetsTable"
-import AddPropertyForm from "../components/assets/addAsset";
+import AddAssetForm from "../components/assets/addAsset";
 import AssetDetails from "../components/assets/assetDetails";
 import Loader from "../components/loader";
+import { useAuthContext } from '../components/onboarding/authProvider';
 
 const Assets = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
+  const { userId, userEmail } = useAuthContext();
+  console.log(userId, userEmail)
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
@@ -83,6 +86,8 @@ const Assets = () => {
     setShowAddPropertyForm(true);
   };
 
+  console.log(showAddPropertyForm)
+
 
 
   const PropertyView = () => (
@@ -96,17 +101,22 @@ const Assets = () => {
               onAddClick={handleAddPropertyClick}
               icontitle="Add Asset"
             />
-            {showAddPropertyForm && (
-              <AddPropertyForm
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-            )}
-          </div>
+           
+         
           <AssetsTable
             assets={assets}
             onViewUnitsClick={handleViewDetailsClick}
           />
+           </div>
+
+
+              <AddAssetForm
+                open={showAddPropertyForm}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+              />
+        
+
         </div>
       )}
 

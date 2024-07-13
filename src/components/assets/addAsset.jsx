@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Button,
   TextField,
   Grid,
-  Typography,
   Paper,
+  FormControl,
+  FormLabel,
 } from '@mui/material';
 
-const AddAssetForm = ({ onSubmit, onCancel }) => {
+const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 //   const classes = useStyles();
   const [property, setProperty] = useState({
     p_name: '',
@@ -45,105 +50,251 @@ const AddAssetForm = ({ onSubmit, onCancel }) => {
     });
   };
 
+  const handleFileChange = (e) => {
+    setProperty({
+      ...property,
+      [e.target.name]: e.target.files[0]
+    });
+  };
+
+
   return (
-    <Paper className={'classes.paper'}>
-      <Typography variant="h6" gutterBottom>
-        Add Assets to track
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              label="Asset Name"
-              name="p_name"
-              value={property.p_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Type"
-              name="p_num_units"
-              type="number"
-              value={property.p_num_units}
-              onChange={handleChange}
-            />
-          </Grid>
-          
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Property Manager ID"
-              name="p_manager_id"
-              value={property.p_manager_id}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Country"
-              name="p_country"
-              value={property.p_country}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="City"
-              name="p_city"
-              value={property.p_city}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Address"
-              name="p_address"
-              value={property.p_address}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="Zip Code"
-              name="p_zipcode"
-              value={property.p_zipcode}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label="State"
-              name="p_state"
-              value={property.p_state}
-              onChange={handleChange}
-            />
-          </Grid>
-        </Grid>
-        <Button type="submit" variant="contained" color="primary">
-          Submit
-        </Button>
+<Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Add Asset</DialogTitle>
+      <DialogContent>
+        <Paper className={'classes.paper'}>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                  <FormLabel>Image</FormLabel>
+                <input
+                  accept="image/*"
+                  type="file"
+                  onChange={handleFileChange}
+                  name="a_image"
+                />
+                 </FormControl>
+              </Grid>
 
-        <Button  variant="contained" color="primary" onClick={onCancel}>
-          cancel
-        </Button>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Asset Name"
+                  name="a_name"
+                  value={property.a_name}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Make"
+                  name="a_make"
+                  value={property.a_make}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Model"
+                  name="a_model"
+                  value={property.a_model}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Year"
+                  name="a_year"
+                  type="number"
+                  value={property.a_year}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="License Plate"
+                  name="a_license_plate"
+                  value={property.a_license_plate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Type"
+                  name="a_type"
+                  value={property.a_type}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="MSRP"
+                  name="a_msrp"
+                  type="number"
+                  value={property.a_msrp}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Chassis Number"
+                  name="a_chasis_no"
+                  value={property.a_chasis_no}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Engine Size"
+                  name="a_engine_size"
+                  type="number"
+                  value={property.a_engine_size}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Tank Size"
+                  name="a_tank_size"
+                  type="number"
+                  value={property.a_tank_size}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Efficiency Rate"
+                  name="a_efficiency_rate"
+                  type="number"
+                  value={property.a_efficiency_rate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Fuel Type"
+                  name="a_fuel_type"
+                  value={property.a_fuel_type}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Cost"
+                  name="a_cost"
+                  type="number"
+                  value={property.a_cost}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Value"
+                  name="a_value"
+                  type="number"
+                  value={property.a_value}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Depreciation Rate"
+                  name="a_depreciation_rate"
+                  type="number"
+                  value={property.a_depreciation_rate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Appreciation Rate"
+                  name="a_apreciation_rate"
+                  type="number"
+                  value={property.a_apreciation_rate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Accumulated Depreciation"
+                  name="a_accumulated_dep"
+                  type="number"
+                  value={property.a_accumulated_dep}
+                  onChange={handleChange}
+                />
+              </Grid>
 
-      </form>
-    </Paper>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Status"
+                  name="a_status"
+                  value={property.a_status}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              
+
+
+
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel>Attachment 1</FormLabel>
+                  <input
+                    accept="application/pdf"
+                    type="file"
+                    onChange={handleFileChange}
+                    name="a_attachment1"
+                  />
+                </FormControl>
+              </Grid>
+                   
+
+            <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <FormLabel>Attachment 2</FormLabel>
+                  <input
+                    accept="application/pdf"
+                    type="file"
+                    onChange={handleFileChange}
+                    name="a_attachment2"
+                  />
+                </FormControl>
+              </Grid>
+              
+
+              
+            </Grid>
+            <DialogActions>
+              <Button type="submit" variant="contained" color="primary">
+                Submit
+              </Button>
+              <Button variant="contained" color="primary" onClick={onCancel}>
+                Cancel
+              </Button>
+            </DialogActions>
+          </form>
+        </Paper>
+      </DialogContent>
+    </Dialog>
   );
 };
 

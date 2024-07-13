@@ -5,9 +5,9 @@ import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/operators/actionOperatorNav";
-import AssetsTable from "../components/operators/operatorTable"
-import AddPropertyForm from "../components/operators/addOperator";
-import AssetDetails from "../components/operators/operatorDetails";
+import OperatorTable from "../components/operators/operatorTable"
+import AddOperatorForm from "../components/operators/addOperator";
+import OperatorDetails from "../components/operators/operatorDetails";
 import Loader from "../components/loader";
 
 const Operators = () => {
@@ -15,10 +15,10 @@ const Operators = () => {
   const baseURL = process.env.REACT_APP_BASE_URL
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
-  const [properties, setProperties] = useState([]);
+  const [operators, setOperators] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const apiUrl = `${baseURL}/properties`;
+    const apiUrl = `${baseURL}/operators`;
     // to be corrected to dynamic
     fetch(apiUrl)
       .then((response) => {
@@ -28,7 +28,7 @@ const Operators = () => {
         return response.json();
       })
       .then((data) => {
-        setProperties(data);
+        setOperators(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -37,11 +37,13 @@ const Operators = () => {
       });
   }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
 
+    console.log(operators)
+
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
   const handleSubmit = (propertyData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/properties/create`;
+    const url = `${baseURL}/operators/create`;
     const data = {
       p_name: propertyData.p_name,
       p_num_units: propertyData.p_num_units,
@@ -62,14 +64,14 @@ const Operators = () => {
     fetch(url, options)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to add property");
+          throw new Error("Failed to add asset");
         }
         console.log("Property added successfully");
         console.log("Property added successfully", propertyData);
         setShowAddPropertyForm(false);
       })
       .catch((error) => {
-        console.error("Error adding property:", error);
+        console.error("Error adding asset:", error);
       });
   };
 
@@ -81,6 +83,8 @@ const Operators = () => {
     setShowAddPropertyForm(true);
   };
 
+  console.log(showAddPropertyForm)
+
 
 
   const PropertyView = () => (
@@ -89,22 +93,27 @@ const Operators = () => {
         <div className="fluidGrid">
           <div>
             <ActionNav
-              title="Properties"
+              title="Operator"
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Operator"
             />
-            {showAddPropertyForm && (
-              <AddPropertyForm
+           
+         
+          <OperatorTable
+            operators={operators}
+            onViewUnitsClick={handleViewDetailsClick}
+          />
+           </div>
+
+
+              <AddOperatorForm
+                open={showAddPropertyForm}
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
               />
-            )}
-          </div>
-          <AssetsTable
-            properties={properties}
-            onViewUnitsClick={handleViewDetailsClick}
-          />
+        
+
         </div>
       )}
 
@@ -117,7 +126,7 @@ const Operators = () => {
     <>
       {!loading && (
         <div className="fluidGrid">
-          <AssetDetails
+          <OperatorDetails
             selectedProperty={selectedTicket}
           />
         </div>
@@ -168,7 +177,7 @@ const Operators = () => {
   console.log(currentView, selectedTicket);
 
   return (
-    <>{setProperties.length > 0 ? <>{renderView()}</> : <p> add Operator </p>}</>
+    <>{setOperators.length > 0 ? <>{renderView()}</> : <p> add Operator blank page </p>}</>
   );
 };
 

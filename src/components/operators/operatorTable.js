@@ -11,13 +11,13 @@ import {
   CardMedia,
   Typography
 } from '@mui/material'
-// import actionicon from "../../assets/actionicon.svg"
+// import actionicon from "../../operators/actionicon.svg"
 import actionicon from '@mui/icons-material/Add';
 
 
-const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
+const OperatorTable = ({ operators, onAddClick, onViewUnitsClick }) => {
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(Array(properties.length).fill(false));
+  const [isDropdownOpen, setIsDropdownOpen] = useState(Array(operators.length).fill(false));
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => {
       const newDropdowns = [...prevState];
@@ -45,7 +45,6 @@ const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
   };
 
 
-
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -60,22 +59,22 @@ const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
             <TableCell>Position </TableCell>
             <TableCell>Contact</TableCell>
             <TableCell>Miles</TableCell>
-            <TableCell>License </TableCell>
+            <TableCell>License Expiry </TableCell>
             
            
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* Render a TableRowItem for each property in the properties array */}
-          {properties.map((property) => (
-                <TableRow key={property.p_id}>
+          {/* Render a TableRowItem for each operator in the operators array */}
+          {operators.map((operator) => (
+                <TableRow key={operator.id}>
 
-       <TableCell onClick={() => handleCellClick(property.p_id)}>
-              {!isDropdownOpen[[property.p_id]] && (
+       <TableCell onClick={() => handleCellClick(operator.id)}>
+              {!isDropdownOpen[[operator.id]] && (
                  <CardMedia
                  component="img"
                  image={actionicon}
-                 alt={property.p_id}
+                 alt={operator.id}
                  height="40"
                  width="40"
                  sx={{flex: "0 0 40px",  }}
@@ -84,7 +83,7 @@ const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
 
               )}
 
-              {isDropdownOpen[property.p_id] && (
+              {isDropdownOpen[operator.id] && (
                 <>
     
                   <Typography
@@ -92,7 +91,7 @@ const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
                     color="text.secondary"
                     noWrap
                     onClick={() =>
-                      handleMenuItemClick("viewDetails", property.p_id)
+                      handleMenuItemClick("viewDetails", operator.id)
                     }
                   >
                     view details
@@ -101,14 +100,15 @@ const OperatorTable = ({ properties, onAddClick, onViewUnitsClick }) => {
                 </>
               )}
             </TableCell>
-      <TableCell>{property.p_name}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_city}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
-      <TableCell>{property.p_num_units}</TableCell>
+      <TableCell>{operator.o_image}</TableCell>
+      <TableCell>{operator.o_national_id}</TableCell>  
+      <TableCell>{operator.o_name}</TableCell>
+      <TableCell>{operator.o_email}</TableCell>
+      <TableCell>{operator.o_status}</TableCell>
+      <TableCell>{operator.o_role}</TableCell>
+      <TableCell>{operator.o_phone}</TableCell>
+      <TableCell>{operator.o_cum_mileage}</TableCell>
+      <TableCell>{operator.o_lincense_expiry}</TableCell>
     
     </TableRow>
           ))}
