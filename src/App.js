@@ -1,7 +1,8 @@
 import React from 'react';
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {SignIn , SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/onboarding/authProvider';
+import ProtectedRoute from './components/onboarding/protectedRoute';
 import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
@@ -15,27 +16,30 @@ import Helpcenter from './pages/helpcenter'
 import Logout from './pages/logout'
 
 
-import SignIn from './components/onboarding/signIn/SignIn';
-import Step1 from './components/onboarding/signUp/Step1';
-import Step2 from './components/onboarding/signUp/Step2';
+// import SignInold from './components/onboarding/signIn/SignIn';
+// import Step1 from './components/onboarding/signUp/Step1';
+// import Step2 from './components/onboarding/signUp/Step2';
 import './App.css';
 
+
+
 const App = () => {
+
   return (
     <Router>
       <div className="App">
       <AuthProvider>
         <Routes>
 
-        <Route path="/" element={<SignedIn> <UserButton /></SignedIn>}  />
+        <Route path="/signin" element={ <SignIn />  } /> 
+        <Route path="*" element={<Navigate to="/signin" />} />
+       
+
+
         <Route path="/login" element={<SignedOut> <SignInButton /></SignedOut>}  />
+       
 
-        <Route path="/dfdv" element={<SignedOut>    <Step1 /> </SignedOut>} /> 
-        <Route path="/step" element={ <SignedOut> <Step2 /> </SignedOut>} /> 
-        <Route path="/signin" element={<SignedOut> <SignIn /> </SignedOut> } /> 
-
-
-       <Route path="/dashboard" element={<SignedIn> <Layout> <DashboardPage /> </Layout> </SignedIn>} />
+       <Route path="/" element={<ProtectedRoute> <Layout> <DashboardPage /> </Layout> </ProtectedRoute>} />
       <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
       <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
       <Route path="/fuel" element={<SignedOut>  <Layout> <Fuel/> </Layout> </SignedOut> } />      
