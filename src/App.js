@@ -1,29 +1,57 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import SignIn from './components/onboarding/signIn/SignIn';
-import Step1 from './components/onboarding/signUp/Step1';
-import Step2 from './components/onboarding/signUp/Step2';
-// import Dashboard from './components/dashboardMain/DashboardMain';
+import {SignIn , SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { AuthProvider } from './components/onboarding/authProvider';
+import ProtectedRoute from './components/onboarding/protectedRoute';
+import Layout from "./components/layout/layout";
+import DashboardPage from './pages/dashboard'
+import Assets from './pages/assets'
+import Operators from './pages/operators'
+import Fuel from './pages/fuel'
+import MapRoutes from './pages/routes'
+import Maintenance from './pages/maintenance'
+import Reports from './pages/reports'
+import Settings from './pages/settings'
+import Helpcenter from './pages/helpcenter'
+import Logout from './pages/logout'
+
+
+// import SignInold from './components/onboarding/signIn/SignIn';
+// import Step1 from './components/onboarding/signUp/Step1';
+// import Step2 from './components/onboarding/signUp/Step2';
 import './App.css';
-import DashboardPage from './pages/dashboard_page/DashboardPage';
+
+
 
 const App = () => {
+
   return (
     <Router>
       <div className="App">
+      <AuthProvider>
         <Routes>
-          {/* <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/step1" element={<Step1 />} />
-          <Route path="/step2" element={<Step2 />} /> */}
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-          <Route path="/" element={<Step1 />} /> 
-          <Route path="/step" element={<Step2 />} /> 
-          <Route path="/signin" element={<SignIn />} /> 
+
+        <Route path="/signin" element={ <SignIn />  } /> 
+        <Route path="*" element={<Navigate to="/signin" />} />
+       
 
 
+        <Route path="/login" element={<SignedOut> <SignInButton /></SignedOut>}  />
+       
 
-          <Route path="/dashboard" element={<DashboardPage />} />
+       <Route path="/" element={<ProtectedRoute> <Layout> <DashboardPage /> </Layout> </ProtectedRoute>} />
+      <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
+      <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
+      <Route path="/fuel" element={<SignedOut>  <Layout> <Fuel/> </Layout> </SignedOut> } />      
+      <Route path="/routes" element={<SignedOut>  <Layout> <MapRoutes/> </Layout> </SignedOut> } />         
+      <Route path="/maintenance" element={<SignedOut> <Layout> <Maintenance/> </Layout> </SignedOut>   } />
+      <Route path="/reports" element={<SignedOut> <Layout> <Reports/> </Layout> </SignedOut>   } />
+      <Route path="/settings" element={<SignedOut> <Layout> <Settings/> </Layout> </SignedOut>   } />
+      <Route path="/helpcenter" element={<SignedOut> <Layout> <Helpcenter/> </Layout> </SignedOut>   } />
+      <Route path="/logout" element={<SignedIn> <Layout> <Logout/> </Layout>  </SignedIn>  } />
+
         </Routes>
+        </AuthProvider>
       </div>
     </Router>
   );

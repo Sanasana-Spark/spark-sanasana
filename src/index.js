@@ -3,11 +3,24 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ClerkProvider } from '@clerk/clerk-react'
+
+// Import your publishable key
+// const PUBLISHABLE_KEY = process.env.VITE_CLERK_PUBLISHABLE_KEY ;
+const PUBLISHABLE_KEY = 'pk_test_cHJvYmFibGUtYnVsbGRvZy00OC5jbGVyay5hY2NvdW50cy5kZXYk'
+console.log(process.env);
+console.log('key' ,PUBLISHABLE_KEY)
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key")
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <App />
+    </ClerkProvider>
   </React.StrictMode>
 );
 
