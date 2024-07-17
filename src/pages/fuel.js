@@ -16,14 +16,14 @@ const Fuel = () => {
       {
         <Container maxWidth="lg">
           <Box sx={{ my: 4 }}>
-            <Typography variant="h4" gutterBottom>Fuel history</Typography>
+            <Typography variant="h5" gutterBottom>Fuel history</Typography>
             <Typography variant="subtitle1">Manage all your fuel transactions in one place</Typography>
           </Box>
           <Grid container spacing={3}>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Total Fuel Cost (USD)</Typography>
-                <Typography variant="h4">7,265</Typography>
+                <Typography variant="h4">$7,265</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
@@ -47,7 +47,7 @@ const Fuel = () => {
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Cost Per Gallon</Typography>
-                <Typography variant="h4">2,318</Typography>
+                <Typography variant="h4">$50</Typography>
               </Paper>
             </Grid>
           </Grid>
