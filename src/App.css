@@ -5,3 +5,11 @@
     list-style: none;
     text-decoration: none;
 }
+:root {
+    --main-bg-color: #f0f0f0;
+    --primary-color: #047A9A;
+    --secondary-color: #01947A;
+    --font-family: 'Arial, sans-serif';
+    --padding: 16px;
+    --margin: 8px;
+  }
