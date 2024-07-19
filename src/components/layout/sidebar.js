@@ -45,7 +45,7 @@ export default function VerticalSidebar({ children }) {
               width: drawerWidth,
               boxSizing: 'border-box',
             //   backgroundColor: '#047A9A',
-              color: '#047A9A'
+              color: '#047A9A',
             },
           }}
           variant='persistent'
