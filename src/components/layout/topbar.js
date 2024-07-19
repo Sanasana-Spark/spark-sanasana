@@ -11,7 +11,7 @@ const TopBar = () => {
   const { org_name } = useAuthContext();
   return (
     <AppBar position="static">
-      <Toolbar style={{ display: 'flex', justifyContent: 'flex-end' }}>
+      <Toolbar style={{ display: 'flex', justifyContent: 'flex-end', backgroundColor: '#047A9A' }}>
       <Typography variant="h6">{org_name}</Typography>
         <IconButton color="inherit">
        

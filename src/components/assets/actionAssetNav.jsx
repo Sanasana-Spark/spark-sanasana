@@ -35,7 +35,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#081F5C",
+              backgroundColor: "#047A9A",
               padding: "8px",
               borderTopRightRadius: "5px",
               borderBottomRightRadius: "5px",
@@ -55,7 +55,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
           <IconButton
             onClick={onAddClick}
             sx={{
-              border: "1px solid #081F5C",
+              border: "1px solid #047A9A",
               borderRadius: " 4px",
               padding: "4.5px",
             }}
@@ -64,7 +64,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               sx={{
                 width: 30,
                 height: 32,
-                backgroundColor: "#081F5C",
+                backgroundColor: "#047A9A",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -73,7 +73,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               <AddIcon sx={{ fontSize: 20, color: "white" }} />
             </Box>
             <Typography
-              sx={{ color: "#081F5C", fontWeight: "bold", marginLeft: "8px" }}
+              sx={{ color: "#047A9A", fontWeight: "bold", marginLeft: "8px" }}
             >
               {icontitle}
             </Typography>
