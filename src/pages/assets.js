@@ -14,8 +14,7 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 const Assets = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { userId, userEmail } = useAuthContext();
-  console.log(userId, userEmail)
+  const { userId, userEmail, org_id, org_name } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
@@ -40,7 +39,6 @@ const Assets = () => {
       });
   }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
 
-    console.log(assets)
 
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
@@ -70,7 +68,6 @@ const Assets = () => {
           throw new Error("Failed to add asset");
         }
         console.log("Property added successfully");
-        console.log("Property added successfully", propertyData);
         setShowAddPropertyForm(false);
       })
       .catch((error) => {
@@ -85,8 +82,6 @@ const Assets = () => {
   const handleAddPropertyClick = () => {
     setShowAddPropertyForm(true);
   };
-
-  console.log(showAddPropertyForm)
 
 
 

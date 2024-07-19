@@ -15,10 +15,15 @@ export const useAuth = () => {
     const fetchOrganization = async () => {
       if (userId) {
         try {
-          const response = await fetch(`${baseURL}/organizations/${userId}`);
+          const response = await fetch(`${baseURL}/organizations/?userId=${userId}`);
           if (response.ok) {
             const data = await response.json();
-            setOrganization(data);
+            // Assuming data is an array with one item
+            if (Array.isArray(data) && data.length > 0) {
+              setOrganization(data[0]);
+            } else {
+              console.error('Error: Organization data is not an array or is empty');
+            }
           } else {
             console.error('Error fetching organization:', response.statusText);
           }
@@ -31,5 +36,8 @@ export const useAuth = () => {
     fetchOrganization();
   }, [userId]);
 
-  return { userId, userEmail, organization };
+  const org_id = organization?.id;
+  const org_name = organization?.org_name;
+
+  return { userId, userEmail,org_id, org_name };
 };
