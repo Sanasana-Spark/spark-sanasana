@@ -44,8 +44,8 @@ export default function VerticalSidebar({ children }) {
             '& .MuiDrawer-paper': {
               width: drawerWidth,
               boxSizing: 'border-box',
-            //   backgroundColor: '#081F5C',
-              color: '#081F5C'
+            //   backgroundColor: '#047A9A',
+              color: '#047A9A'
             },
           }}
           variant='persistent'
