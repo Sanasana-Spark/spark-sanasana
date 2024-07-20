@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import {
   Dialog,
   DialogTitle,
@@ -11,70 +11,95 @@ import {
   Paper,
   FormControl,
   FormLabel,
-} from '@mui/material';
+  Select,
+  MenuItem,
+  InputLabel,
+} from "@mui/material";
+const baseURL = process.env.REACT_APP_BASE_URL
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
-//   const classes = useStyles();
-  const [property, setProperty] = useState({
-    p_name: '',
-    p_num_units: '',
-    p_manager_id: '',
-    p_country: '',
-    p_city: '',
-    p_address: '',
-    p_zipcode: '',
-    p_state: '',
+  // const [asset, setAsset] = useState({ a_status: "" });
+  const [statusOptions, setStatusOptions] = useState([]);
+
+  useEffect(() => {
+    // Fetch status options from the backend
+    const fetchStatusOptions = async () => {
+      try {
+        const response = await fetch(`${baseURL}/assets/status`); // Adjust the URL as needed
+        if (response.ok) {
+          const data = await response.json();
+          setStatusOptions(data);
+        } else {
+          console.error("Error fetching status options:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching status options:", error);
+      }
+    };
+
+    fetchStatusOptions();
+  }, []);
+
+  //   const classes = useStyles();
+  const [asset, setAsset] = useState({
+    p_name: "",
+    p_num_units: "",
+    p_manager_id: "",
+    p_country: "",
+    p_city: "",
+    p_address: "",
+    p_zipcode: "",
+    p_state: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProperty((prevProperty) => ({
-      ...prevProperty,
+    setAsset((prevAsset) => ({
+      ...prevAsset,
       [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(property);
+    onSubmit(asset);
     // Optionally, you can reset the form after submission
-    setProperty({
-      p_name: '',
-      p_num_units: '',
-      p_manager_id: '',
-      p_country: '',
-      p_city: '',
-      p_address: '',
-      p_zipcode: '',
-      p_state: '',
+    setAsset({
+      p_name: "",
+      p_num_units: "",
+      p_manager_id: "",
+      p_country: "",
+      p_city: "",
+      p_address: "",
+      p_zipcode: "",
+      p_state: "",
     });
   };
 
   const handleFileChange = (e) => {
-    setProperty({
-      ...property,
-      [e.target.name]: e.target.files[0]
+    setAsset({
+      ...asset,
+      [e.target.name]: e.target.files[0],
     });
   };
 
-
   return (
-<Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
+    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Add Asset</DialogTitle>
       <DialogContent>
-        <Paper className={'classes.paper'}>
+        <Paper className={"classes.paper"}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
                   <FormLabel>Image</FormLabel>
-                <input
-                  accept="image/*"
-                  type="file"
-                  onChange={handleFileChange}
-                  name="a_image"
-                />
-                 </FormControl>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    onChange={handleFileChange}
+                    name="a_image"
+                  />
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -82,7 +107,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   required
                   label="Asset Name"
                   name="a_name"
-                  value={property.a_name}
+                  value={asset.a_name}
                   onChange={handleChange}
                 />
               </Grid>
@@ -91,7 +116,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   required
                   label="Make"
                   name="a_make"
-                  value={property.a_make}
+                  value={asset.a_make}
                   onChange={handleChange}
                 />
               </Grid>
@@ -100,7 +125,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   required
                   label="Model"
                   name="a_model"
-                  value={property.a_model}
+                  value={asset.a_model}
                   onChange={handleChange}
                 />
               </Grid>
@@ -110,7 +135,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Year"
                   name="a_year"
                   type="number"
-                  value={property.a_year}
+                  value={asset.a_year}
                   onChange={handleChange}
                 />
               </Grid>
@@ -119,35 +144,32 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   required
                   label="License Plate"
                   name="a_license_plate"
-                  value={property.a_license_plate}
+                  value={asset.a_license_plate}
                   onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   label="Type"
                   name="a_type"
-                  value={property.a_type}
+                  value={asset.a_type}
                   onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   label="MSRP"
                   name="a_msrp"
                   type="number"
-                  value={property.a_msrp}
+                  value={asset.a_msrp}
                   onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   label="Chassis Number"
                   name="a_chasis_no"
-                  value={property.a_chasis_no}
+                  value={asset.a_chasis_no}
                   onChange={handleChange}
                 />
               </Grid>
@@ -157,7 +179,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Engine Size"
                   name="a_engine_size"
                   type="number"
-                  value={property.a_engine_size}
+                  value={asset.a_engine_size}
                   onChange={handleChange}
                 />
               </Grid>
@@ -167,7 +189,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Tank Size"
                   name="a_tank_size"
                   type="number"
-                  value={property.a_tank_size}
+                  value={asset.a_tank_size}
                   onChange={handleChange}
                 />
               </Grid>
@@ -177,18 +199,22 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Efficiency Rate"
                   name="a_efficiency_rate"
                   type="number"
-                  value={property.a_efficiency_rate}
+                  value={asset.a_efficiency_rate}
                   onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
+                <InputLabel id="a_fuel_type">Fuel Type</InputLabel>
+                <Select
+                  labelId="a_fuel_type"
                   label="Fuel Type"
                   name="a_fuel_type"
-                  value={property.a_fuel_type}
+                  value={asset.a_fuel_type}
                   onChange={handleChange}
-                />
+                >
+                  <MenuItem value="Petrol">Petrol</MenuItem>
+                  <MenuItem value="Diesel">Diesel</MenuItem>
+                </Select>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
@@ -196,7 +222,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Cost"
                   name="a_cost"
                   type="number"
-                  value={property.a_cost}
+                  value={asset.a_cost}
                   onChange={handleChange}
                 />
               </Grid>
@@ -206,7 +232,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Value"
                   name="a_value"
                   type="number"
-                  value={property.a_value}
+                  value={asset.a_value}
                   onChange={handleChange}
                 />
               </Grid>
@@ -216,7 +242,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Depreciation Rate"
                   name="a_depreciation_rate"
                   type="number"
-                  value={property.a_depreciation_rate}
+                  value={asset.a_depreciation_rate}
                   onChange={handleChange}
                 />
               </Grid>
@@ -226,7 +252,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Appreciation Rate"
                   name="a_apreciation_rate"
                   type="number"
-                  value={property.a_apreciation_rate}
+                  value={asset.a_apreciation_rate}
                   onChange={handleChange}
                 />
               </Grid>
@@ -236,24 +262,27 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Accumulated Depreciation"
                   name="a_accumulated_dep"
                   type="number"
-                  value={property.a_accumulated_dep}
+                  value={asset.a_accumulated_dep}
                   onChange={handleChange}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
                   label="Status"
                   name="a_status"
-                  value={property.a_status}
+                  value={asset.a_status}
                   onChange={handleChange}
-                />
+                >
+                  {statusOptions.map((status) => (
+            <MenuItem key={status.id} value={status.s_name}>
+              {status.s_name}
+            </MenuItem>
+          ))}
+                </Select>
               </Grid>
-
-              
-
-
 
               <Grid item xs={12}>
                 <FormControl fullWidth>
@@ -266,9 +295,8 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   />
                 </FormControl>
               </Grid>
-                   
 
-            <Grid item xs={12}>
+              <Grid item xs={12}>
                 <FormControl fullWidth>
                   <FormLabel>Attachment 2</FormLabel>
                   <input
@@ -279,9 +307,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   />
                 </FormControl>
               </Grid>
-              
-
-              
             </Grid>
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">

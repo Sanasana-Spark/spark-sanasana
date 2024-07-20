@@ -14,11 +14,12 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 const Assets = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { userId, userEmail, org_id, org_name } = useAuthContext();
+  const { userId, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
     const apiUrl = `${baseURL}/assets`;
     // to be corrected to dynamic
@@ -42,18 +43,30 @@ const Assets = () => {
 
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
-  const handleSubmit = (propertyData) => {
+  const handleSubmit = (assetData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/assets/create`;
     const data = {
-      p_name: propertyData.p_name,
-      p_num_units: propertyData.p_num_units,
-      p_manager_id: propertyData.p_manager_id,
-      p_country: propertyData.p_country,
-      p_city: propertyData.p_city,
-      p_address: propertyData.p_address,
-      p_zipcode: propertyData.p_zipcode,
-      p_state: propertyData.p_state,
+      a_created_by: userId,
+      a_organisation_id:org_id,
+      a_name: assetData.a_name,
+      a_make: assetData.a_make,
+      a_model: assetData.a_model,
+      a_year: assetData.a_year,
+      a_license_plate: assetData.a_license_plate,
+      a_type: assetData.a_type,
+      a_chasis_no: assetData.a_chasis_no,
+      a_msrp: assetData.a_msrp,
+      a_engine_size: assetData.a_engine_size,
+      a_tank_size: assetData.a_tank_size,
+      a_efficiency_rate: assetData.a_efficiency_rate,
+      a_fuel_type: assetData.a_fuel_type,
+      a_cost: assetData.a_cost,
+      a_value: assetData.a_value,
+      a_depreciation_rate: assetData.a_depreciation_rate,
+      a_apreciation_rate: assetData.a_aprecition_rate,
+      a_accumulated_dep: assetData.a_accumulated_dep,
+      a_status: assetData.a_status,
     };
     const options = {
       method: "POST", // Specify the HTTP method
@@ -74,6 +87,9 @@ const Assets = () => {
         console.error("Error adding asset:", error);
       });
   };
+  const selectedAsset = assets.filter(
+    (asset) => asset["id"] === selectedTicket
+  );
 
   const handleCancel = () => {
     setShowAddPropertyForm(false);
@@ -85,7 +101,7 @@ const Assets = () => {
 
 
 
-  const PropertyView = () => (
+  const AssetView = () => (
     <>
       {!loading && (
         <div className="fluidGrid">
@@ -120,23 +136,48 @@ const Assets = () => {
     </>
   );
 
-  const DetailView = () => (
+  const DetailView = ({ selectedAsset, isOpen }) => (
     <>
       {!loading && (
-        <div className="fluidGrid">
-          <AssetDetails
-            selectedProperty={selectedTicket}
+         <div className="fluidGrid">
+
+<ActionNav
+              title="assets"
+              icons={icons}
+              onAddClick={handleAddPropertyClick}
+              icontitle="Add Asset"
+            />
+           
+         
+          <AssetsTable
+            assets={assets}
+            onViewUnitsClick={handleViewDetailsClick}
           />
+
+<AddAssetForm
+                open={showAddPropertyForm}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+              />
+        
+        <div className={`slider ${isOpen ? 'open' : ''}`}>
+          <AssetDetails
+            selectedAsset={selectedAsset}
+          />
+        </div>
         </div>
       )}
 
-{ loading && (<Loader/> )}
+{ loading && ( <div className="loader-container">
+        <Loader />
+      </div> )}
     </>
   );
 
   const handleIconClick = (iconIndex) => {
     const newView = iconIndex === 0 ? "TableView" : "RequestDetails"; // Determine view based on index
     setCurrentView(newView);
+    setIsSliderOpen(iconIndex !== 0); // Open slider if iconIndex is not 0
   };
 
   const icons = [
@@ -158,10 +199,17 @@ const Assets = () => {
   const renderView = () => {
     switch (currentView) {
       case "TableView":
-        return <PropertyView />;
+        return <AssetView />;
       case "RequestDetails":
         return (
-          <DetailView/>
+          <>
+         
+          <DetailView
+          selectedAsset={selectedAsset}
+          isOpen={isSliderOpen}
+          />
+          </>
+        
         ); // Replace with actual rendering logic for RequestDetails
       default:
         return null;
@@ -171,6 +219,7 @@ const Assets = () => {
   const handleViewDetailsClick = (rowIndex) => {
     setCurrentView("RequestDetails");
     setSelectedTicket(rowIndex);
+    setIsSliderOpen(true);
   };
   console.log(currentView, selectedTicket);
 
