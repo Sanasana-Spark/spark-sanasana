@@ -42,14 +42,10 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
   //   const classes = useStyles();
   const [asset, setAsset] = useState({
-    p_name: "",
-    p_num_units: "",
-    p_manager_id: "",
-    p_country: "",
-    p_city: "",
-    p_address: "",
-    p_zipcode: "",
-    p_state: "",
+    a_status: "Active",
+    a_fuel_type:"Petrol",
+    a_accumulated_dep:0,
+    a_apreciation_rate:0
   });
 
   const handleChange = (e) => {
@@ -65,14 +61,9 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     onSubmit(asset);
     // Optionally, you can reset the form after submission
     setAsset({
-      p_name: "",
-      p_num_units: "",
-      p_manager_id: "",
-      p_country: "",
-      p_city: "",
-      p_address: "",
-      p_zipcode: "",
-      p_state: "",
+      a_status: "Active",
+      a_fuel_type:"Petrol"
+
     });
   };
 
