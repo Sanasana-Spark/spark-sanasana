@@ -13,11 +13,12 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
         id="subparent"
         width="100%"
       >
-        {/* Search Box */}
+       
         <Box
           sx={{ display: "flex", alignItems: "center", marginRight: "0px" }}
           id="inner1"
         >
+           {/* Search Box */}
           <TextField
             label="Search"
             variant="outlined"
@@ -43,14 +44,16 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
           >
             <Search sx={{ color: "white" }} />
           </Box>
-        </Box>
-
-        <Box display="flex" id="inner3">
-          {/* Icons */}
+   {/* Icons */}
+   <Box>
           {icons.map((icon, index) => (
             <IconButton key={index}>{icon}</IconButton>
           ))}
+        </Box>
 
+        </Box>
+     
+        <Box display="flex" id="inner3">
           {/* Add button  */}
           <IconButton
             onClick={onAddClick}
