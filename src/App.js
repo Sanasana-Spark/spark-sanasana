@@ -8,7 +8,7 @@ import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
 import Operators from './pages/operators'
 import Fuel from './pages/fuel'
-import MapRoutes from './pages/routes'
+import Trips from './pages/routes'
 import Maintenance from './pages/maintenance'
 import Reports from './pages/reports'
 import Settings from './pages/settings'
@@ -43,7 +43,7 @@ const App = () => {
       <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
       <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
       <Route path="/fuel" element={<SignedIn>  <Layout> <Fuel/> </Layout> </SignedIn> } />      
-      <Route path="/routes" element={<SignedIn>  <Layout> <MapRoutes/> </Layout> </SignedIn> } />         
+      <Route path="/trips" element={<SignedIn>  <Layout> <Trips/> </Layout> </SignedIn> } />         
       <Route path="/maintenance" element={<SignedOut> <Layout> <Maintenance/> </Layout> </SignedOut>   } />
       <Route path="/reports" element={<SignedOut> <Layout> <Reports/> </Layout> </SignedOut>   } />
       <Route path="/settings" element={<SignedOut> <Layout> <Settings/> </Layout> </SignedOut>   } />
