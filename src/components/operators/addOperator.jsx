@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import {
   Dialog,
   DialogTitle,
@@ -11,25 +11,45 @@ import {
   Paper,
   FormControl,
   FormLabel,
-} from '@mui/material';
+  Select,
+  MenuItem,
+  InputLabel,
+} from "@mui/material";
+const baseURL = process.env.REACT_APP_BASE_URL
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
-//   const classes = useStyles();
+  const [statusOptions, setStatusOptions] = useState([]);
+
+  useEffect(() => {
+    // Fetch status options from the backend
+    const fetchStatusOptions = async () => {
+      try {
+        const response = await fetch(`${baseURL}/assets/status`); // Adjust the URL as needed
+        if (response.ok) {
+          const data = await response.json();
+          setStatusOptions(data);
+        } else {
+          console.error("Error fetching status options:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching status options:", error);
+      }
+    };
+
+    fetchStatusOptions();
+  }, []);
+
+  //   const classes = useStyles();
   const [operator, setOperator] = useState({
-    p_name: '',
-    p_num_units: '',
-    p_manager_id: '',
-    p_country: '',
-    p_city: '',
-    p_address: '',
-    p_zipcode: '',
-    p_state: '',
+    o_status: "Active",
+    o_cum_mileage: 0,
+    o_role: "Driver",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOperator((prevOperator) => ({
-      ...prevOperator,
+    setOperator((prevAsset) => ({
+      ...prevAsset,
       [name]: value,
     }));
   };
@@ -39,25 +59,23 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     onSubmit(operator);
     // Optionally, you can reset the form after submission
     setOperator({
-      o_email: '',
-      o_expirence: '',
-      o_role: '',
-      o_lincense_expiry: '',
-      o_lincense_id: '',
-      o_payment_card_id: '',
-      o_lincense_type: '',
-      o_phone: '',
-      o_status: '',
+      p_name: "",
+      p_num_units: "",
+      p_manager_id: "",
+      p_country: "",
+      p_city: "",
+      p_address: "",
+      p_zipcode: "",
+      p_state: "",
     });
   };
 
   const handleFileChange = (e) => {
     setOperator({
       ...operator,
-      [e.target.name]: e.target.files[0]
+      [e.target.name]: e.target.files[0],
     });
   };
-
 
   return (
 <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
@@ -136,7 +154,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Assign card"
+                  label="Assiged card"
                   name="o_payment_card_id"
                   value={operator.o_payment_card_id}
                   onChange={handleChange}
@@ -163,15 +181,22 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 />
               </Grid>
               
+
               <Grid item xs={12} sm={6}>
-                <TextField
-                  required
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="status-label"
                   label="Status"
                   name="o_status"
-                  type="number"
                   value={operator.o_status}
                   onChange={handleChange}
-                />
+                >
+                  {statusOptions.map((status) => (
+            <MenuItem key={status.id} value={status.s_name}>
+              {status.s_name}
+            </MenuItem>
+          ))}
+                </Select>
               </Grid>
              
              

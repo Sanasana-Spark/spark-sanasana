@@ -1,7 +1,6 @@
 import React from 'react';
-import { Container, Grid, Paper, Typography, Box, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Container, Grid, Paper, Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Notifications, Person } from '@mui/icons-material';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
 const data = [
