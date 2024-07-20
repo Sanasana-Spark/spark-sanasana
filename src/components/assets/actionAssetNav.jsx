@@ -13,11 +13,12 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
         id="subparent"
         width="100%"
       >
-        {/* Search Box */}
+       
         <Box
           sx={{ display: "flex", alignItems: "center", marginRight: "0px" }}
           id="inner1"
         >
+           {/* Search Box */}
           <TextField
             label="Search"
             variant="outlined"
@@ -35,7 +36,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#081F5C",
+              backgroundColor: "#047A9A",
               padding: "8px",
               borderTopRightRadius: "5px",
               borderBottomRightRadius: "5px",
@@ -43,19 +44,21 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
           >
             <Search sx={{ color: "white" }} />
           </Box>
-        </Box>
-
-        <Box display="flex" id="inner3">
-          {/* Icons */}
+   {/* Icons */}
+   <Box>
           {icons.map((icon, index) => (
             <IconButton key={index}>{icon}</IconButton>
           ))}
+        </Box>
 
+        </Box>
+     
+        <Box display="flex" id="inner3">
           {/* Add button  */}
           <IconButton
             onClick={onAddClick}
             sx={{
-              border: "1px solid #081F5C",
+              border: "1px solid #047A9A",
               borderRadius: " 4px",
               padding: "4.5px",
             }}
@@ -64,7 +67,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               sx={{
                 width: 30,
                 height: 32,
-                backgroundColor: "#081F5C",
+                backgroundColor: "#047A9A",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -73,7 +76,7 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
               <AddIcon sx={{ fontSize: 20, color: "white" }} />
             </Box>
             <Typography
-              sx={{ color: "#081F5C", fontWeight: "bold", marginLeft: "8px" }}
+              sx={{ color: "#047A9A", fontWeight: "bold", marginLeft: "8px" }}
             >
               {icontitle}
             </Typography>
