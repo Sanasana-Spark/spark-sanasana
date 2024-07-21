@@ -24,7 +24,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     // Fetch status options from the backend
     const fetchStatusOptions = async () => {
       try {
-        const response = await fetch(`${baseURL}/assets/status`); // Adjust the URL as needed
+        const response = await fetch(`${baseURL}/operators/status`); // Adjust the URL as needed
         if (response.ok) {
           const data = await response.json();
           setStatusOptions(data);
