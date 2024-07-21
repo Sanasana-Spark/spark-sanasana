@@ -14,8 +14,7 @@ import Reports from './pages/reports'
 import Settings from './pages/settings'
 import Helpcenter from './pages/helpcenter'
 import Logout from './pages/logout'
-
-// import DriverView from './components/driver-view/DriverView';
+import DriverView from './components/driver-view/DriverView';
 
 // import SignInold from './components/onboarding/signIn/SignIn';
 // import Step1 from './components/onboarding/signUp/Step1';
@@ -50,7 +49,7 @@ const App = () => {
       <Route path="/settings" element={<SignedOut> <Layout> <Settings/> </Layout> </SignedOut>   } />
       <Route path="/helpcenter" element={<SignedOut> <Layout> <Helpcenter/> </Layout> </SignedOut>   } />
 
-      {/* <Route path="/driver" element={<SignedIn> <Layout> <DriverView/> </Layout>  </SignedIn>  } /> */}
+      <Route path="/driver" element={<SignedIn>  <DriverView/>  </SignedIn>  } />
 
       <Route path="/logout" element={<SignedIn> <Layout> <Logout/> </Layout>  </SignedIn>  } />
 
