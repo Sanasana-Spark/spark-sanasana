@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DriverView.css';
-import profileImage from '../assets/profileImage.png';
-import truckImage from '../assets/truckImage.png';
-import logoImage from '../assets/logo.png';
-import odometerImage from '../assets/odometer.png';
-import spinningWheel from '../assets/spinningWheel.png';
-import gasFillerImage from '../assets/gasFiller.png';
-import successTickImage from '../assets/successTick.png';
+import profileImage from '../../assets/profileImage.png';
+import truckImage from '../../assets/truckImage.png';
+import logoImage from '../../assets/logo.png';
+import odometerImage from '../../assets/odometer.png';
+import spinningWheel from '../../assets/spinningWheel.png';
+import gasFillerImage from '../../assets/gasFiller.png';
+import successTickImage from '../../assets/successTick.png';
 import Trip from './Trip';
 import EndTrip from './EndTrip';
 
@@ -26,14 +26,15 @@ const DriverView = () => {
   const [showResultModal, setShowResultModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showStartTripButton, setShowStartTripButton] = useState(false);
-  const [showStartTripMessage, setShowStartTripMessage] = useState(false);
+  // const [showStartTripMessage, setShowStartTripMessage] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [cameraStream, setCameraStream] = useState(null);
   const [tripEnded, setTripEnded] = useState(false);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const mapRef = useRef(null);
-  const [tripDistance, setTripDistance] = useState(5); // Updated to default to 5 km
+  // const [tripDistance, setTripDistance] = useState(5);
+  const tripDistance =  "5 km"
 
   useEffect(() => {
     const initMap = () => {
@@ -77,7 +78,7 @@ const DriverView = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
       context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      const imageData = canvasRef.current.toDataURL('image/png');
+      // const imageData = canvasRef.current.toDataURL('image/png');
 
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
