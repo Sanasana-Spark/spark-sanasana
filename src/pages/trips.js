@@ -218,7 +218,6 @@ const Trips = () => {
     setSelectedTicket(rowIndex);
     setIsSliderOpen(true);
   };
-  console.log(currentView, selectedTicket);
 
   return (
     <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
