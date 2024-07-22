@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { ClerkProvider } from '@clerk/clerk-react'
 
 
-const PUBLISHABLE_KEY1 = process.env.VITE_CLERK_PUBLISHABLE_KEY ;
+const PUBLISHABLE_KEY1 = process.env.REACT_APP_VITE_CLERK_PUBLISHABLE_KEY;
 const PUBLISHABLE_KEY = 'pk_test_cHJvYmFibGUtYnVsbGRvZy00OC5jbGVyay5hY2NvdW50cy5kZXYk'
 console.log(process.env);
 console.log('key' ,PUBLISHABLE_KEY1)
