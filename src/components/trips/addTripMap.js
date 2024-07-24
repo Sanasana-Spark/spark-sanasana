@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef,useCallback, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   DialogActions,
   Button,
@@ -126,7 +126,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     libraries,
   });
 
-  const mapRef = useRef();
+  // const mapRef = useRef();
   const options = useMemo(
     () => ({
       mapId: "9ebfa89edaafd2e",
@@ -140,7 +140,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setAutocomplete(autoC);
   };
 
-  const [map, setMap] = useState(/** @type google.maps.Map */ (null));
+  // const [map, setMap] = useState(/** @type google.maps.Map */ (null));
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -185,13 +185,13 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     console.log("originRef", directionsResponse,"destiantionRef",directionsResponse.destination)
   }
 
-  function clearRoute() {
-    setDirectionsResponse(null);
-    setDistance("");
-    setDuration("");
-    originRef.current.value = "";
-    destiantionRef.current.value = "";
-  }
+  // function clearRoute() {
+  //   setDirectionsResponse(null);
+  //   setDistance("");
+  //   setDuration("");
+  //   originRef.current.value = "";
+  //   destiantionRef.current.value = "";
+  // }
 
   return (
     <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
