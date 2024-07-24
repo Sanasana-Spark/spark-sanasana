@@ -4,14 +4,15 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import ActionNav from "../components/operators/actionOperatorNav";
-import OperatorTable from "../components/operators/operatorTable"
-import AddOperatorForm from "../components/operators/addOperator";
-import OperatorDetails from "../components/operators/operatorDetails";
+import ActionNav from "../components/trips/actionTripNav";
+import AssetsTable from "../components/trips/tripsTable"
+import AddAssetForm1 from "../components/trips/addTrip";
+import AddAssetForm from "../components/trips/addTripMap";
+import AssetDetails from "../components/trips/tripDetails";
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
 
-const Operators = () => {
+const Trips = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
   const { userId, org_id } = useAuthContext();
@@ -21,7 +22,7 @@ const Operators = () => {
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
-    const apiUrl = `${baseURL}/operators`;
+    const apiUrl = `${baseURL}/trips`;
     // to be corrected to dynamic
     fetch(apiUrl)
       .then((response) => {
@@ -43,25 +44,26 @@ const Operators = () => {
 
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
-  const handleSubmit = (operatorData) => {
+  const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/operators/create`;
+    const url = `${baseURL}/trips/create`;
     const data = {
-      o_created_by: userId,
-      o_organisation_id:org_id,
-      o_name: operatorData.o_name,
-      o_email: operatorData.o_email,
-      o_phone: operatorData.o_phone,
-      o_national_id: operatorData.o_national_id,
-      o_lincense_id: operatorData.o_lincense_id,
-      o_lincense_type: operatorData.o_lincense_type,
-      o_lincense_expiry: operatorData.o_lincense_expiry,
-      o_payment_card_id: operatorData.o_payment_card_id,
-      o_Payment_card_no: operatorData.o_Payment_card_no,
-      o_role: operatorData.o_role,
-      o_status: operatorData.o_status,
-      o_cum_mileage: operatorData.o_cum_mileage,
-      o_expirence: operatorData.o_expirence,
+      t_created_by: userId,
+      t_organization_id:org_id,
+      t_type: assetData.t_type,
+      t_start_lat: assetData.t_start_lat,
+      t_start_long: assetData.t_start_long,
+      t_start_elavation: assetData.t_start_elavation,
+      t_end_lat: assetData.t_end_lat,
+      t_end_long: assetData.t_end_long,
+      t_end_elavation: assetData.t_end_elavation,
+      t_distance: assetData.t_distance,
+      t_start_date: assetData.t_start_date,
+      t_end_date: assetData.t_end_date,
+      t_operator_id: assetData.t_operator_id,
+      t_asset_id: assetData.t_asset_id,
+      t_status: assetData.t_status,
+      t_load: assetData.t_load,
     };
     const options = {
       method: "POST", // Specify the HTTP method
@@ -82,7 +84,7 @@ const Operators = () => {
         console.error("Error adding asset:", error);
       });
   };
-  const selectedOperator = assets.filter(
+  const selectedAsset = assets.filter(
     (asset) => asset["id"] === selectedTicket
   );
 
@@ -101,22 +103,23 @@ const Operators = () => {
       {!loading && (
         <div className="fluidGrid">
           <div>
-            <ActionNav
+
+<ActionNav
               title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
-              icontitle="Add Operator"
+              icontitle="Add Trip"
             />
            
          
-          <OperatorTable
-            operators={assets}
+          <AssetsTable
+            assets={assets}
             onViewUnitsClick={handleViewDetailsClick}
           />
            </div>
 
 
-              <AddOperatorForm
+              <AddAssetForm
                 open={showAddPropertyForm}
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
@@ -131,7 +134,7 @@ const Operators = () => {
     </>
   );
 
-  const DetailView = ({ selectedOperator, isOpen }) => (
+  const DetailView = ({ selectedAsset, isOpen }) => (
     <>
       {!loading && (
          <div className="fluidGrid">
@@ -144,20 +147,20 @@ const Operators = () => {
             />
            
          
-          <OperatorTable
-            operators={assets}
+          <AssetsTable
+            assets={assets}
             onViewUnitsClick={handleViewDetailsClick}
           />
 
-<AddOperatorForm
+<AddAssetForm
                 open={showAddPropertyForm}
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
               />
         
         <div className={`slider ${isOpen ? 'open' : ''}`}>
-          <OperatorDetails
-            selectedOperator={selectedOperator}
+          <AssetDetails
+            selectedAsset={selectedAsset}
           />
         </div>
         </div>
@@ -200,7 +203,7 @@ const Operators = () => {
           <>
          
           <DetailView
-          selectedOperator={selectedOperator}
+          selectedAsset={selectedAsset}
           isOpen={isSliderOpen}
           />
           </>
@@ -216,11 +219,10 @@ const Operators = () => {
     setSelectedTicket(rowIndex);
     setIsSliderOpen(true);
   };
-  console.log(currentView, selectedTicket);
 
   return (
     <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
   );
 };
 
-export default Operators;
+export default Trips;

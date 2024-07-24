@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import odometerImage from '../assets/odometer.png';
-import successTickImage from '../assets/successTick.png';
+import odometerImage from '../../assets/odometer.png';
+import successTickImage from '../../assets/successTick.png';
 
 const EndTrip = ({ onEndTrip }) => {
   const [showModal, setShowModal] = useState(true);
@@ -33,7 +33,7 @@ const EndTrip = ({ onEndTrip }) => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
       context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      const imageData = canvasRef.current.toDataURL('image/png');
+      // const imageData = canvasRef.current.toDataURL('image/png');
 
       // Stop the camera stream
       if (cameraStream) {
