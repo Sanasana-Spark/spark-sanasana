@@ -1,10 +1,9 @@
 // components/ProtectedRoute.js
 import React from 'react';
-import { SignedIn, SignedOut } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
+import { SignedIn, SignedOut, SignIn } from '@clerk/clerk-react';
+import { Box } from '@mui/material';
 
 const ProtectedRoute = ({ children }) => {
-  const navigate = useNavigate();
 
   return (
     <>
@@ -12,7 +11,14 @@ const ProtectedRoute = ({ children }) => {
         {children}
       </SignedIn>
       <SignedOut>
-        {navigate('/signin')}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <SignIn />
+      </Box>
       </SignedOut>
     </>
   );
