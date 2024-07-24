@@ -45,11 +45,13 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
             <Search sx={{ color: "white" }} />
           </Box>
    {/* Icons */}
-   <Box>
+   
           {icons.map((icon, index) => (
-            <IconButton key={index}>{icon}</IconButton>
+            <Box>
+            <IconButton key={index}> {icon}</IconButton>
+            </Box>
           ))}
-        </Box>
+      
 
         </Box>
      

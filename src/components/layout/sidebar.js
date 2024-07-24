@@ -81,9 +81,9 @@ export default function VerticalSidebar({ children }) {
             />
 
 <ListItemWithLink
-              label='Routes'
+              label='Trips'
               icon={ <img src={Routes_icon} alt="Custom Icon" />}
-              to='/routes'
+              to='/trips'
             />
 
 

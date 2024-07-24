@@ -45,7 +45,7 @@ const Trip = ({ tripDistance = 5, onTripEnd }) => {
         clearInterval(distanceInterval);
       }
     };
-  }, [tripStarted]);
+  }, );
 
   const handleStartTrip = () => {
     setTripStarted(true);
