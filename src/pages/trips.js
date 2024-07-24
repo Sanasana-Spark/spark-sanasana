@@ -6,7 +6,8 @@ import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/trips/actionTripNav";
 import AssetsTable from "../components/trips/tripsTable"
-import AddAssetForm from "../components/trips/addTrip";
+import AddAssetForm1 from "../components/trips/addTrip";
+import AddAssetForm from "../components/trips/addTripMap";
 import AssetDetails from "../components/trips/tripDetails";
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';

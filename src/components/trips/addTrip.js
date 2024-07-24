@@ -15,10 +15,10 @@ import {
 } from "@mui/material";
 const baseURL = process.env.REACT_APP_BASE_URL
 
-const AddAssetForm = ({ onSubmit, onCancel, open }) => {
-  // const [asset, setAsset] = useState({ a_status: "" });
+const AddTripForm = ({ onSubmit, onCancel, open }) => {
+  // const [trip, setTrip] = useState({ a_status: "" });
   const [statusOptions, setStatusOptions] = useState([]);
-  const [assetOptions, setAssetOptions] = useState([]);
+  const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
 
   useEffect(() => {
@@ -42,21 +42,21 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
   useEffect(() => {
     // Fetch status options from the backend
-    const fetchAssetOptions = async () => {
+    const fetchTripOptions = async () => {
       try {
         const response = await fetch(`${baseURL}/assets`); // Adjust the URL as needed
         if (response.ok) {
           const data = await response.json();
-          setAssetOptions(data);
+          setTripOptions(data);
         } else {
-          console.error("Error fetching Asset options:", response.statusText);
+          console.error("Error fetching Trip options:", response.statusText);
         }
       } catch (error) {
-        console.error("Error fetching Asset options:", error);
+        console.error("Error fetching Trip options:", error);
       }
     };
 
-    fetchAssetOptions();
+    fetchTripOptions();
   }, []);
 
   useEffect(() => {
@@ -79,24 +79,24 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   }, []);
 
   //   const classes = useStyles();
-  const [asset, setAsset] = useState({
+  const [trip, setTrip] = useState({
     t_status: "Pending",
     t_load:0
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAsset((prevAsset) => ({
-      ...prevAsset,
+    setTrip((prevTrip) => ({
+      ...prevTrip,
       [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(asset);
+    onSubmit(trip);
     // Optionally, you can reset the form after submission
-    setAsset({
+    setTrip({
       t_status: "Pending",
 
     });
@@ -119,7 +119,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   fullWidth
                   label="Type"
                   name="t_type"
-                  value={asset.t_type}
+                  value={trip.t_type}
                   onChange={handleChange}
                 />
               </Grid>
@@ -130,7 +130,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="start_lat"
                   name="t_start_lat"
                   type="number"
-                  value={asset.t_start_lat}
+                  value={trip.t_start_lat}
                   onChange={handleChange}
                 />
               </Grid>
@@ -141,7 +141,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="t_start_long"
                   name="t_start_long"
                   type="number"
-                  value={asset.t_start_long}
+                  value={trip.t_start_long}
                   onChange={handleChange}
                 />
               </Grid>
@@ -152,7 +152,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="t_end_lat"
                   name="t_end_lat"
                   type="number"
-                  value={asset.t_end_lat}
+                  value={trip.t_end_lat}
                   onChange={handleChange}
                 />
               </Grid>
@@ -163,7 +163,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="t_end_long "
                   name="t_end_long"
                   type="number"
-                  value={asset.t_end_long}
+                  value={trip.t_end_long}
                   onChange={handleChange}
                 />
               </Grid>
@@ -173,7 +173,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="Load(Tonnes)"
                   name="t_load"
                   type="number"
-                  value={asset.t_load}
+                  value={trip.t_load}
                   onChange={handleChange}
                 />
               </Grid>
@@ -183,7 +183,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="start_date"
                   name="t_start_date"
                   type="date"
-                  value={asset.t_start_date}
+                  value={trip.t_start_date}
                   onChange={handleChange}
                 />
               </Grid>
@@ -193,7 +193,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   label="t_end_date"
                   name="t_end_date"
                   type="date"
-                  value={asset.t_end_date}
+                  value={trip.t_end_date}
                   onChange={handleChange}
                 />
               </Grid>
@@ -208,7 +208,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   labelId="status-label"
                   label="Status"
                   name="t_status"
-                  value={asset.t_status}
+                  value={trip.t_status}
                   onChange={handleChange}
                 >
                   {statusOptions.map((status) => (
@@ -226,7 +226,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   labelId="operator-label"
                   label="Operator"
                   name="t_operator_id"
-                  value={asset.t_operator_id}
+                  value={trip.t_operator_id}
                   onChange={handleChange}
                 >
                   {operatorOptions.map((operator) => (
@@ -238,18 +238,18 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <InputLabel id="asset-label">Assign Vehicle</InputLabel>
+                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
                 <Select
                 fullWidth
-                  labelId="asset-label"
+                  labelId="trip-label"
                   label="t_asset_id"
                   name="t_asset_id"
-                  value={asset.t_asset_id}
+                  value={trip.t_asset_id}
                   onChange={handleChange}
                 >
-                  {assetOptions.map((asset) => (
-            <MenuItem key={asset.id} value={asset.id}>
-              {asset.a_license_plate}: {asset.a_make}-{asset.a_model}
+                  {assetOptions.map((trip) => (
+            <MenuItem key={trip.id} value={trip.id}>
+              {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
             </MenuItem>
           ))}
                 </Select>
@@ -273,9 +273,9 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   );
 };
 
-AddAssetForm.propTypes = {
+AddTripForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
 };
 
-export default AddAssetForm;
+export default AddTripForm;
