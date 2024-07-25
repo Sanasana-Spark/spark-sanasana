@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { AuthProvider } from './components/onboarding/authProvider';
 import ProtectedRoute from './components/onboarding/protectedRoute';
 import Layout from "./components/layout/layout";
+import DriverLayout from "./components/layout/driverLayout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
 import Operators from './pages/operators'
@@ -15,6 +16,9 @@ import Settings from './pages/settings'
 import Helpcenter from './pages/helpcenter'
 import Logout from './pages/logout'
 import DriverView from './components/driver-view/DriverView';
+import DriverHome from './pages/driverview/driverHome';
+import TripHistory from './pages/driverview/tripHistory';
+import UpcomingTrips from './pages/driverview/upcomingTrips';
 
 // import SignInold from './components/onboarding/signIn/SignIn';
 // import Step1 from './components/onboarding/signUp/Step1';
@@ -49,7 +53,10 @@ const App = () => {
       <Route path="/settings" element={<SignedOut> <Layout> <Settings/> </Layout> </SignedOut>   } />
       <Route path="/helpcenter" element={<SignedOut> <Layout> <Helpcenter/> </Layout> </SignedOut>   } />
 
-      <Route path="/driver" element={<SignedIn>  <DriverView/>  </SignedIn>  } />
+      <Route path="/driver1" element={<SignedIn>  <DriverView/>  </SignedIn>  } />
+      <Route path="/driver" element={<SignedIn>  <DriverLayout>  <DriverHome/> </DriverLayout> </SignedIn> } /> 
+      <Route path="/history" element={<SignedIn>  <DriverLayout>  <TripHistory/> </DriverLayout> </SignedIn> } />  
+      <Route path="/newtrips" element={<SignedIn>  <DriverLayout>  <UpcomingTrips/> </DriverLayout> </SignedIn> } />   
 
       <Route path="/logout" element={<SignedIn> <Layout> <Logout/> </Layout>  </SignedIn>  } />
 
