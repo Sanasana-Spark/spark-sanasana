@@ -59,42 +59,42 @@ export default function VerticalSidebar({ children }) {
 
             <ListItemWithLink
               label='Dashboard'
-              icon={ <img src={Dashboard_icon} alt="Custom Icon" />}
+              icon={ <img src={Dashboard_icon} alt="Custom Icon" className="icon" />}
               to='/dashboard'
             />
             <ListItemWithLink
               label='Assets'
-              icon={ <img src={Asset_icon} alt="Custom Icon" />}
+              icon={ <img src={Asset_icon} alt="Custom Icon" className="icon"/>}
               to='/assets'
             />
 
 <ListItemWithLink
               label='Operators'
-              icon={ <img src={Operator_icon} alt="Custom Icon" />}
+              icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
               to='/operators'
             />
 
 <ListItemWithLink
               label='Fuel'
-              icon={ <img src={Fuel_icon} alt="Custom Icon" />}
+              icon={ <img src={Fuel_icon} alt="Custom Icon"  className="icon" />}
               to='/fuel'
             />
 
 <ListItemWithLink
               label='Trips'
-              icon={ <img src={Routes_icon} alt="Custom Icon" />}
+              icon={ <img src={Routes_icon} alt="Custom Icon"  className="icon" />}
               to='/trips'
             />
 
 
             <ListItemWithLink
               label='Maintenance'
-              icon={ <img src={Maintenance_icon} alt="Custom Icon" />}
+              icon={ <img src={Maintenance_icon} alt="Custom Icon"  className="icon" />}
               to='/maintenance'
             />
              <ListItemWithLink
               label='Reports'
-              icon={ <img src={Reports_icon} alt="Custom Icon" />}
+              icon={ <img src={Reports_icon} alt="Custom Icon"  className="icon" />}
               to='/reports'
             />
           </List>
@@ -104,19 +104,19 @@ export default function VerticalSidebar({ children }) {
 
           <ListItemWithLink
               label='Settings'
-              icon={ <img src={Settings_icon} alt="Custom Icon" />}
+              icon={ <img src={Settings_icon} alt="Custom Icon"  className="icon" />}
               to='/settings'
             />
 
             <ListItemWithLink
               label='Help Center'
-              icon={ <img src={Helpcenter_icon} alt="Custom Icon" />}
+              icon={ <img src={Helpcenter_icon} alt="Custom Icon"  className="icon" />}
               to='/reports'
             />
 
             <ListItemWithLink
               label='Logout'
-              icon={ <img src={Logout_icon} alt="Custom Icon" />}
+              icon={ <img src={Logout_icon} alt="Custom Icon"  className="icon" />}
               to='/logout'
             />
 
