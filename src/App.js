@@ -54,7 +54,7 @@ const App = () => {
       <Route path="/helpcenter" element={<SignedOut> <Layout> <Helpcenter/> </Layout> </SignedOut>   } />
 
       <Route path="/driver1" element={<SignedIn>  <DriverView/>  </SignedIn>  } />
-      <Route path="/driver" element={<SignedIn>  <DriverLayout>  <DriverHome/> </DriverLayout> </SignedIn> } /> 
+      <Route path="/drive" element={<SignedIn>  <DriverLayout>  <DriverHome/> </DriverLayout> </SignedIn> } /> 
       <Route path="/history" element={<SignedIn>  <DriverLayout>  <TripHistory/> </DriverLayout> </SignedIn> } />  
       <Route path="/newtrips" element={<SignedIn>  <DriverLayout>  <UpcomingTrips/> </DriverLayout> </SignedIn> } />   
 
