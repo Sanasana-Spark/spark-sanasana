@@ -46,4 +46,9 @@
     align-items: center;
     height: 100vh;
   }
+
+  .icon {
+    width: 20px; /* Adjust the size as needed */
+    height: 20px; /* Adjust the size as needed */
+  }
   
