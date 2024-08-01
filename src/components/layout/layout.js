@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       <div style={{ display: 'flex', flexGrow: 1, marginTop: topBarHeight }}>
         <VerticalSidebar topBarHeight={topBarHeight}  />
 
-        <main style={{ flexGrow: 1, padding: '10px' }}>
+        <main style={{ flexGrow: 1 }}>
           {children}
         </main>
       </div>

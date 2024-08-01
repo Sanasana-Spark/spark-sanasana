@@ -12,6 +12,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Divider,
+  Box,
 } from "@mui/material";
 import {
   useJsApiLoader,
@@ -30,6 +32,13 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [statusOptions, setStatusOptions] = useState([]);
   const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
+  const [selectedOperator, setSelectedOperator] = useState(null);
+  const [directionsResponse, setDirectionsResponse] = useState(null);
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+
+  const originRef = useRef();
+  const destiantionRef = useRef();
 
   const [trip, setTrip] = useState({
     t_load: 0,
@@ -108,6 +117,19 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       ...prevTrip,
       [name]: value,
     }));
+
+    if (name === "t_operator_id") {
+      const operator = operatorOptions.find((op) => op.id === value);
+      setSelectedOperator(operator);
+      if (operator && operator.o_assigned_asset) {
+        setTrip((prevTrip) => ({
+          ...prevTrip,
+          t_asset_id: operator.o_assigned_asset,
+        }));
+      }
+    }
+
+
   };
 
   const handleSubmit = (e) => {
@@ -116,6 +138,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
+      t_distance: distance,
       t_operator_id: "",
       t_asset_id: "",
     });
@@ -125,8 +148,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries,
   });
-
-  // const mapRef = useRef();
+  
   const options = useMemo(
     () => ({
       mapId: "9ebfa89edaafd2e",
@@ -135,30 +157,19 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     }),
     []
   );
-  // const onLoad = useCallback((map) => (mapRef.current = map), []);
-  const onLoad = (autoC) => {
-    setAutocomplete(autoC);
+
+
+  const onLoad = (autocomplete) => {
+    setAutocomplete(autocomplete);
   };
 
-  // const [map, setMap] = useState(/** @type google.maps.Map */ (null));
-  const [directionsResponse, setDirectionsResponse] = useState(null);
-  const [distance, setDistance] = useState("");
-  const [duration, setDuration] = useState("");
-
-  /** @type React.MutableRefObject<HTMLInputElement> */
-  const originRef = useRef();
-  /** @type React.MutableRefObject<HTMLInputElement> */
-  const destiantionRef = useRef();
-
   const [autocomplete, setAutocomplete] = useState(null);
-
-
 
   const onPlaceChanged = () => {
     if (autocomplete !== null) {
       console.log(autocomplete.getPlace());
     } else {
-      console.log('Autocomplete is not loaded yet!');
+      console.log("Autocomplete is not loaded yet!");
     }
   };
 
@@ -181,178 +192,203 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
   }
-  if (directionsResponse) {
-    console.log("originRef", directionsResponse,"destiantionRef",directionsResponse.destination)
+
+
+  function clearRoute() {
+    setDirectionsResponse(null);
+    setDistance("");
+    setDuration("");
+    originRef.current.value = "";
+    destiantionRef.current.value = "";
   }
 
-  // function clearRoute() {
-  //   setDirectionsResponse(null);
-  //   setDistance("");
-  //   setDuration("");
-  //   originRef.current.value = "";
-  //   destiantionRef.current.value = "";
-  // }
+
+  if (directionsResponse) {
+    console.log(
+      "originRef",
+      directionsResponse,
+      "destiantionRef",
+      directionsResponse.destination
+    );
+  }
 
   return (
-    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
+    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title" maxWidth="false"  fullWidth
+    sx={{ '& .MuiDialog-paper': { width: '60%', maxWidth: 'none' } }} >
       <DialogTitle id="form-dialog-title">Add Trip</DialogTitle>
       <DialogContent>
-
-        <Paper className={"classes.paper"}>
+        <Paper className={"classes.paper"} style={{ padding: '16px' }}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-             
-               
-                  {/* Google Map Box */}
-                  <GoogleMap
-                    center={center}
-                    zoom={15}
-                    mapContainerStyle={{ width: "100%", height: "100%" }}
-                    options={options}
-                    onLoad={onLoad}
-                  >
-                    <Marker position={center} />
-                    {directionsResponse && (
-                      <DirectionsRenderer directions={directionsResponse} />
-                    )}
-                  </GoogleMap>
+              <Grid item xs={12} md={6}>
+                <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+                  <TextField
+                    fullWidth
+                    type="text"
+                    label="Origin"
+                    inputRef={originRef}
+                    autoComplete="off"
+                    margin="normal"
+                  />
+                </Autocomplete>
+                <Autocomplete>
+                  <TextField
+                    fullWidth
+                    type="text"
+                    label="Destination"
+                    inputRef={destiantionRef}
+                    autoComplete="off"
+                    margin="normal"
+                  />
+                </Autocomplete>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={calculateRoute}
+                  style={{ marginTop: '16px', marginRight: '8px' }}
+                >
+                  Calculate Route
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={clearRoute}
+                  style={{ marginTop: '16px' }}
+                >
+                  Clear Route
+                </Button>
+                <Typography style={{ marginTop: '16px' }}>Distance: {distance} </Typography>
+                <Typography>Duration: {duration} </Typography>
+              </Grid>
+
+
+              <Grid item xs={12} sm={6}>
+                <GoogleMap
+                  center={center}
+                  zoom={15}
+                  mapContainerStyle={{ width: "400px", height: "300px" }}
+                  options={options}
+                  onLoad={onLoad}
+                >
+                  <Marker position={center} />
+                  {directionsResponse && (
+                    <DirectionsRenderer directions={directionsResponse} />
+                  )}
+                </GoogleMap>
+                </Grid>
+
+     
+
+              <Divider></Divider>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Load(Tonnes)"
+                  name="t_load"
+                  type="number"
+                  value={trip.t_load}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="LPO number"
+                  name="t_type"
+                  type="text"
+                  value={trip.t_type}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="start_date"
+                  name="t_start_date"
+                  type="date"
+                  value={trip.t_start_date}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="t_end_date"
+                  name="t_end_date"
+                  type="date"
+                  value={trip.t_end_date}
+                  onChange={handleChange}
+                />
+              </Grid>
 
 
 
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="operator-label">Assign Driver</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="operator-label"
+                  label="Operator"
+                  name="t_operator_id"
+                  value={trip.t_operator_id}
+                  onChange={handleChange}
+                >
+                  {operatorOptions.map((operator) => (
+                    <MenuItem key={operator.id} value={operator.id}>
+                      {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
 
-                  <Grid item xs={12} sm={6}>
-                      <Autocomplete
-                       onLoad={onLoad}
-                       onPlaceChanged={onPlaceChanged}>
-                        <TextField
-                          fullWidth
-                          type="text"
-                          label="originRef"
-                          inputRef={originRef}
-                          autoComplete="off"
-                        />
-                      </Autocomplete>
-                   </Grid>
-                   <Grid item xs={12} sm={6}>
-                      <Autocomplete>
-                        <TextField
-                          fullWidth
-                          type="text"
-                          label="Destination"
-                          inputRef={destiantionRef}
-                        />
-                      </Autocomplete>
-                      </Grid>
-             
-                      <Grid item xs={12} sm={4}>
-                     
-              <Button  variant="outlined" color="primary" onClick={calculateRoute}>
-              Calculate Route
-              </Button>
-              {/* <Button  variant="contained" color="primary" onClick={clearRoute}>
-              center back
-              </Button> */}
-            
-             
-</Grid>
-<Grid item xs={12} sm={4}><Typography>Distance: {distance} </Typography></Grid>
-<Grid item xs={12} sm={4}><Typography>Duration: {duration} </Typography></Grid>
-              
-                    
-                    
-                   
-               
 
-        
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="Load(Tonnes)"
-                        name="t_load"
-                        type="number"
-                        value={trip.t_load}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="start_date"
-                        name="t_start_date"
-                        type="date"
-                        value={trip.t_start_date}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        fullWidth
-                        label="t_end_date"
-                        name="t_end_date"
-                        type="date"
-                        value={trip.t_end_date}
-                        onChange={handleChange}
-                      />
-                    </Grid>
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="trip-label"
+                  label="t_asset_id"
+                  name="t_asset_id"
+                  value={trip.t_asset_id}
+                  onChange={handleChange}
+                  disabled // Disable the select box to prevent manual changes
+                >
+                  {selectedOperator ? (
+                    <MenuItem value={selectedOperator.o_assigned_asset}>
+                      {selectedOperator.o_a_license_plate}
+                    </MenuItem>
+                  ) : (
+                    assetOptions.map((asset) => (
+                      <MenuItem key={asset.id} value={asset.id}>
+                        {asset.a_license_plate}: {asset.a_make} - {asset.a_model}
+                      </MenuItem>
+                    ))
+                  )}
+                </Select>
+              </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                      <InputLabel id="status-label">Status</InputLabel>
-                      <Select
-                        fullWidth
-                        labelId="status-label"
-                        label="Status"
-                        name="t_status"
-                        value={trip.t_status}
-                        onChange={handleChange}
-                      >
-                        {statusOptions.map((status) => (
-                          <MenuItem key={status.id} value={status.t_name}>
-                            {status.t_name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                      <InputLabel id="operator-label">Assign Driver</InputLabel>
-                      <Select
-                        fullWidth
-                        labelId="operator-label"
-                        label="Operator"
-                        name="t_operator_id"
-                        value={trip.t_operator_id}
-                        onChange={handleChange}
-                      >
-                        {operatorOptions.map((operator) => (
-                          <MenuItem key={operator.id} value={operator.id}>
-                            {operator.o_name} - {operator.o_status}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                      <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                      <Select
-                        fullWidth
-                        labelId="trip-label"
-                        label="t_asset_id"
-                        name="t_asset_id"
-                        value={trip.t_asset_id}
-                        onChange={handleChange}
-                      >
-                        {assetOptions.map((trip) => (
-                          <MenuItem key={trip.id} value={trip.id}>
-                            {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Grid>
-                 
-
-              
-             
-              
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
+                <Select
+                  fullWidth
+                  labelId="trip-label"
+                  label="t_asset_id"
+                  name="t_asset_id"
+                  value={trip.t_asset_id}
+                  onChange={handleChange}
+                >
+                  {assetOptions.map((trip) => (
+                    <MenuItem key={trip.id} value={trip.id}>
+                      {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Grid>
             </Grid>
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">
@@ -362,9 +398,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                 Cancel
               </Button>
             </DialogActions>
+         
           </form>
         </Paper>
-        
       </DialogContent>
     </Dialog>
   );
