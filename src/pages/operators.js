@@ -9,14 +9,17 @@ import OperatorTable from "../components/operators/operatorTable"
 import AddOperatorForm from "../components/operators/addOperator";
 import OperatorDetails from "../components/operators/operatorDetails";
 import Loader from "../components/loader";
+import { useAuthContext } from '../components/onboarding/authProvider';
 
 const Operators = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
+  const { userId, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
-  const [operators, setOperators] = useState([]);
+  const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
     const apiUrl = `${baseURL}/operators`;
     // to be corrected to dynamic
@@ -28,7 +31,7 @@ const Operators = () => {
         return response.json();
       })
       .then((data) => {
-        setOperators(data);
+        setAssets(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -37,22 +40,28 @@ const Operators = () => {
       });
   }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
 
-    console.log(operators)
 
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 
-  const handleSubmit = (propertyData) => {
+  const handleSubmit = (operatorData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/operators/create`;
     const data = {
-      p_name: propertyData.p_name,
-      p_num_units: propertyData.p_num_units,
-      p_manager_id: propertyData.p_manager_id,
-      p_country: propertyData.p_country,
-      p_city: propertyData.p_city,
-      p_address: propertyData.p_address,
-      p_zipcode: propertyData.p_zipcode,
-      p_state: propertyData.p_state,
+      o_created_by: userId,
+      o_organisation_id:org_id,
+      o_name: operatorData.o_name,
+      o_email: operatorData.o_email,
+      o_phone: operatorData.o_phone,
+      o_national_id: operatorData.o_national_id,
+      o_lincense_id: operatorData.o_lincense_id,
+      o_lincense_type: operatorData.o_lincense_type,
+      o_lincense_expiry: operatorData.o_lincense_expiry,
+      o_payment_card_id: operatorData.o_payment_card_id,
+      o_Payment_card_no: operatorData.o_Payment_card_no,
+      o_role: operatorData.o_role,
+      o_status: operatorData.o_status,
+      o_cum_mileage: operatorData.o_cum_mileage,
+      o_expirence: operatorData.o_expirence,
     };
     const options = {
       method: "POST", // Specify the HTTP method
@@ -67,13 +76,15 @@ const Operators = () => {
           throw new Error("Failed to add asset");
         }
         console.log("Property added successfully");
-        console.log("Property added successfully", propertyData);
         setShowAddPropertyForm(false);
       })
       .catch((error) => {
         console.error("Error adding asset:", error);
       });
   };
+  const selectedOperator = assets.filter(
+    (asset) => asset["id"] === selectedTicket
+  );
 
   const handleCancel = () => {
     setShowAddPropertyForm(false);
@@ -83,17 +94,15 @@ const Operators = () => {
     setShowAddPropertyForm(true);
   };
 
-  console.log(showAddPropertyForm)
 
 
-
-  const PropertyView = () => (
+  const AssetView = () => (
     <>
       {!loading && (
         <div className="fluidGrid">
           <div>
             <ActionNav
-              title="Operator"
+              title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Operator"
@@ -101,7 +110,7 @@ const Operators = () => {
            
          
           <OperatorTable
-            operators={operators}
+            operators={assets}
             onViewUnitsClick={handleViewDetailsClick}
           />
            </div>
@@ -122,23 +131,48 @@ const Operators = () => {
     </>
   );
 
-  const DetailView = () => (
+  const DetailView = ({ selectedOperator, isOpen }) => (
     <>
       {!loading && (
-        <div className="fluidGrid">
-          <OperatorDetails
-            selectedProperty={selectedTicket}
+         <div className="fluidGrid">
+
+<ActionNav
+              title="assets"
+              icons={icons}
+              onAddClick={handleAddPropertyClick}
+              icontitle="Add Asset"
+            />
+           
+         
+          <OperatorTable
+            operators={assets}
+            onViewUnitsClick={handleViewDetailsClick}
           />
+
+<AddOperatorForm
+                open={showAddPropertyForm}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+              />
+        
+        <div className={`slider ${isOpen ? 'open' : ''}`}>
+          <OperatorDetails
+            selectedOperator={selectedOperator}
+          />
+        </div>
         </div>
       )}
 
-{ loading && (<Loader/> )}
+{ loading && ( <div className="loader-container">
+        <Loader />
+      </div> )}
     </>
   );
 
   const handleIconClick = (iconIndex) => {
     const newView = iconIndex === 0 ? "TableView" : "RequestDetails"; // Determine view based on index
     setCurrentView(newView);
+    setIsSliderOpen(iconIndex !== 0); // Open slider if iconIndex is not 0
   };
 
   const icons = [
@@ -160,10 +194,17 @@ const Operators = () => {
   const renderView = () => {
     switch (currentView) {
       case "TableView":
-        return <PropertyView />;
+        return <AssetView />;
       case "RequestDetails":
         return (
-          <DetailView/>
+          <>
+         
+          <DetailView
+          selectedOperator={selectedOperator}
+          isOpen={isSliderOpen}
+          />
+          </>
+        
         ); // Replace with actual rendering logic for RequestDetails
       default:
         return null;
@@ -173,11 +214,12 @@ const Operators = () => {
   const handleViewDetailsClick = (rowIndex) => {
     setCurrentView("RequestDetails");
     setSelectedTicket(rowIndex);
+    setIsSliderOpen(true);
   };
   console.log(currentView, selectedTicket);
 
   return (
-    <>{setOperators.length > 0 ? <>{renderView()}</> : <p> add Operator blank page </p>}</>
+    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
   );
 };
 

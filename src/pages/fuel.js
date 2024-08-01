@@ -1,53 +1,84 @@
 /* eslint-disable no-undef */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Pagination } from '@mui/material';
 
 
 
-const data = [
-  { vehicle: 'TN-323', date: '08/05/2024', volume: 10, price: '$3.5990', type: 'Diesel', vendor: 'Total Energies', usage: '247.0' },
-  // Add more data as needed
-];
-
-
 const Fuel = () => {
+  const baseURL = process.env.REACT_APP_BASE_URL
+  const [loading, setLoading] = useState(true);
+  const [fuelEntries, setFuelEntries] = useState([]);
+  const [fuelData, setFuelData] = useState({
+    totalFuelCost: 0,
+    totalVolume: 0,
+    avgFuelEconomyMPG: 0,
+    avgFuelEconomyHrs: 0,
+    avgCostPerGallon: 0,
+    fuelEntries: fuelEntries
+  });
+
+
+  useEffect(() => {
+    const apiUrl = `${baseURL}/fuel`;
+    // to be corrected to dynamic
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setFuelEntries(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }, [baseURL]);
+
+  const totalLitres = fuelEntries.reduce((sum, entry) => sum + entry.f_litres, 0).toFixed(2);
+  const totalFuelCost = fuelEntries.reduce((sum, entry) => sum + entry.f_total_cost, 0);
+
+
   return (
     <>
       {
         <Container maxWidth="lg">
           <Box sx={{ my: 4 }}>
-            <Typography variant="h5" gutterBottom>Fuel history</Typography>
-            <Typography variant="subtitle1">Manage all your fuel transactions in one place</Typography>
+            <Typography variant="h4" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold'}}  gutterBottom>Fuel history</Typography>
+            <Typography variant="h6">Manage all your fuel transactions in one place</Typography>
           </Box>
           <Grid container spacing={3}>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Total Fuel Cost (USD)</Typography>
-                <Typography variant="h4">$7,265</Typography>
+                <Typography variant="h4">${totalFuelCost}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Total Volume (gallons)</Typography>
-                <Typography variant="h4">3,671</Typography>
+                <Typography variant="h4">{totalLitres}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Fuel Economy (MPG)</Typography>
-                <Typography variant="h4">156</Typography>
+                <Typography variant="h4">{fuelData.avgFuelEconomyMPG}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Fuel Economy (hrs)</Typography>
-                <Typography variant="h4">2,318</Typography>
+                <Typography variant="h4">{fuelData.avgFuelEconomyHrs}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Cost Per Gallon</Typography>
-                <Typography variant="h4">$50</Typography>
+                <Typography variant="h4">${fuelData.avgCostPerGallon}</Typography>
               </Paper>
             </Grid>
           </Grid>
@@ -68,73 +99,25 @@ const Fuel = () => {
                   <TableCell>Fuel Price/gallon</TableCell>
                   <TableCell>Fuel Type</TableCell>
                   <TableCell>Vendor</TableCell>
-                  <TableCell>Usage/mile</TableCell>
+                  <TableCell>Distance</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Checkbox />
-                      {row.vehicle}
-                    </TableCell>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.volume}</TableCell>
-                    <TableCell>{row.price}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>{row.vendor}</TableCell>
-                    <TableCell>{row.usage}</TableCell>
-                  </TableRow>
-                ))}
+               {fuelEntries.map((entry) => (
+                    <TableRow key={entry.id}>
+                      <TableCell>{entry.f_license_plate}</TableCell>
+                      <TableCell>{entry.f_created_at}</TableCell>
+                      <TableCell>{entry.f_litres}</TableCell>
+                      <TableCell>${entry.f_total_cost}</TableCell>
+                      <TableCell>{entry.f_type}</TableCell>
+                      <TableCell>{entry.f_vendor}</TableCell>
+                      <TableCell>{entry.f_distance}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
-              <TableBody>
-                {data.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Checkbox />
-                      {row.vehicle}
-                    </TableCell>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.volume}</TableCell>
-                    <TableCell>{row.price}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>{row.vendor}</TableCell>
-                    <TableCell>{row.usage}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableBody>
-                {data.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Checkbox />
-                      {row.vehicle}
-                    </TableCell>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.volume}</TableCell>
-                    <TableCell>{row.price}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>{row.vendor}</TableCell>
-                    <TableCell>{row.usage}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-              <TableBody>
-                {data.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>
-                      <Checkbox />
-                      {row.vehicle}
-                    </TableCell>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>{row.volume}</TableCell>
-                    <TableCell>{row.price}</TableCell>
-                    <TableCell>{row.type}</TableCell>
-                    <TableCell>{row.vendor}</TableCell>
-                    <TableCell>{row.usage}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+              
+              
+              
             </Table>
           </TableContainer>
           <Box sx={{ my: 4, display: 'flex', justifyContent: 'center' }}>

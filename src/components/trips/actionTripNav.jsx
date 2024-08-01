@@ -45,11 +45,13 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
             <Search sx={{ color: "white" }} />
           </Box>
    {/* Icons */}
-   <Box>
+   
           {icons.map((icon, index) => (
-            <IconButton key={index}>{icon}</IconButton>
+            <Box>
+            <IconButton key={index}> {icon}</IconButton>
+            </Box>
           ))}
-        </Box>
+      
 
         </Box>
      
@@ -59,24 +61,15 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
             onClick={onAddClick}
             sx={{
               border: "1px solid #047A9A",
-              borderRadius: " 4px",
+              borderRadius: " 50px",
               padding: "4.5px",
+              backgroundColor: "#047A9A",
             }}
           >
-            <Box
-              sx={{
-                width: 30,
-                height: 32,
-                backgroundColor: "#047A9A",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <AddIcon sx={{ fontSize: 20, color: "white" }} />
-            </Box>
+            <AddIcon sx={{ fontSize: 20, color: "white" }} />
+
             <Typography
-              sx={{ color: "#047A9A", fontWeight: "bold", marginLeft: "8px" }}
+              sx={{ color: "white", fontWeight: "normal", marginLeft: "5px" }}
             >
               {icontitle}
             </Typography>

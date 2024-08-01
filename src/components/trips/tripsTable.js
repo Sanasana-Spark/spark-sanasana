@@ -32,15 +32,15 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         <TableHead>
           <TableRow>
             <TableCell>Action</TableCell>
-            <TableCell>Image</TableCell>
-            <TableCell>Plate</TableCell>
+            <TableCell>LPO</TableCell>
             <TableCell>Status</TableCell>
-            <TableCell>Make</TableCell>
-            <TableCell>Model </TableCell>
-            <TableCell>Fuel type</TableCell>
-            <TableCell>Engine size</TableCell>
-            <TableCell>Efficiency </TableCell>
-            <TableCell>Dep</TableCell>
+            <TableCell>Driver</TableCell>
+            <TableCell>Vehicle</TableCell>  
+            <TableCell>Tonnage</TableCell>           
+            <TableCell>Est Distance</TableCell>
+            <TableCell>Variance</TableCell>
+            <TableCell>Fuel(L) </TableCell>
+            <TableCell>Fuel cost</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -48,29 +48,20 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           {assets.map((asset) => (
             <TableRow key={asset.id}>
               <TableCell onClick={() => handleCellClick(asset.id)}>
-                {!isDropdownOpen[[asset.id]] && <Button> Details </Button>}
+                {!isDropdownOpen[[asset.id]] && <Button> View </Button>}
 
                 {isDropdownOpen[asset.id] && <Button>Back </Button>}
               </TableCell>
-              <TableCell>
-                {asset.a_image ? (
-                  <img
-                    src={asset.a_image}
-                    alt={asset.a_license_plate}
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                ) : (
-                  "No Image"
-                )}
-              </TableCell>
+              <TableCell>{asset.t_type}</TableCell>
+              <TableCell>{asset.t_status}</TableCell>
+              <TableCell>{asset.t_operator_name}</TableCell>
               <TableCell>{asset.a_license_plate}</TableCell>
-              <TableCell>{asset.a_status}</TableCell>
-              <TableCell>{asset.a_make}</TableCell>
-              <TableCell>{asset.a_model}</TableCell>
-              <TableCell>{asset.a_fuel_type}</TableCell>
-              <TableCell>{asset.a_engine_size}</TableCell>
-              <TableCell>{asset.a_efficiency_rate}</TableCell>
-              <TableCell>{asset.a_accumulated_dep}</TableCell>
+              <TableCell>{asset.t_load}</TableCell>
+              <TableCell>{asset.t_distance}</TableCell>
+              <TableCell>{asset.t_distance}</TableCell>
+              <TableCell>{asset.t_distance}</TableCell>
+              <TableCell>{asset.t_est_fuel}</TableCell>
+              <TableCell>{asset.t_est_cost}</TableCell>
             </TableRow>
           ))}
         </TableBody>

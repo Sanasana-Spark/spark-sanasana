@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import * as React from 'react'
-import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import CssBaseline from '@mui/material/CssBaseline'
@@ -8,7 +7,6 @@ import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import ListItemWithLink from './ListItemWithLink'
 import { Typography } from '@mui/material'
-import Logo from '../../assets/logo.png'
 import Dashboard_icon from '../../assets/dashboard_icon.png'
 import Asset_icon from '../../assets/asset_icon.png'
 import Maintenance_icon  from '../../assets/maintenance_icon.png'
@@ -22,14 +20,7 @@ import Routes_icon from '../../assets/routes_icon.png'
 
 const drawerWidth = 250
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 0),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}))
+
 
 export default function VerticalSidebar({ children }) {
   return (
@@ -43,85 +34,85 @@ export default function VerticalSidebar({ children }) {
             flexShrink: 0,
             '& .MuiDrawer-paper': {
               width: drawerWidth,
-              boxSizing: 'border-box',
-            //   backgroundColor: '#047A9A',
-              color: '#047A9A',
+             backgroundColor: '#E5ECF6',
+              color: 'black',
+              marginTop: '50px',
+              paddingTop:'15px',
+              zIndex: 0
             },
           }}
           variant='persistent'
           anchor='left'>
-          <DrawerHeader sx={{ display: 'flex', justifyContent: 'left' }}>
-            <img src={Logo} alt='' style={{ maxWidth: '80%' }} />
-          </DrawerHeader>
    
           <List>
-            <Typography variant='subtitle1' gutterBottom> HOME</Typography>
+           
 
             <ListItemWithLink
               label='Dashboard'
-              icon={ <img src={Dashboard_icon} alt="Custom Icon" />}
+              icon={ <img src={Dashboard_icon} alt="Custom Icon" className="icon" />}
               to='/dashboard'
             />
             <ListItemWithLink
               label='Assets'
-              icon={ <img src={Asset_icon} alt="Custom Icon" />}
+              icon={ <img src={Asset_icon} alt="Custom Icon" className="icon"/>}
               to='/assets'
             />
 
 <ListItemWithLink
               label='Operators'
-              icon={ <img src={Operator_icon} alt="Custom Icon" />}
+              icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
               to='/operators'
+            />
+            <ListItemWithLink
+              label='Trips'
+              icon={ <img src={Routes_icon} alt="Custom Icon"  className="icon" />}
+              to='/trips'
             />
 
 <ListItemWithLink
               label='Fuel'
-              icon={ <img src={Fuel_icon} alt="Custom Icon" />}
+              icon={ <img src={Fuel_icon} alt="Custom Icon"  className="icon" />}
               to='/fuel'
             />
 
-<ListItemWithLink
-              label='Routes'
-              icon={ <img src={Routes_icon} alt="Custom Icon" />}
-              to='/routes'
-            />
+
 
 
             <ListItemWithLink
               label='Maintenance'
-              icon={ <img src={Maintenance_icon} alt="Custom Icon" />}
+              icon={ <img src={Maintenance_icon} alt="Custom Icon"  className="icon" />}
               to='/maintenance'
             />
              <ListItemWithLink
               label='Reports'
-              icon={ <img src={Reports_icon} alt="Custom Icon" />}
+              icon={ <img src={Reports_icon} alt="Custom Icon"  className="icon" />}
               to='/reports'
             />
           </List>
           <Divider />
 
-          <Typography variant='subtitle1' gutterBottom> GENERAL</Typography>
+          {/* <Typography variant='subtitle1' gutterBottom> GENERAL</Typography> */}
 
           <ListItemWithLink
               label='Settings'
-              icon={ <img src={Settings_icon} alt="Custom Icon" />}
+              icon={ <img src={Settings_icon} alt="Custom Icon"  className="icon" />}
               to='/settings'
             />
 
             <ListItemWithLink
               label='Help Center'
-              icon={ <img src={Helpcenter_icon} alt="Custom Icon" />}
+              icon={ <img src={Helpcenter_icon} alt="Custom Icon"  className="icon" />}
               to='/reports'
             />
 
             <ListItemWithLink
               label='Logout'
-              icon={ <img src={Logout_icon} alt="Custom Icon" />}
+              icon={ <img src={Logout_icon} alt="Custom Icon"  className="icon" />}
               to='/logout'
             />
 
         </Drawer>
-        <main style={{ flexGrow: 1, padding: '20px' }}>{children}</main>
+        <main style={{ flexGrow: 1, padding: '10px' }}>{children}</main>
       </Box>
     </div>
   )
