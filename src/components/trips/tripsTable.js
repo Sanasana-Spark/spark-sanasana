@@ -32,17 +32,15 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         <TableHead>
           <TableRow>
             <TableCell>Action</TableCell>
-            <TableCell>Type</TableCell>
+            <TableCell>LPO</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Driver</TableCell>
             <TableCell>Vehicle</TableCell>  
-            <TableCell>Load(tonnes)</TableCell>           
+            <TableCell>Tonnage</TableCell>           
             <TableCell>Est Distance</TableCell>
-            <TableCell>Actual Distance</TableCell>
-            <TableCell>Est Fuel(L) </TableCell>
-            <TableCell>Est Fuel cost</TableCell>
-            <TableCell>est Efficiency</TableCell>
-            <TableCell>Act Efficiency </TableCell>
+            <TableCell>Variance</TableCell>
+            <TableCell>Fuel(L) </TableCell>
+            <TableCell>Fuel cost</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -50,7 +48,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           {assets.map((asset) => (
             <TableRow key={asset.id}>
               <TableCell onClick={() => handleCellClick(asset.id)}>
-                {!isDropdownOpen[[asset.id]] && <Button> Details </Button>}
+                {!isDropdownOpen[[asset.id]] && <Button> View </Button>}
 
                 {isDropdownOpen[asset.id] && <Button>Back </Button>}
               </TableCell>
@@ -58,10 +56,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
               <TableCell>{asset.t_status}</TableCell>
               <TableCell>{asset.t_operator_name}</TableCell>
               <TableCell>{asset.a_license_plate}</TableCell>
+              <TableCell>{asset.t_load}</TableCell>
               <TableCell>{asset.t_distance}</TableCell>
-              <TableCell>{asset.a_engine_size}</TableCell>
               <TableCell>{asset.t_distance}</TableCell>
               <TableCell>{asset.t_distance}</TableCell>
+              <TableCell>{asset.t_est_fuel}</TableCell>
+              <TableCell>{asset.t_est_cost}</TableCell>
             </TableRow>
           ))}
         </TableBody>
