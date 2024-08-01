@@ -91,7 +91,7 @@ export default function VerticalSidebar({ children }) {
           </List>
           <Divider />
 
-          <Typography variant='subtitle1' gutterBottom> GENERAL</Typography>
+          {/* <Typography variant='subtitle1' gutterBottom> GENERAL</Typography> */}
 
           <ListItemWithLink
               label='Settings'
