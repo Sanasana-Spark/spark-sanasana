@@ -10,7 +10,7 @@ const DriverHome = () => {
   const center = { lat: 5.66667, lng: 0.0 };
   const baseURL = process.env.REACT_APP_BASE_URL;
 
-  const { userId, org_id } = useAuthContext();
+  const { userId, org_id, userEmail } = useAuthContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
