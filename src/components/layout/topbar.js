@@ -17,7 +17,7 @@ const TopBar = () => {
     <AppBar position="fixed">
       <Toolbar style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: '#F6F7F8', color: 'black' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={Logo} alt='' style={{ maxWidth: '150px' }} /> {/* Adjust the width as needed */}
+          <img src={Logo} alt='' style={{ maxWidth: '150px', maxHeight:'60px' }} /> {/* Adjust the width as needed */}
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="h6" style={{ marginRight: '16px' }}>{org_name}</Typography>

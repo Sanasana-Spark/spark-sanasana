@@ -45,7 +45,7 @@ export default function VerticalSidebar({ children }) {
           anchor='left'>
    
           <List>
-            <Typography variant='subtitle1' gutterBottom> HOME</Typography>
+           
 
             <ListItemWithLink
               label='Dashboard'
