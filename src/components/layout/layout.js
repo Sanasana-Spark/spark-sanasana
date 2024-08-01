@@ -4,15 +4,26 @@ import TopBar from './topbar';
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
+  const topBarHeight = '45px';
 
   return (
+
+
 <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <TopBar />
-      <div style={{ display: 'flex', flexGrow: 1 }}>
-        <VerticalSidebar />
-        <main style={{ flexGrow: 1, padding: '20px' }}>{children}</main>
+      <div style={{ height: topBarHeight, width: '100vw', zIndex: 10 }}>
+        <TopBar />
       </div>
-    </div>
+
+      <div style={{ display: 'flex', flexGrow: 1, marginTop: topBarHeight }}>
+        <VerticalSidebar topBarHeight={topBarHeight}  />
+
+        <main style={{ flexGrow: 1 }}>
+          {children}
+        </main>
+      </div>
+
+      </div>
+
 
   )
 }
