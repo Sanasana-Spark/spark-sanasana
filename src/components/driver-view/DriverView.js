@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DriverView.css';
-import profileImage from '../assets/profileImage.png';
-import truckImage from '../assets/truckImage.png';
+import profileImage from '../assets/profileImage.png'; // Assuming these assets are still needed
 import logoImage from '../assets/logo.png';
 import odometerImage from '../assets/odometer.png';
 import spinningWheel from '../assets/spinningWheel.png';
@@ -49,7 +48,7 @@ const DriverView = () => {
     const fetchDriverData = async (email) => {
       setLoading(true);
       try {
-        const baseURL = 'process.env.REACT_APP_BASE_URL'; // Replace with your actual base URL
+        const baseURL = process.env.REACT_APP_BASE_URL; // Ensure this environment variable is set
         const apiUrl = `${baseURL}/trips?userEmail=${email}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
@@ -79,7 +78,7 @@ const DriverView = () => {
     const initMap = () => {
       if (window.google && mapRef.current) {
         const mapInstance = new window.google.maps.Map(mapRef.current, {
-          center: { lat: 37.7749, lng: -122.4194 },
+          center: { lat: 37.7749, lng: -122.4194 }, // Default center, could be dynamic
           zoom: 10,
         });
         setMap(mapInstance);
@@ -183,7 +182,7 @@ const DriverView = () => {
   };
 
   const handleProceed = async () => {
-    const baseURL = 'https://your-api-url.com'; // Replace with your actual base URL
+    const baseURL = process.env.REACT_APP_API_URL; // Ensure this environment variable is set
 
     // Construct the payload with specific naming
     const payload = {
@@ -247,13 +246,14 @@ const DriverView = () => {
       </header>
       <div ref={mapRef} className="google-map"></div>
       <div className="delivery-info">
-        <img src={truckImage} alt="Sand delivery" className="delivery-pic" />
+        <img src={profileImage} alt="Delivery" className="delivery-pic" /> {/* Assuming this is the truck image */}
         <div className="delivery-details">
           <h4>Sand delivery</h4>
-          <p>East Legon</p>
-          <p>12:00 am - 10:00 pm</p>
-          <div className="delivery-meta">
-            <span className="rating">3.9</span>
+          <p>{tripDetails?.destination || 'Destination not available'}</p>
+          <p>{tripDetails?.time}</p>
+          <div className="delivery-rating">
+            <span className="rating-label">Rating:</span>
+            <span className="rating">{tripDetails?.rating || 'N/A'}</span>
             <span className="distance">
               {distanceRemaining !== null ? `Distance Remaining: ${distanceRemaining.toFixed(2)} km` : 'Calculating...'}
             </span>
@@ -310,7 +310,7 @@ const DriverView = () => {
         <div className="modal">
           <div className="modal-content result-modal">
             <img src={gasFillerImage} alt="Gas filler" className="gas-filler-img" />
-            <h2>$100</h2>
+            <h2>$100</h2> {/* This should be dynamic based on some calculation */}
             <p>According to the trip duration, this is the amount of fuel needed to complete your journey.</p>
             <div>
               <button className="blue-button big-button" onClick={handleProceed}>
