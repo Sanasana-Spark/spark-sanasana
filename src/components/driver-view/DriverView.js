@@ -49,7 +49,7 @@ const DriverView = () => {
     const fetchDriverData = async (email) => {
       setLoading(true);
       try {
-        const baseURL = 'https://your-api-url.com'; // Replace with your actual base URL
+        const baseURL = 'process.env.REACT_APP_BASE_URL'; // Replace with your actual base URL
         const apiUrl = `${baseURL}/trips?userEmail=${email}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
@@ -112,7 +112,7 @@ const DriverView = () => {
     };
 
     if (!window.google) {
-      loadScript(`https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=geometry`, initMap);
+      loadScript(`https://maps.googleapis.com/maps/api/js?key=AIzaSyACIsovAIGLyWjhP-KZAK7wz-smt0NPTCY&libraries=geometry`, initMap);
     } else {
       initMap();
     }
