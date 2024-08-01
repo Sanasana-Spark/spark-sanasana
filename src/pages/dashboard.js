@@ -1,18 +1,9 @@
-import React from 'react';
-import { Container, Grid, Paper, Typography, Box, List, ListItem, ListItemText } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Grid, Paper, Typography, Box } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import axios from 'axios';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 
-const data = [
-  { vehicle: 'TN-323', date: '08/05/2024', volume: 10, price: '$3.5990', type: 'Diesel', vendor: 'Total Energies', usage: '247.0' },
-  { name: 'Jan', value: 10 },
-  { name: 'Feb', value: 15 },
-  { name: 'Mar', value: 10 },
-  { name: 'Apr', value: 10 },
-  { name: 'May', value: 20 },
-  { name: 'Jun', value: 25 },
-  // Add more data as needed
-];
 
 const containerStyle = {
   width: '100%',
@@ -25,34 +16,82 @@ const center = {
 };
 
 const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState({
+    totalAssets: 0,
+    overallAssetsValue: 0,
+    totalFuelCost: 0,
+    carbonReduction: 0,
+    fuelUsage: [
+      { name: 'Jan', value: 0 },
+      { name: 'Feb', value: 0 },
+      { name: 'Mar', value: 0 },
+      { name: 'Apr', value: 0 },
+      { name: 'May', value: 0 },
+      { name: 'Jun', value: 0 },
+      { name: 'Jul', value: 0 },
+      { name: 'Aug', value: 0 },
+      { name: 'Sep', value: 0 },
+      { name: 'Oct', value: 0 },
+      { name: 'Nov', value: 0 },
+      { name: 'Dec', value: 0 },
+    ],
+    upcomingTrips: []
+  });
+
+
+  useEffect(() => {
+    // Fetch data from the backend
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/dashboard'); // Adjust the endpoint as needed
+        const fetchedData = response.data;
+
+        // Map the fetched fuel usage data to the static months
+        const updatedFuelUsage = dashboardData.fuelUsage.map(month => {
+          const fetchedMonthData = fetchedData.fuelUsage.find(fuel => fuel.name === month.name);
+          return fetchedMonthData ? { ...month, value: fetchedMonthData.value } : month;
+        });
+
+        setDashboardData({
+          ...fetchedData,
+          fuelUsage: updatedFuelUsage
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard data', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" gutterBottom>Dashboard</Typography>
+        <Typography variant="h4" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold'}} gutterBottom>Dashboard</Typography>
       </Box>
       <Grid container spacing={3}>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography variant="h6">Total Assets</Typography>
-            <Typography variant="h4">700</Typography>
+            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}} >Total Assets</Typography>
+            <Typography variant="h4">{dashboardData.totalAssets}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography variant="h6">Overall Assets Value</Typography>
-            <Typography variant="h4">$3,671</Typography>
+            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Overall Assets Value</Typography>
+            <Typography variant="h4">${dashboardData.overallAssetsValue}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography variant="h6">Total Fuel Cost</Typography>
-            <Typography variant="h4">$1,500</Typography>
+            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Total Fuel Cost</Typography>
+            <Typography variant="h4">${dashboardData.totalFuelCost}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
-            <Typography variant="h6">Carbon Reduction</Typography>
-            <Typography variant="h4">300 kWh</Typography>
+            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Carbon Reduction</Typography>
+            <Typography variant="h4">{dashboardData.carbonReduction}</Typography>
           </Paper>
         </Grid>
       </Grid>
@@ -72,7 +111,7 @@ const Dashboard = () => {
                 <Typography variant="body2" sx={{ marginRight: 2 }}>Last year</Typography>
               </Box>
 
-              <LineChart width={600} height={300} data={data}>
+              <LineChart width={600} height={300} data={dashboardData.fuelUsage}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -85,13 +124,9 @@ const Dashboard = () => {
           <Grid item xs={4.1}>
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h6">Upcoming Trips</Typography>
-              <List>
-                {['Truck 1', 'Truck 2', 'Truck 3', 'Truck 4', 'Truck 5', 'Truck 6'].map((truck, index) => (
-                  <ListItem key={index}>
-                    <ListItemText primary={truck} />
-                  </ListItem>
-                ))}
-              </List>
+              {dashboardData.upcomingTrips.map((trip, index) => (
+                <Typography key={index}>{trip.name}</Typography>
+              ))}
             </Paper>
           </Grid>
         </Grid>
