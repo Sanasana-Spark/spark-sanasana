@@ -1,131 +1,79 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DriverView.css';
 import profileImage from '../../assets/profileImage.png';
-import truckImage from '../../assets/truckImage.png';
-import logoImage from '../../assets/logo.png';
 import odometerImage from '../../assets/odometer.png';
 import spinningWheel from '../../assets/spinningWheel.png';
 import gasFillerImage from '../../assets/gasFiller.png';
 import successTickImage from '../../assets/successTick.png';
 import Trip from './Trip';
 import EndTrip from './EndTrip';
-import { useAuthContext } from "../../components/onboarding/authProvider"; // Adjust path as needed
+import { useAuthContext } from "../../components/onboarding/authProvider"; 
+import Map from "../../components/maps/singleTripMap";
 
-const loadScript = (url, callback) => {
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = url;
-  script.async = true;
-  script.onload = callback;
-  document.head.appendChild(script);
-};
+
 
 const DriverView = () => {
+  const { userId, org_id, userEmail } = useAuthContext();
+  const center = { lat: 5.66667, lng: 0.0 };
+  const baseURL = process.env.REACT_APP_BASE_URL; 
   const [showModal, setShowModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const [showStartTripButton, setShowStartTripButton] = useState(false);
-  // const [showStartTripMessage, setShowStartTripMessage] = useState(false);
-
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showStartTripButton, setShowStartTripButton] = useState(false);
   const [cameraStream, setCameraStream] = useState(null);
   const [tripEnded, setTripEnded] = useState(false);
-  const [driverName, setDriverName] = useState('');
-  const [driverEmail, setDriverEmail] = useState('');
+  // eslint-disable-next-line
   const [loading, setLoading] = useState(true);
   const [tripDetails, setTripDetails] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
+  // eslint-disable-next-line
   const [driverLocation, setDriverLocation] = useState(null);
+  // eslint-disable-next-line
   const [distanceRemaining, setDistanceRemaining] = useState(null);
+  // eslint-disable-next-line
+  const [inProgressTrip, setInProgressTrip] = useState(null);
+  // eslint-disable-next-line
+  const [inProgressTripId, setInProgressTripId] = useState(null);
+  
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const mapRef = useRef(null);
 
-  const [map, setMap] = useState(null);
-
-  // Extracting user details from auth context
-  const { userId, org_id, userEmail } = useAuthContext(); // Ensure this hook works correctly
 
   useEffect(() => {
-    const fetchDriverData = async (email) => {
-      setLoading(true);
-      try {
-        const baseURL = process.env.REACT_APP_BASE_URL; // Ensure this environment variable is set
-        const apiUrl = `${baseURL}/trips?userEmail=${email}`;
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        
-        if (data) {
-          setDriverName(data.name);
-          setDriverEmail(data.email);
-          setTripDetails(data.trip); // Assuming `data.trip` contains the trip details
-        } else {
-          console.error('Driver not found');
+    const apiUrl = `${baseURL}/trips?userEmail=${userEmail}`;
+
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error('Error fetching driver data:', error);
-      } finally {
+        return response.json();
+      })
+      .then((data) => {
+        setTripDetails(data);
         setLoading(false);
-      }
-    };
 
-    if (userEmail) {
-      fetchDriverData(userEmail);
-    } else {
-      console.error('User email is not available');
-    }
-  }, [userEmail]);
-
-  // const [tripDistance, setTripDistance] = useState(5);
-  const tripDistance =  "5 km"
-
-
-  useEffect(() => {
-    const initMap = () => {
-      if (window.google && mapRef.current) {
-        const mapInstance = new window.google.maps.Map(mapRef.current, {
-          center: { lat: 37.7749, lng: -122.4194 }, // Default center, could be dynamic
-          zoom: 10,
-        });
-        setMap(mapInstance);
-
-        if (tripDetails) {
-          const { startLat, startLng, endLat, endLng } = tripDetails;
-
-          // Create markers for start and end locations
-          new window.google.maps.Marker({
-            position: { lat: startLat, lng: startLng },
-            map: mapInstance,
-            title: 'Start Location',
-          });
-
-          new window.google.maps.Marker({
-            position: { lat: endLat, lng: endLng },
-            map: mapInstance,
-            title: 'End Location',
-          });
-
-          // Calculate the distance remaining
-          if (driverLocation) {
-            const tripEnd = new window.google.maps.LatLng(endLat, endLng);
-            const driverPosition = new window.google.maps.LatLng(driverLocation.lat, driverLocation.lng);
-            const distance = window.google.maps.geometry.spherical.computeDistanceBetween(driverPosition, tripEnd);
-            setDistanceRemaining(distance / 1000); // Convert meters to kilometers
-          }
+        // Find the first trip with status "In-progress"
+        const inProgressTrip = data.find(
+          (trip) => trip.t_status === "In-progress"
+        );
+        if (inProgressTrip) {
+          setInProgressTrip(inProgressTrip);
+          setInProgressTripId(inProgressTrip.id);
         }
-      }
-    };
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  },);
 
-    if (!window.google) {
-      loadScript(`https://maps.googleapis.com/maps/api/js?key=AIzaSyACIsovAIGLyWjhP-KZAK7wz-smt0NPTCY&libraries=geometry`, initMap);
-    } else {
-      initMap();
-    }
-  }, [tripDetails, driverLocation]);
+
+
 
   useEffect(() => {
     const getDriverLocation = () => {
@@ -196,9 +144,6 @@ const DriverView = () => {
   };
 
   const handleProceed = async () => {
-    const baseURL = process.env.REACT_APP_API_URL; // Ensure this environment variable is set
-
-    // Construct the payload with specific naming
     const payload = {
       f_created_by: userId,
       f_organization_id: org_id,
@@ -242,23 +187,10 @@ const DriverView = () => {
 
   return (
     <div className="driver-view">
-      <header className="header">
-        <img src={logoImage} alt="Sana Sana" className="logo" />
-        <div className="driver-info">
-          <div className="driver-details">
-            {loading ? (
-              <p>Loading driver details...</p> // Loading indicator
-            ) : (
-              <>
-                <img src={profileImage} alt={driverName} className="profile-pic" />
-                <h3>{driverName}</h3>
-                <p>{driverEmail}</p>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-      <div ref={mapRef} className="google-map"></div>
+
+
+      <Map startpoint={center} endpoint={center} key={1} />
+
       <div className="delivery-info">
         <img src={profileImage} alt="Delivery" className="delivery-pic" /> {/* Assuming this is the truck image */}
         <div className="delivery-details">

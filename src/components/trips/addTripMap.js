@@ -13,7 +13,6 @@ import {
   DialogTitle,
   DialogContent,
   Divider,
-  Box,
 } from "@mui/material";
 import {
   useJsApiLoader,
@@ -29,7 +28,6 @@ const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const [statusOptions, setStatusOptions] = useState([]);
   const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
   const [selectedOperator, setSelectedOperator] = useState(null);
@@ -44,31 +42,6 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_load: 0,
     t_status: "Pending",
   });
-
-  useEffect(() => {
-    // Fetch status options from the backend
-    const fetchStatusOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/trips/status`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setStatusOptions(data);
-          if (data.length > 0 && !trip.t_status) {
-            setTrip((prevTrip) => ({
-              ...prevTrip,
-              t_status: data[0].s_name,
-            }));
-          }
-        } else {
-          console.error("Error fetching status options:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching status options:", error);
-      }
-    };
-
-    fetchStatusOptions();
-  }, [trip.t_status, baseURL]);
 
   useEffect(() => {
     // Fetch status options from the backend
