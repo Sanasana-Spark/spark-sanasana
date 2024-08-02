@@ -61,7 +61,7 @@ const Dashboard = () => {
       }
     };
     fetchData();
-  }, []);
+  }, );
 
 
   return (

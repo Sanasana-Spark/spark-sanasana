@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Pagination } from '@mui/material';
+import { Container, Grid, Paper, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination } from '@mui/material';
 
 
 
@@ -8,14 +8,9 @@ const Fuel = () => {
   const baseURL = process.env.REACT_APP_BASE_URL
   const [loading, setLoading] = useState(true);
   const [fuelEntries, setFuelEntries] = useState([]);
-  const [fuelData, setFuelData] = useState({
-    totalFuelCost: 0,
-    totalVolume: 0,
-    avgFuelEconomyMPG: 0,
-    avgFuelEconomyHrs: 0,
-    avgCostPerGallon: 0,
-    fuelEntries: fuelEntries
-  });
+
+
+
 
 
   useEffect(() => {
@@ -38,6 +33,12 @@ const Fuel = () => {
       });
   }, [baseURL]);
 
+  if (loading) return <> Loading...</>;
+
+
+  const avgFuelEconomyMPG = 0 ;
+  const avgFuelEconomyHrs = 0;
+  const avgCostPerGallon = 0; 
   const totalLitres = fuelEntries.reduce((sum, entry) => sum + entry.f_litres, 0).toFixed(2);
   const totalFuelCost = fuelEntries.reduce((sum, entry) => sum + entry.f_total_cost, 0);
 
@@ -66,19 +67,19 @@ const Fuel = () => {
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Fuel Economy (MPG)</Typography>
-                <Typography variant="h4">{fuelData.avgFuelEconomyMPG}</Typography>
+                <Typography variant="h4">{avgFuelEconomyMPG}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Fuel Economy (hrs)</Typography>
-                <Typography variant="h4">{fuelData.avgFuelEconomyHrs}</Typography>
+                <Typography variant="h4">{avgFuelEconomyHrs}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
                 <Typography variant="h6">Avg. Cost Per Gallon</Typography>
-                <Typography variant="h4">${fuelData.avgCostPerGallon}</Typography>
+                <Typography variant="h4">${avgCostPerGallon}</Typography>
               </Paper>
             </Grid>
           </Grid>
