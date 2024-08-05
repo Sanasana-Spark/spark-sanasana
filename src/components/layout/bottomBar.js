@@ -1,41 +1,56 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import HistoryIcon from '@mui/icons-material/History';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import TripOriginIcon from '@mui/icons-material/TripOrigin';
 
-const BottomBar = () => {
-  const [value, setValue] = React.useState(1); // Set the initial value to the index of /drive
-  const navigate = useNavigate();
+const LinkWrapper = React.forwardRef((props, ref) => (
+  <Link ref={ref} {...props} />
+));
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    switch (newValue) {
-      case 0:
-        navigate('/history');
-        break;
-      case 1:
-        navigate('/drive');
-        break;
-      case 2:
-        navigate('/newtrips');
-        break;
+const BottomBar = () => {
+  const location = useLocation();
+
+  const getValueFromPath = (path) => {
+    switch (path) {
+      case '/history':
+        return 0;
+      case '/drive':
+        return 1;
+      case '/newtrips':
+        return 2;
       default:
-        break;
+        return 1; // Default to 'Drive' if no match
     }
   };
+
+  const value = getValueFromPath(location.pathname);
 
   return (
     <BottomNavigation
       value={value}
-      onChange={handleChange}
       style={{ width: '100%', position: 'fixed', bottom: 0 }}
     >
-      <BottomNavigationAction label="History" icon={<HistoryIcon />} />
-      <BottomNavigationAction label="Drive" icon={<DirectionsCarIcon />} />
-      <BottomNavigationAction label="New Trips" icon={<TripOriginIcon />} />
+      <BottomNavigationAction
+        component={LinkWrapper}
+        to="/history"
+        label="History"
+        icon={<HistoryIcon />}
+      />
+      <BottomNavigationAction
+        component={LinkWrapper}
+        to="/drive"
+        label="Drive"
+        icon={<DirectionsCarIcon />}
+      />
+      <BottomNavigationAction
+        component={LinkWrapper}
+        to="/newtrips"
+        label="New Trips"
+        icon={<TripOriginIcon />}
+      />
     </BottomNavigation>
   );
 };

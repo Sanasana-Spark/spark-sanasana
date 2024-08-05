@@ -48,27 +48,38 @@ const PropCard = ({ selectedAsset }) => {
             <Card>
               <CardContent>
                 <Grid container spacing={2}>
-                  <Grid item xs={12}>
+                  {/* <Grid item xs={12}>
                     <Typography>start coordinates: {JSON.stringify(start)}</Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Typography>end: {JSON.stringify(end)}</Typography>
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12}>
-                    <Typography>Status: {asset.a_status}</Typography>
+                    <Typography>Truck:{asset.a_license_plate}( {asset.t_a_make}-{asset.t_a_model})</Typography>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Make & Model: {asset.a_make}:{asset.a_model}</Typography>
+   
+   <Grid item xs={12 } sm={6}>
+                    <Typography>LPO: CL-{asset.id}</Typography>
+                    
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Engine: {asset.a_engine_size}</Typography>
+                   
+                  <Grid item xs={12} sm={6} >
+                    <Typography>Status: {asset.t_status}</Typography>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Value: {asset.a_value}</Typography>
+                  <Grid item xs={12} sm={6} >
+                    <Typography>Driver: {asset.t_operator_name}</Typography>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Typography>Acc Dep: {asset.a_accumulated_dep}</Typography>
+                  
+                  <Grid item xs={12} sm={6} >
+                    <Typography>Distance: {asset.t_distance}</Typography>
                   </Grid>
+                  <Grid item xs={12} sm={6} >
+                    <Typography>Tonnage: {asset.t_load}</Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6} >
+                    <Typography>Fuel: {asset.t_actual_fuel}(Ltrs):Ksh{asset.t_actual_cost}</Typography>
+                  </Grid>
+               
                 </Grid>
               </CardContent>
             </Card>
