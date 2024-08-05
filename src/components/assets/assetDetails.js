@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { React, useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import 'leaflet/dist/leaflet.css';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
 import Loader from '../loader';
@@ -18,10 +18,10 @@ const endLong = -0.1170;
 const start = { lat: startLat, lng: startLong };
 const end = { lat: endLat, lng: endLong };
 
-const pathCoordinates = [
-  [startLat, startLong],
-  [endLat, endLong]
-];
+// const pathCoordinates = [
+//   [startLat, startLong],
+//   [endLat, endLong]
+// ];
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {

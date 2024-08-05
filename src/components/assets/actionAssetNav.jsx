@@ -2,7 +2,7 @@
 import { Search } from "@mui/icons-material";
 import { Typography, Box, IconButton, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { React } from "react";
+import React from "react";
 
 export const ActionNav = ({ icons, onAddClick, icontitle }) => {
   return (
