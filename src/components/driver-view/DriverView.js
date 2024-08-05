@@ -1,56 +1,98 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './DriverView.css';
 import profileImage from '../../assets/profileImage.png';
-import truckImage from '../../assets/truckImage.png';
-import logoImage from '../../assets/logo.png';
 import odometerImage from '../../assets/odometer.png';
 import spinningWheel from '../../assets/spinningWheel.png';
 import gasFillerImage from '../../assets/gasFiller.png';
 import successTickImage from '../../assets/successTick.png';
 import Trip from './Trip';
 import EndTrip from './EndTrip';
+import { useAuthContext } from "../../components/onboarding/authProvider"; 
+import Map from "../../components/maps/singleTripMap";
 
-const loadScript = (url, callback) => {
-  const script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = url;
-  script.async = true;
-  script.onload = callback;
-  document.head.appendChild(script);
-};
+
 
 const DriverView = () => {
+  const { userId, org_id, userEmail } = useAuthContext();
+  const center = { lat: 5.66667, lng: 0.0 };
+  const baseURL = process.env.REACT_APP_BASE_URL; 
   const [showModal, setShowModal] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [showResultModal, setShowResultModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [showStartTripButton, setShowStartTripButton] = useState(false);
-  // const [showStartTripMessage, setShowStartTripMessage] = useState(false);
+
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showStartTripButton, setShowStartTripButton] = useState(false);
   const [cameraStream, setCameraStream] = useState(null);
   const [tripEnded, setTripEnded] = useState(false);
+  // eslint-disable-next-line
+  const [loading, setLoading] = useState(true);
+  const [tripDetails, setTripDetails] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  // eslint-disable-next-line
+  const [driverLocation, setDriverLocation] = useState(null);
+  // eslint-disable-next-line
+  const [distanceRemaining, setDistanceRemaining] = useState(null);
+  // eslint-disable-next-line
+  const [inProgressTrip, setInProgressTrip] = useState(null);
+  // eslint-disable-next-line
+  const [inProgressTripId, setInProgressTripId] = useState(null);
+  
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const mapRef = useRef(null);
-  // const [tripDistance, setTripDistance] = useState(5);
-  const tripDistance =  "5 km"
+
 
   useEffect(() => {
-    const initMap = () => {
-      if (window.google && mapRef.current) {
-        new window.google.maps.Map(mapRef.current, {
-          center: { lat: 37.7749, lng: -122.4194 },
-          zoom: 10,
-        });
+    const apiUrl = `${baseURL}/trips?userEmail=${userEmail}`;
+
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTripDetails(data);
+        setLoading(false);
+
+        // Find the first trip with status "In-progress"
+        const inProgressTrip = data.find(
+          (trip) => trip.t_status === "In-progress"
+        );
+        if (inProgressTrip) {
+          setInProgressTrip(inProgressTrip);
+          setInProgressTripId(inProgressTrip.id);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  },);
+
+
+
+
+  useEffect(() => {
+    const getDriverLocation = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setDriverLocation({ lat: latitude, lng: longitude });
+          },
+          (error) => {
+            console.error('Error getting driver location:', error);
+          }
+        );
+      } else {
+        console.error('Geolocation is not supported by this browser.');
       }
     };
 
-    if (!window.google) {
-      loadScript(`https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY`, initMap);
-    } else {
-      initMap();
-    }
+    getDriverLocation();
   }, []);
 
   const handleRequestFuel = () => {
@@ -78,7 +120,12 @@ const DriverView = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
       context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+
+      const imageData = canvasRef.current.toDataURL('image/png');
+      setCapturedImage(imageData); // Store the captured image
+
       // const imageData = canvasRef.current.toDataURL('image/png');
+
 
       if (cameraStream) {
         cameraStream.getTracks().forEach((track) => track.stop());
@@ -96,15 +143,38 @@ const DriverView = () => {
     }
   };
 
-  const handleProceed = () => {
-    setShowResultModal(false);
-    setShowSuccessModal(true);
+  const handleProceed = async () => {
+    const payload = {
+      f_created_by: userId,
+      f_organization_id: org_id,
+      f_operator_id: tripDetails?.t_operator_id,
+      f_asset_id: tripDetails?.t_asset_id,
+      f_trip_id: tripDetails?.t_trip_id,
+      f_odometer_image: capturedImage,
+    };
 
-    setTimeout(() => {
-      setShowSuccessModal(false);
-      setShowSuccessMessage(true);
-      setShowStartTripButton(true);
-    }, 3000);
+    try {
+      const response = await fetch(`${baseURL}/fuel/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setShowResultModal(false);
+        setShowSuccessModal(true);
+
+        setTimeout(() => {
+          setShowSuccessModal(false);
+          setShowSuccessMessage(true);
+          setShowStartTripButton(true);
+        }, 3000);
+      } else {
+        console.error('Error posting fuel request:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error posting fuel request:', error);
+    }
   };
 
   const handleCloseModal = () => {
@@ -117,36 +187,27 @@ const DriverView = () => {
 
   return (
     <div className="driver-view">
-      <header className="header">
-        <img src={logoImage} alt="Sana Sana" className="logo" />
-        <div className="driver-info">
-          <div className="driver-details">
-            <img src={profileImage} alt="Nana Kwame" className="profile-pic" />
-            <h3>Nana Kwame</h3>
-            <p>Madina</p>
-          </div>
-          <div className="contact-info">
-            <p>Benz Aligon</p>
-            <p>BE 75324</p>
-            <p>Construction Material</p>
-          </div>
-        </div>
-      </header>
-      <div ref={mapRef} className="google-map"></div>
+
+
+      <Map startpoint={center} endpoint={center} key={1} />
+
       <div className="delivery-info">
-        <img src={truckImage} alt="Sand delivery" className="delivery-pic" />
+        <img src={profileImage} alt="Delivery" className="delivery-pic" /> {/* Assuming this is the truck image */}
         <div className="delivery-details">
           <h4>Sand delivery</h4>
-          <p>East Legon</p>
-          <p>12:00 am - 10:00 pm</p>
-          <div className="delivery-meta">
-            <span className="rating">3.9</span>
-            <span className="distance">100 Km</span>
+          <p>{tripDetails?.destination || 'Destination not available'}</p>
+          <p>{tripDetails?.time}</p>
+          <div className="delivery-rating">
+            <span className="rating-label">Rating:</span>
+            <span className="rating">{tripDetails?.rating || 'N/A'}</span>
+            <span className="distance">
+              {distanceRemaining !== null ? `Distance Remaining: ${distanceRemaining.toFixed(2)} km` : 'Calculating...'}
+            </span>
           </div>
         </div>
       </div>
       {showStartTripButton ? (
-        <Trip tripDistance={tripDistance} onTripEnd={handleTripEnd} />
+        <Trip tripDistance={tripDetails?.distance || 5} onTripEnd={handleTripEnd} />
       ) : (
         <button className="request-fuel" onClick={handleRequestFuel}>
           Request fuel
@@ -195,7 +256,7 @@ const DriverView = () => {
         <div className="modal">
           <div className="modal-content result-modal">
             <img src={gasFillerImage} alt="Gas filler" className="gas-filler-img" />
-            <h2>$100</h2>
+            <h2>$100</h2> {/* This should be dynamic based on some calculation */}
             <p>According to the trip duration, this is the amount of fuel needed to complete your journey.</p>
             <div>
               <button className="blue-button big-button" onClick={handleProceed}>
@@ -210,23 +271,17 @@ const DriverView = () => {
       )}
       {showSuccessModal && (
         <div className="modal">
-          <div className="modal-content result-modal">
-            <img src={successTickImage} alt="Success tick" className="gas-filler-img" />
-            <h2>Your request has been successfully submitted</h2>
-            <div>
-              <button className="blue-button big-button" onClick={() => setShowSuccessModal(false)}>
-                OK
-              </button>
-            </div>
+          <div className="modal-content success-modal">
+            <img src={successTickImage} alt="Success" className="success-tick-img" />
+            <h3>Refuel request successful</h3>
           </div>
         </div>
       )}
       {showSuccessMessage && (
-        <div className="success-message-popup">
-          <p>Your request has been successfully submitted</p>
+        <div className="success-popup">
+          <p>Refuel request successful!</p>
         </div>
       )}
-      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
     </div>
   );
 };
