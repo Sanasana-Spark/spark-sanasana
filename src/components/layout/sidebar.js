@@ -101,7 +101,7 @@ export default function VerticalSidebar({ children }) {
             <ListItemWithLink
               label='Help Center'
               icon={ <img src={Helpcenter_icon} alt="Custom Icon"  className="icon" />}
-              to='/reports'
+              to='/drive'
             />
 
             <ListItemWithLink
