@@ -17,66 +17,49 @@ const baseURL = process.env.REACT_APP_BASE_URL
 
 const AddTripForm = ({ onSubmit, onCancel, open }) => {
   // const [trip, setTrip] = useState({ a_status: "" });
+  const [loading, setLoading] = useState(true);
   const [statusOptions, setStatusOptions] = useState([]);
-  const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
-
   useEffect(() => {
-    // Fetch status options from the backend
-    const fetchStatusOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/trips/status`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setStatusOptions(data);
-        } else {
-          console.error("Error fetching status options:", response.statusText);
+    const apiUrl = `${baseURL}/trips/status`;
+    // to be corrected to dynamic
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error("Error fetching status options:", error);
-      }
-    };
-
-    fetchStatusOptions();
+        return response.json();
+      })
+      .then((data) => {
+        setStatusOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
-    // Fetch status options from the backend
-    const fetchTripOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/assets`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setTripOptions(data);
-        } else {
-          console.error("Error fetching Trip options:", response.statusText);
+    const apiUrl = `${baseURL}/operators`;
+    // to be corrected to dynamic
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error("Error fetching Trip options:", error);
-      }
-    };
+        return response.json();
+      })
+      .then((data) => {
+        setOperatorOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }, [ baseURL]);
 
-    fetchTripOptions();
-  }, []);
-
-  useEffect(() => {
-    // Fetch status options from the backend
-    const fetchOperatorOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/operators`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setOperatorOptions(data);
-        } else {
-          console.error("Error fetching operator options:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching operator options:", error);
-      }
-    };
-
-    fetchOperatorOptions();
-  }, []);
 
   //   const classes = useStyles();
   const [trip, setTrip] = useState({
@@ -237,7 +220,7 @@ const AddTripForm = ({ onSubmit, onCancel, open }) => {
                 </Select>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <InputLabel id="trip-label">Assign Vehicle</InputLabel>
                 <Select
                 fullWidth
@@ -253,7 +236,7 @@ const AddTripForm = ({ onSubmit, onCancel, open }) => {
             </MenuItem>
           ))}
                 </Select>
-              </Grid>
+              </Grid> */}
 
              
               
