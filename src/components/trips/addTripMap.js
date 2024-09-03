@@ -22,11 +22,10 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 const libraries = ["places"];
-
 const center = { lat: 0.00075, lng: 36.0098 };
-//   const center = { lat: 48.8584, lng: 2.2945 }
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
+
   const baseURL = process.env.REACT_APP_BASE_URL;
   const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
@@ -34,6 +33,11 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
+  const [origin_place_id,setOriginPlaceId] = useState("")
+  const [origin_place_query,setOriginPlaceQuery] = useState("")
+  const [destination_place_id,setDestinationPlaceId] = useState("")
+  const [destination_place_query,setDestinationPlaceQuery] = useState("")
+
 
   const originRef = useRef();
   const destiantionRef = useRef();
@@ -41,7 +45,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [trip, setTrip] = useState({
     t_load: 0,
     t_status: "Pending",
-  });
+  },[]);
 
   useEffect(() => {
     // Fetch status options from the backend
@@ -60,7 +64,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     };
 
     fetchTripOptions();
-  });
+  },[baseURL]);
 
   useEffect(() => {
     // Fetch status options from the backend
@@ -82,10 +86,11 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     };
 
     fetchOperatorOptions();
-  });
+  },[baseURL]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setTrip((prevTrip) => ({
       ...prevTrip,
       [name]: value,
@@ -107,11 +112,31 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(trip);
+
+    setTrip((prevTrip) => ({
+      ...prevTrip,
+      t_origin_place_id:origin_place_id,
+      t_origin_place_query:origin_place_query,
+      t_destination_place_id:destination_place_id,
+      t_destination_place_query:destination_place_query,
+      t_directionsResponse:directionsResponse,
+      t_distance:distance,
+      t_duration:duration,
+    }));
+
+  onSubmit({
+    ...trip, // this includes previous trip values
+    t_origin_place_id:origin_place_id,
+    t_origin_place_query:origin_place_query,
+    t_destination_place_id:destination_place_id,
+    t_destination_place_query:destination_place_query,
+    t_directionsResponse:directionsResponse,
+    t_distance:distance,
+    t_duration:duration
+  });
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
-      t_distance: distance,
       t_operator_id: "",
       t_asset_id: "",
     });
@@ -164,6 +189,10 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
+    setOriginPlaceId(results.geocoded_waypoints[0].place_id);
+    setOriginPlaceQuery(originRef.current.value);
+    setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
+    setDestinationPlaceQuery(destiantionRef.current.value);
   }
 
 
@@ -178,10 +207,10 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
   if (directionsResponse) {
     console.log(
-      "originRef",
-      directionsResponse,
-      "destiantionRef",
-      directionsResponse.destination
+     "origin", origin_place_id,origin_place_query,
+     "Dest", destination_place_id,destination_place_query,
+     "distance", distance,
+     "time", duration
     );
   }
 
@@ -299,6 +328,17 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
               </Grid>
 
 
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="t_distance"
+                  name="t_distance"
+                  value={distance}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+
 
               <Grid item xs={12} sm={6}>
                 <InputLabel id="operator-label">Assign Driver</InputLabel>
@@ -378,5 +418,4 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     </Dialog>
   );
 };
-
 export default AddTripMapForm;
