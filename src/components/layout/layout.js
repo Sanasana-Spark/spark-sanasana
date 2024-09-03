@@ -4,7 +4,7 @@ import TopBar from './topbar';
 
 // eslint-disable-next-line react/prop-types
 const Layout = ({ children }) => {
-  const topBarHeight = '45px';
+  const topBarHeight = '30px';
 
   return (
 
@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
         <TopBar />
       </div>
 
-      <div style={{ display: 'flex', flexGrow: 1, marginTop: topBarHeight }}>
+      <div style={{ display: 'flex', flexGrow: 1, marginTop: topBarHeight, paddingTop:'20px' }}>
         <VerticalSidebar topBarHeight={topBarHeight}  />
 
         <main style={{ flexGrow: 1 }}>
