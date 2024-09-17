@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Box } from '@mui/material';
+import { Container, Grid, Paper, Typography, Box, Button } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import './Dashboard.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const containerStyle = {
   width: '100%',
   height: '300px',
+
 };
 
 const center = {
@@ -16,6 +19,8 @@ const center = {
 };
 
 const Dashboard = () => {
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     totalAssets: 0,
     overallAssetsValue: 0,
@@ -38,58 +43,103 @@ const Dashboard = () => {
     upcomingTrips: []
   });
 
+  const [currentPage, setCurrentPage] = useState(1); // Added for pagination
+  const tripsPerPage = 5;
+
+
 
   useEffect(() => {
     // Fetch data from the backend
     const fetchData = async () => {
       try {
-        const response = await axios.get('/api/dashboard'); // Adjust the endpoint as needed
-        const fetchedData = response.data;
+        const response = await axios.get(`${baseURL}/summary`);
+    
+        
 
-        // Map the fetched fuel usage data to the static months
+        
+
+        const fetchedData = response.data;
+        
+
+        //Map the fetched fuel usage data to the static months
         const updatedFuelUsage = dashboardData.fuelUsage.map(month => {
-          const fetchedMonthData = fetchedData.fuelUsage.find(fuel => fuel.name === month.name);
+        const fetchedMonthData = fetchedData.fuelUsage.find(fuel => fuel.name === month.name);
           return fetchedMonthData ? { ...month, value: fetchedMonthData.value } : month;
         });
 
         setDashboardData({
           ...fetchedData,
-          fuelUsage: updatedFuelUsage
+          fuelUsage: updatedFuelUsage,
+          
         });
+
       } catch (error) {
         console.error('Error fetching dashboard data', error);
       }
     };
     fetchData();
   }, );
+  useEffect(() => {
+    fetch(`${baseURL}/trips`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setTrips(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  },[baseURL] );
 
+  const indexOfLastTrip = currentPage * tripsPerPage;
+  const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
+  const currentTrips = dashboardData.upcomingTrips.slice(indexOfFirstTrip, indexOfLastTrip);
+
+  // Pagination controls
+  const handleNextPage = () => {
+    if (indexOfLastTrip < dashboardData.upcomingTrips.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold'}} gutterBottom>Dashboard</Typography>
+        <Typography variant="h5" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }} gutterBottom>Dashboard</Typography>
       </Box>
       <Grid container spacing={3}>
         <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
+          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}} >Total Assets</Typography>
             <Typography variant="h4">{dashboardData.totalAssets}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
+          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Overall Assets Value</Typography>
             <Typography variant="h4">${dashboardData.overallAssetsValue}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
+          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Total Fuel Cost</Typography>
             <Typography variant="h4">${dashboardData.totalFuelCost}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary' }}>
+          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Carbon Reduction</Typography>
             <Typography variant="h4">{dashboardData.carbonReduction}</Typography>
           </Paper>
@@ -124,9 +174,22 @@ const Dashboard = () => {
           <Grid item xs={4.1}>
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h6">Upcoming Trips</Typography>
-              {dashboardData.upcomingTrips.map((trip, index) => (
-                <Typography key={index}>{trip.name}</Typography>
+              
+              {trips.map((trip) => (
+                <Typography key={trip.id}>{trip.a_license_plate}</Typography>
               ))}
+              {/* Pagination Buttons */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                  Previous
+                </Button>
+                <Button
+                  onClick={handleNextPage}
+                  disabled={indexOfLastTrip >= trips.length}
+                >
+                  Next
+                </Button>
+              </Box>
             </Paper>
           </Grid>
         </Grid>
