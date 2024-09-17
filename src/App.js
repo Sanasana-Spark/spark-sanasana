@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {SignIn , SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/onboarding/authProvider';
@@ -19,7 +20,7 @@ import Logout from './pages/logout'
 // import Step1 from './components/onboarding/signUp/Step1';
 // import Step2 from './components/onboarding/signUp/Step2';
 import './App.css';
-
+ 
 
 
 const App = () => {
@@ -55,6 +56,7 @@ const App = () => {
         </AuthProvider>
       </div>
     </Router>
+   
   );
 }
 

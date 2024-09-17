@@ -1,3 +1,4 @@
+
 * {
     padding: 0;
     margin: 0;
@@ -5,11 +6,16 @@
     list-style: none;
     text-decoration: none;
 }
+
+body, html {
+  font-family: 'Poppins', sans-serif;
+}
+
 :root {
     --main-bg-color: #f0f0f0;
     --primary-color: #047A9A;
     --secondary-color: #01947A;
-    --font-family: 'Arial, sans-serif';
+    --font-family: 'Poppins, sans-serif';
     --padding: 16px;
     --margin: 8px;
   }
