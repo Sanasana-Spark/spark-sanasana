@@ -42,9 +42,14 @@ const Dashboard = () => {
     ],
     upcomingTrips: []
   });
+  
 
   const [currentPage, setCurrentPage] = useState(1); // Added for pagination
   const tripsPerPage = 5;
+
+  const indexOfLastTrip = currentPage * tripsPerPage;
+  // const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
+  // const currentTrips = dashboardData.upcomingTrips.slice(indexOfFirstTrip, indexOfLastTrip);
 
 
 
@@ -95,11 +100,9 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[baseURL] );
+  },[] );
 
-  const indexOfLastTrip = currentPage * tripsPerPage;
-  const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
-  const currentTrips = dashboardData.upcomingTrips.slice(indexOfFirstTrip, indexOfLastTrip);
+
 
   // Pagination controls
   const handleNextPage = () => {
@@ -175,7 +178,7 @@ const Dashboard = () => {
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h6">Upcoming Trips</Typography>
               
-              {trips.map((trip) => (
+              { loading && trips.map((trip) => (
                 <Typography key={trip.id}>{trip.a_license_plate}</Typography>
               ))}
               {/* Pagination Buttons */}
