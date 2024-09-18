@@ -3,6 +3,7 @@ import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import Loader from "../loader";
 import Map from "../maps/singleTripMap";
+import Map1 from "../maps/newmap";
 
 
 
@@ -34,16 +35,31 @@ const PropCard = ({ selectedAsset }) => {
 
         const start = { lat: startLat, lng: startLong };
         const end = { lat: endLat, lng: endLong };
+        console.log("origin",start, "destination", end )
 
-        console.log("center Coordinates:", start);
+        const center = { lat:(startLat+endLat), lng:(startLong + endLong) };
+
 
         return (
           <div key={asset.id}>
-           <Map
+
+           {/* <Map
            startpoint= {start}
             endpoint={end}
             key={asset.id}
+            center = {center}
+            directionsResponse={asset.t_directionsResponse}
+           /> */}
+
+<Map1
+           origin= {start}
+           destination={end}
+           key={asset.id}
+           center = {start}
            />
+
+
+
 
             <Card>
               <CardContent>
@@ -61,6 +77,14 @@ const PropCard = ({ selectedAsset }) => {
    <Grid item xs={12 } sm={6}>
                     <Typography>LPO: CL-{asset.id}</Typography>
                     
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} >
+                    <Typography>start: {asset.t_origin_place_query}</Typography>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} >
+                    <Typography>end: {asset.t_destination_place_query}</Typography>
                   </Grid>
                    
                   <Grid item xs={12} sm={6} >

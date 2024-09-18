@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
 import React, {  useMemo, useCallback, useRef } from "react";
-import { useLoadScript, GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
+import { useLoadScript, GoogleMap, Marker, Polyline } from "@react-google-maps/api";
 
 const mapContainerStyle = {
   height: "400px",
@@ -8,10 +7,10 @@ const mapContainerStyle = {
 };
 // const center = { lat: 0.00075, lng: 36.0098 };
 
-const PropCard = ({ startpoint, endpoint, key, center, directionsResponse }) => {
+const PropCard = ({ origin, destination, key, center }) => {
+    console.log("origin", origin, "destination", destination)
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY
   });
   const google = window.google;
 
@@ -55,10 +54,17 @@ const PropCard = ({ startpoint, endpoint, key, center, directionsResponse }) => 
                     scale: 10,
                   }}
                    />
+{origin && destination && (
+          <Polyline
+            path={[origin, destination]}
+            options={{
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 2
+            }}
+          />
+        )}
 
-{directionsResponse && (
-                    <DirectionsRenderer directions={directionsResponse} />
-                  )}
   
               </GoogleMap>
 
