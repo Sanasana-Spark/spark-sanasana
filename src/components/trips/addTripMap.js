@@ -27,9 +27,10 @@ const center = { lat: 0.00075, lng: 36.0098 };
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const [assetOptions, setTripOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  // const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
-  const [selectedOperator, setSelectedOperator] = useState(null);
+  // const [selectedOperator, setSelectedOperator] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -38,55 +39,34 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [destination_place_id,setDestinationPlaceId] = useState("")
   const [destination_place_query,setDestinationPlaceQuery] = useState("")
 
-
+  const [origin_lat,setOriginLat] = useState()
+  const [destination_lat,setDestinationLat] = useState()
+  const [origin_lng,setOriginLng] = useState()
+  const [destination_lng,setDestinationLng] = useState()
   const originRef = useRef();
   const destiantionRef = useRef();
-
   const [trip, setTrip] = useState({
     t_load: 0,
     t_status: "Pending",
   },[]);
 
   useEffect(() => {
-    // Fetch status options from the backend
-    const fetchTripOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/assets`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setTripOptions(data);
-        } else {
-          console.error("Error fetching Trip options:", response.statusText);
+    fetch(`${baseURL}/operators`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error("Error fetching Trip options:", error);
-      }
-    };
-
-    fetchTripOptions();
-  },[baseURL]);
-
-  useEffect(() => {
-    // Fetch status options from the backend
-    const fetchOperatorOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/operators`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setOperatorOptions(data);
-        } else {
-          console.error(
-            "Error fetching operator options:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching operator options:", error);
-      }
-    };
-
-    fetchOperatorOptions();
-  },[baseURL]);
+        return response.json();
+      })
+      .then((data) => {
+        setOperatorOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  },[baseURL] );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,7 +78,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
     if (name === "t_operator_id") {
       const operator = operatorOptions.find((op) => op.id === value);
-      setSelectedOperator(operator);
+      // setSelectedOperator(operator);
       if (operator && operator.o_assigned_asset) {
         setTrip((prevTrip) => ({
           ...prevTrip,
@@ -122,8 +102,13 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_directionsResponse:directionsResponse,
       t_distance:distance,
       t_duration:duration,
-    }));
+      t_start_lat:origin_lat,
+      t_end_lat:destination_lat,
+      t_start_long:origin_lng,
+      t_end_long:destination_lng
 
+    }));
+console.log(directionsResponse)
   onSubmit({
     ...trip, // this includes previous trip values
     t_origin_place_id:origin_place_id,
@@ -132,7 +117,11 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_destination_place_query:destination_place_query,
     t_directionsResponse:directionsResponse,
     t_distance:distance,
-    t_duration:duration
+    t_duration:duration,
+    t_start_lat:origin_lat,
+    t_end_lat:destination_lat,
+    t_start_long:origin_lng,
+    t_end_long:destination_lng
   });
     // Optionally, you can reset the form after submission
     setTrip({
@@ -193,11 +182,15 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
+    setOriginLat(results.routes[0].bounds.di.lo);
+    setDestinationLat(results.routes[0].bounds.di.hi);
+    setOriginLng(results.routes[0].bounds.Gh.lo);
+    setDestinationLng(results.routes[0].bounds.Gh.hi);
   }
 
 
   function clearRoute() {
-    setDirectionsResponse(null);
+    // setDirectionsResponse(null);
     setDistance("");
     setDuration("");
     originRef.current.value = "";
@@ -210,7 +203,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
      "origin", origin_place_id,origin_place_query,
      "Dest", destination_place_id,destination_place_query,
      "distance", distance,
-     "time", duration
+     "time", duration,
+     "cordi", origin_lat, destination_lat, origin_lng, destination_lng,
+     "directionsResponse",directionsResponse
     );
   }
 
@@ -350,15 +345,21 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                   value={trip.t_operator_id}
                   onChange={handleChange}
                 >
-                  {operatorOptions.map((operator) => (
+                {operatorOptions && operatorOptions.length > 0 ? (
+                  operatorOptions.map((operator) => (
                     <MenuItem key={operator.id} value={operator.id}>
                       {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
                     </MenuItem>
-                  ))}
+                  ))
+                ) : (
+                  <MenuItem disabled>
+                    Loading operators...
+                  </MenuItem>
+                )}
                 </Select>
               </Grid>
 
-
+{/* 
               <Grid item xs={12} sm={6}>
                 <InputLabel id="trip-label">Assign Vehicle</InputLabel>
                 <Select
@@ -382,10 +383,10 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                     ))
                   )}
                 </Select>
-              </Grid>
+              </Grid> */}
 
 
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <InputLabel id="trip-label">Assign Vehicle</InputLabel>
                 <Select
                   fullWidth
@@ -401,7 +402,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                     </MenuItem>
                   ))}
                 </Select>
-              </Grid>
+              </Grid> */}
             </Grid>
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">
