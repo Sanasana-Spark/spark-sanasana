@@ -2,7 +2,6 @@
 import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import Loader from "../loader";
-import Map from "../maps/singleTripMap";
 import Map1 from "../maps/newmap";
 
 
@@ -37,7 +36,7 @@ const PropCard = ({ selectedAsset }) => {
         const end = { lat: endLat, lng: endLong };
         console.log("origin",start, "destination", end )
 
-        const center = { lat:(startLat+endLat), lng:(startLong + endLong) };
+        // const center = { lat:(startLat+endLat), lng:(startLong + endLong) };
 
 
         return (

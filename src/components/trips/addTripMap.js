@@ -351,7 +351,7 @@ console.log(directionsResponse)
                       {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
                     </MenuItem>
                   ))
-                ) : (
+                ) : ( loading &&
                   <MenuItem disabled>
                     Loading operators...
                   </MenuItem>
