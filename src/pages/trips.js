@@ -62,7 +62,6 @@ const Trips = () => {
       t_asset_id: assetData.t_asset_id,
       t_status: assetData.t_status,
       t_load: assetData.t_load,
-      
       t_origin_place_id:assetData.t_origin_place_id,
       t_origin_place_query:assetData.t_origin_place_query,
       t_destination_place_id:assetData.t_destination_place_id,
@@ -71,6 +70,9 @@ const Trips = () => {
       t_distance:assetData.t_distance,
       t_duration:assetData.t_duration,
     };
+
+    console.log("Payload Data:", data); // Log the payload
+
     const options = {
       method: "POST", // Specify the HTTP method
       headers: {
@@ -78,16 +80,17 @@ const Trips = () => {
       },
       body: JSON.stringify(data), // Convert data to JSON string for the request body
     };
+    console.log(data)
     fetch(url, options)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to add asset");
+          throw new Error("Failed to add trip");
         }
-        console.log("Property added successfully");
+        console.log("trip added successfully");
         setShowAddPropertyForm(false);
       })
       .catch((error) => {
-        console.error("Error adding asset:", error);
+        console.error("Error adding trip:", error);
       });
   };
   const selectedAsset = assets.filter(
