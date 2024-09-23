@@ -2,7 +2,8 @@
 import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import Loader from "../loader";
-import Map1 from "../maps/newmap";
+import Map from "../maps/singleTripMap";
+// import Map1 from "../maps/newmap";
 
 
 
@@ -41,21 +42,27 @@ const PropCard = ({ selectedAsset }) => {
 
         return (
           <div key={asset.id}>
-
-           {/* <Map
-           startpoint= {start}
-            endpoint={end}
+{/* 
+           <Map
+           origin= {asset.t_origin_place_query}
+           destination={asset.t_destination_place_query}
             key={asset.id}
-            center = {center}
-            directionsResponse={asset.t_directionsResponse}
+            center = {start}
            /> */}
 
-<Map1
+<Map
+           origin= {start}
+           destination={end}
+            key={asset.id}
+            center = {start}
+           />
+
+{/* <Map1
            origin= {start}
            destination={end}
            key={asset.id}
            center = {start}
-           />
+           /> */}
 
 
 
