@@ -38,7 +38,7 @@ const Trips = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[baseURL] ); // Empty dependency array ensures this effect runs only once when the component mounts
+  },[baseURL, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
 
