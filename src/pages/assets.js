@@ -14,15 +14,17 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 const Assets = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { userId, org_id } = useAuthContext();
+  const { user_id} = useAuthContext();
+  const { org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
-    const apiUrl = `${baseURL}/assets`;
-    // to be corrected to dynamic
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
     fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
@@ -38,16 +40,16 @@ const Assets = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
+  }}, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
-  const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/assets/create`;
     const data = {
-      a_created_by: userId,
+      a_created_by: user_id,
       a_organisation_id:org_id,
       a_name: assetData.a_name,
       a_make: assetData.a_make,
