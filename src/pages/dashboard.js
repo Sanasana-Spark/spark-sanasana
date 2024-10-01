@@ -2,21 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Box, Button } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import './Dashboard.css';
+import Map from "../components/maps/markedMap";
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-
-const containerStyle = {
-  width: '100%',
-  height: '300px',
-
-};
-
-const center = {
-  lat: 5.6037,
-  lng: -0.1870,
-};
 
 const Dashboard = () => {
   const [trips, setTrips] = useState([]);
@@ -42,11 +31,8 @@ const Dashboard = () => {
     ],
     upcomingTrips: []
   });
-  
-
   const [currentPage, setCurrentPage] = useState(1); // Added for pagination
   const tripsPerPage = 5;
-
   const indexOfLastTrip = currentPage * tripsPerPage;
   // const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
   // const currentTrips = dashboardData.upcomingTrips.slice(indexOfFirstTrip, indexOfLastTrip);
@@ -116,6 +102,7 @@ const Dashboard = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+  console.log(loading)
 
   return (
     <Container maxWidth="lg">
@@ -178,7 +165,7 @@ const Dashboard = () => {
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h6">Upcoming Trips</Typography>
               
-              { loading && trips.map((trip) => (
+              {  trips.map((trip) => (
                 <Typography key={trip.id}>{trip.a_license_plate}</Typography>
               ))}
               {/* Pagination Buttons */}
@@ -197,27 +184,18 @@ const Dashboard = () => {
           </Grid>
         </Grid>
 
-
-
         <Grid container spacing={3}>
           <Grid item xs={11.6}>
             <Box sx={{ my: 4, height: 300, backgroundColor: '#f5f5f5', borderRadius: 1, position: 'relative' }}>
-              <LoadScript googleMapsApiKey="AIzaSyACIsovAIGLyWjhP-KZAK7wz-smt0NPTCY">
-                <GoogleMap
-                  mapContainerStyle={containerStyle}
-                  center={center}
-                  zoom={13}
-                >
-                  <Marker position={center} />
-                </GoogleMap>
-              </LoadScript>
-              <Box sx={{ position: 'absolute', bottom: 16, left: 16, backgroundColor: '#fff', padding: 2, borderRadius: 1 }}>
-                <Typography variant="h6">Merc</Typography>
-                <Typography variant="body2">East Legon</Typography>
-                <Typography variant="body2">12:00 am - 10:00 pm</Typography>
-                <Typography variant="body2">40L</Typography>
-                <Typography variant="body2">100 mt</Typography>
-              </Box>
+
+              
+            {trips && trips.length > 0 ? (
+  <Map trips={trips} />
+) : (
+  <div>Loading trips...</div> // Optional: You can render a loading message or spinner here
+)}
+           
+             
             </Box>
           </Grid>
         </Grid>

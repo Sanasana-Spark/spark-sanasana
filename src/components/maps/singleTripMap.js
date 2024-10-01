@@ -52,7 +52,7 @@ const DirectionsMap = ({ origin, destination, center }) => {
   // eslint-disable-next-line
    [isLoaded, origin, destination]);
 
-  if (!isLoaded) return <div>Loading...</div>;
+   if (!isLoaded) return <div>Loading...</div>;
 
   return (
     <GoogleMap
