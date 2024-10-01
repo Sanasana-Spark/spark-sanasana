@@ -32,7 +32,6 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         <TableHead>
           <TableRow>
             <TableCell>Action</TableCell>
-            <TableCell>Image</TableCell>
             <TableCell>Plate</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Make</TableCell>
@@ -52,17 +51,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 
                 {isDropdownOpen[asset.id] && <Button>Back </Button>}
               </TableCell>
-              <TableCell>
-                {asset.a_image ? (
-                  <img
-                    src={asset.a_image}
-                    alt={asset.a_license_plate}
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                ) : (
-                  "No Image"
-                )}
-              </TableCell>
+      
               <TableCell>{asset.a_license_plate}</TableCell>
               <TableCell>{asset.a_status}</TableCell>
               <TableCell>{asset.a_make}</TableCell>
