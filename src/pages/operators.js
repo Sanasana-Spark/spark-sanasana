@@ -14,14 +14,16 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 const Operators = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { userId, org_id } = useAuthContext();
+  const { user_id, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
+  const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   useEffect(() => {
-    const apiUrl = `${baseURL}/operators`;
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
     // to be corrected to dynamic
     fetch(apiUrl)
       .then((response) => {
@@ -38,16 +40,16 @@ const Operators = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [baseURL]); // Empty dependency array ensures this effect runs only once when the component mounts
+  }}, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
-  const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+
 
   const handleSubmit = (operatorData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/operators/create`;
     const data = {
-      o_created_by: userId,
+      o_created_by: user_id,
       o_organisation_id:org_id,
       o_name: operatorData.o_name,
       o_email: operatorData.o_email,
@@ -62,6 +64,7 @@ const Operators = () => {
       o_status: operatorData.o_status,
       o_cum_mileage: operatorData.o_cum_mileage,
       o_expirence: operatorData.o_expirence,
+      o_assigned_asset: operatorData.o_assigned_asset
     };
     const options = {
       method: "POST", // Specify the HTTP method
@@ -73,13 +76,13 @@ const Operators = () => {
     fetch(url, options)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Failed to add asset");
+          throw new Error("Failed to add Operator");
         }
-        console.log("Property added successfully");
+        console.log("Operator added successfully");
         setShowAddPropertyForm(false);
       })
       .catch((error) => {
-        console.error("Error adding asset:", error);
+        console.error("Error adding Operator:", error);
       });
   };
   const selectedOperator = assets.filter(
