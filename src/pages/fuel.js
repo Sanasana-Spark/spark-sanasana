@@ -1,20 +1,19 @@
 /* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination } from '@mui/material';
-
+import { useAuthContext } from '../components/onboarding/authProvider';
 
 
 const Fuel = () => {
   const baseURL = process.env.REACT_APP_BASE_URL
+  const { user_id} = useAuthContext();
+  const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [fuelEntries, setFuelEntries] = useState([]);
 
-
-
-
-
   useEffect(() => {
-    const apiUrl = `${baseURL}/fuel`;
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/fuel/${org_id}/${user_id}`;
     // to be corrected to dynamic
     fetch(apiUrl)
       .then((response) => {
@@ -31,7 +30,7 @@ const Fuel = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }, [baseURL]);
+  }}, [baseURL, org_id, user_id]);
 
   if (loading) return <> Loading...</>;
 
