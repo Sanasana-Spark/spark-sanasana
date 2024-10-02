@@ -4,6 +4,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import axios from 'axios';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import './Dashboard.css';
+import { useAuthContext } from '../components/onboarding/authProvider';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -19,26 +20,31 @@ const center = {
 };
 
 const Dashboard = () => {
+  const { user_id} = useAuthContext();
+  const { org_id } = useAuthContext();
+  console.log("user", user_id, "org", org_id);
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState({
+  const [dashboardSummary, setDashboardSummary] = useState({
     totalAssets: 0,
     overallAssetsValue: 0,
     totalFuelCost: 0,
-    carbonReduction: 0,
+    carbonReduction: 0
+  })
+  const [dashboardData, setDashboardData] = useState({
     fuelUsage: [
-      { name: 'Jan', value: 0 },
-      { name: 'Feb', value: 0 },
-      { name: 'Mar', value: 0 },
-      { name: 'Apr', value: 0 },
-      { name: 'May', value: 0 },
-      { name: 'Jun', value: 0 },
-      { name: 'Jul', value: 0 },
-      { name: 'Aug', value: 0 },
-      { name: 'Sep', value: 0 },
-      { name: 'Oct', value: 0 },
-      { name: 'Nov', value: 0 },
-      { name: 'Dec', value: 0 },
+      { name: 'Jan', value: 1000 },
+      { name: 'Feb', value: 1700 },
+      { name: 'Mar', value: 1800 },
+      { name: 'Apr', value: 1500 },
+      { name: 'May', value: 1700 },
+      { name: 'Jun', value: 100 },
+      { name: 'Jul', value: 1450 },
+      { name: 'Aug', value: 1500 },
+      { name: 'Sep', value: 1340 },
+      { name: 'Oct', value: 1000 },
+      { name: 'Nov', value: 1590 },
+      { name: 'Dec', value: 1490 },
     ],
     upcomingTrips: []
   });
@@ -58,14 +64,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${baseURL}/summary`);
-    
-        
-
-        
-
         const fetchedData = response.data;
-        
-
         //Map the fetched fuel usage data to the static months
         const updatedFuelUsage = dashboardData.fuelUsage.map(month => {
         const fetchedMonthData = fetchedData.fuelUsage.find(fuel => fuel.name === month.name);
@@ -84,6 +83,7 @@ const Dashboard = () => {
     };
     fetchData();
   }, );
+
   useEffect(() => {
     fetch(`${baseURL}/trips`)
       .then((response) => {
@@ -102,6 +102,26 @@ const Dashboard = () => {
       });
   },[] );
 
+  useEffect(() => {
+
+    if (org_id && user_id) {
+
+    fetch(`${baseURL}/summaries/${org_id}/${user_id}/`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setDashboardSummary(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }},[org_id,user_id] );
 
 
   // Pagination controls
@@ -126,25 +146,25 @@ const Dashboard = () => {
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}} >Total Assets</Typography>
-            <Typography variant="h4">{dashboardData.totalAssets}</Typography>
+            <Typography variant="h4">{dashboardSummary.totalAssets}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Overall Assets Value</Typography>
-            <Typography variant="h4">${dashboardData.overallAssetsValue}</Typography>
+            <Typography variant="h4">${dashboardSummary.overallAssetsValue}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Total Fuel Cost</Typography>
-            <Typography variant="h4">${dashboardData.totalFuelCost}</Typography>
+            <Typography variant="h4">${dashboardSummary.totalFuelCost}</Typography>
           </Paper>
         </Grid>
         <Grid item xs={2.9}>
           <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
             <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Carbon Reduction</Typography>
-            <Typography variant="h4">{dashboardData.carbonReduction}</Typography>
+            <Typography variant="h4">{dashboardSummary.carbonReduction}</Typography>
           </Paper>
         </Grid>
       </Grid>

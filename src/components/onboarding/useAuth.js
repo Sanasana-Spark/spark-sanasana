@@ -9,7 +9,9 @@ export const useAuth = () => {
     const [organization, setOrganization] = useState(null);
 
     const userId = user?.id;
+    const user_id = user?.id;
     const userEmail = user?.emailAddresses[0]?.emailAddress;
+    const user_email = user?.emailAddresses[0]?.emailAddress;
 
   useEffect(() => {
     const fetchOrganization = async () => {
@@ -39,5 +41,5 @@ export const useAuth = () => {
   const org_id = organization?.id;
   const org_name = organization?.org_name;
 
-  return { userId, userEmail,org_id, org_name };
+  return { userId,user_id,userEmail,user_email,org_id, org_name };
 };

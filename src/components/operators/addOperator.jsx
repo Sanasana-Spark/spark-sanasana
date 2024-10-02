@@ -15,29 +15,54 @@ import {
   MenuItem,
   InputLabel,
 } from "@mui/material";
-const baseURL = process.env.REACT_APP_BASE_URL
+import { useAuthContext } from "../onboarding/authProvider";
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
+  const baseURL = process.env.REACT_APP_BASE_URL;
+  const { user_id, org_id } = useAuthContext();
   const [statusOptions, setStatusOptions] = useState([]);
+  const [assetOptions, setAssetOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch status options from the backend
-    const fetchStatusOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/operators/status`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setStatusOptions(data);
-        } else {
-          console.error("Error fetching status options:", response.statusText);
+    const apiUrl = `${baseURL}/operators/status`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error("Error fetching status options:", error);
-      }
-    };
+        return response.json();
+      })
+      .then((data) => {
+        setStatusOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }, [baseURL]);
 
-    fetchStatusOptions();
-  }, []);
+  useEffect(() => {
+    if (org_id && user_id) {
+      const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setAssetOptions(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }
+  }, [baseURL, org_id, user_id, open]); // Empty dependency array ensures this effect runs only once when the component mounts
 
   //   const classes = useStyles();
   const [operator, setOperator] = useState({
@@ -78,22 +103,22 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   };
 
   return (
-<Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
+    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Add Operator</DialogTitle>
       <DialogContent>
-        <Paper className={'classes.paper'}>
+        <Paper className={"classes.paper"}>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
                   <FormLabel>Profile</FormLabel>
-                <input
-                  accept="image/*"
-                  type="file"
-                  onChange={handleFileChange}
-                  name="o_image"
-                />
-                 </FormControl>
+                  <input
+                    accept="image/*"
+                    type="file"
+                    onChange={handleFileChange}
+                    name="o_image"
+                  />
+                </FormControl>
               </Grid>
 
               <Grid item xs={12} sm={6}>
@@ -110,7 +135,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   required
                   label="Email"
                   name="o_email"
-                  type = "email"
+                  type="email"
                   value={operator.o_email}
                   onChange={handleChange}
                 />
@@ -151,7 +176,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Assiged card"
@@ -180,7 +205,30 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
-              
+
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="status-label">Assigned Vehicle</InputLabel>
+                <Select
+                  labelId="status-label"
+                  label="Asset"
+                  name="o_assigned_asset"
+                  value={operator.o_assigned_asset}
+                  onChange={handleChange}
+                >
+                      {assetOptions && assetOptions.length > 0 ? (
+                  assetOptions.map((asset) => (
+                    <MenuItem key={asset.id} value={asset.id}>
+                       {asset.a_license_plate} - {asset.a_status}
+                    </MenuItem>
+                  ))
+                ) : ( loading &&
+                  <MenuItem disabled>
+                    Loading Vehicle...
+                  </MenuItem>
+                )}
+
+                </Select>
+              </Grid>
 
               <Grid item xs={12} sm={6}>
                 <InputLabel id="status-label">Status</InputLabel>
@@ -191,17 +239,21 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   value={operator.o_status}
                   onChange={handleChange}
                 >
-                  {statusOptions.map((status) => (
-            <MenuItem key={status.id} value={status.s_name}>
-              {status.s_name}
-            </MenuItem>
-          ))}
+                    {statusOptions && statusOptions.length > 0 ? (
+                  statusOptions.map((status) => (
+                    <MenuItem key={status.id} value={status.o_name}>
+                      {status.o_name}
+                    </MenuItem>
+                  ))
+                ) : ( loading &&
+                  <MenuItem disabled>
+                    Loading status...
+                  </MenuItem>
+                )}
+
                 </Select>
               </Grid>
-             
-             
 
-             
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
@@ -212,7 +264,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
-
 
               <Grid item xs={12}>
                 <FormControl fullWidth>
@@ -225,10 +276,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   />
                 </FormControl>
               </Grid>
-                   
-              
-
-              
             </Grid>
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">

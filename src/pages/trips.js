@@ -6,7 +6,6 @@ import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/trips/actionTripNav";
 import AssetsTable from "../components/trips/tripsTable"
-// import AddAssetForm1 from "../components/trips/addTrip";
 import AddAssetForm from "../components/trips/addTripMap";
 import AssetDetails from "../components/trips/tripDetails";
 import Loader from "../components/loader";
@@ -15,7 +14,7 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 const Trips = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { userId, org_id } = useAuthContext();
+  const { user_id, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
@@ -23,7 +22,8 @@ const Trips = () => {
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   useEffect(() => {
-    fetch(`${baseURL}/trips`)
+    if (org_id && user_id) {
+    fetch(`${baseURL}/trips/${org_id}/${user_id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -38,16 +38,14 @@ const Trips = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[baseURL, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
-
-
+  }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/trips/create`;
     const data = {
-      t_created_by: userId,
+      t_created_by: user_id,
       t_organization_id:org_id,
       t_type: assetData.t_type,
       t_start_lat: assetData.t_start_lat,

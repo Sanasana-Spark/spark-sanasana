@@ -21,16 +21,16 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import { useAuthContext } from "../onboarding/authProvider";
 const libraries = ["places"];
 const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
-
   const baseURL = process.env.REACT_APP_BASE_URL;
+  const { user_id } = useAuthContext();
+  const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
-  // const [assetOptions, setTripOptions] = useState([]);
   const [operatorOptions, setOperatorOptions] = useState([]);
-  // const [selectedOperator, setSelectedOperator] = useState(null);
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -51,7 +51,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   },[]);
 
   useEffect(() => {
-    fetch(`${baseURL}/operators`)
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
+    fetch(apiUrl)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -66,7 +68,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[baseURL] );
+  }}, [ baseURL, org_id, user_id, open]);
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
