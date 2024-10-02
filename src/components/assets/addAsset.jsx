@@ -15,30 +15,35 @@ import {
   MenuItem,
   InputLabel,
 } from "@mui/material";
-const baseURL = process.env.REACT_APP_BASE_URL
+
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
-  // const [asset, setAsset] = useState({ a_status: "" });
+  const baseURL = process.env.REACT_APP_BASE_URL
+  const [loading, setLoading] = useState(true);
   const [statusOptions, setStatusOptions] = useState([]);
 
-  useEffect(() => {
-    // Fetch status options from the backend
-    const fetchStatusOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/assets/status`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setStatusOptions(data);
-        } else {
-          console.error("Error fetching status options:", response.statusText);
-        }
-      } catch (error) {
-        console.error("Error fetching status options:", error);
-      }
-    };
 
-    fetchStatusOptions();
-  }, []);
+  useEffect(() => {
+    const apiUrl = `${baseURL}/assets/status`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setStatusOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  },[baseURL]);
+
+
+
 
   //   const classes = useStyles();
   const [asset, setAsset] = useState({
@@ -267,11 +272,19 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   value={asset.a_status}
                   onChange={handleChange}
                 >
+
+{!loading && (
+<>
+
+
+
                   {statusOptions.map((status) => (
             <MenuItem key={status.id} value={status.s_name}>
               {status.s_name}
             </MenuItem>
           ))}
+
+</> )}
                 </Select>
               </Grid>
 
