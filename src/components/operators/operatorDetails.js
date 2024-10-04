@@ -72,6 +72,7 @@ const PropCard = ({ selectedOperator }) => {
     <Grid item xs={6}>
       <Typography>{Operator.o_expirence}</Typography>
     </Grid>
+    
 
   </Grid>
 </CardContent>

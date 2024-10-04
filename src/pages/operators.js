@@ -96,6 +96,7 @@ const Operators = () => {
   const handleAddPropertyClick = () => {
     setShowAddPropertyForm(true);
   };
+  
 
 
 
