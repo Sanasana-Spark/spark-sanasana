@@ -9,6 +9,7 @@ import {
   TableRow,
   Paper,
   Button,
+  TablePagination,
 } from "@mui/material";
 // import actionicon from "../../assets/actionicon.svg"
 
@@ -16,6 +17,10 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(
     Array(assets.length).fill(false)
   );
+
+  const [currentPage, setCurrentPage] = useState(0); // State for current page
+  const rowsPerPage = 7; // Define number of rows per page
+
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => {
       const newDropdowns = [...prevState];
@@ -24,6 +29,16 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
     });
     onViewUnitsClick(rowIndex);
   };
+
+  // Handle pagination change
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const paginatedAssets = assets.slice(
+    currentPage * rowsPerPage,
+    currentPage * rowsPerPage + rowsPerPage
+  );
 
 
   return (
@@ -64,6 +79,17 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           ))}
         </TableBody>
       </Table>
+      
+
+      {/* Pagination Component */}
+      <TablePagination
+        rowsPerPageOptions={[]} // Hide the rows per page options
+        component="div"
+        count={assets.length} // Total number of assets
+        rowsPerPage={rowsPerPage} // Rows per page
+        page={currentPage} // Current page
+        onPageChange={handleChangePage} // Page change handler
+      />
     </TableContainer>
   );
 };
