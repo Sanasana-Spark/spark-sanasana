@@ -90,7 +90,7 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
                   <TableCell>{operator.o_phone}</TableCell>
                   <TableCell>{operator.o_status}</TableCell>
                   <TableCell>
-                    <Button onClick={() => handleCellClick(index)}>
+                    <Button onClick={() => handleCellClick(operator.id)}>
                       {isDropdownOpen[index] ? 'Close Details' : 'View Details'}
                     </Button>
                   </TableCell>
