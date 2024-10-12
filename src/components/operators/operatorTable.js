@@ -54,7 +54,7 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Action</TableCell>
+              <TableCell></TableCell>
               <TableCell>Image</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Email address</TableCell>
@@ -91,7 +91,7 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
                   <TableCell>{operator.o_status}</TableCell>
                   <TableCell>
                     <Button onClick={() => handleCellClick(operator.id)}>
-                      {isDropdownOpen[index] ? 'Close Details' : 'View Details'}
+                      {isDropdownOpen[index] ? 'Close Details' : 'Details'}
                     </Button>
                   </TableCell>
                 </TableRow>
