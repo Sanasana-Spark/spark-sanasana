@@ -56,7 +56,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         <TableHead>
           <TableRow>
             <TableCell padding="checkbox"> {/* Replace Action with Checkbox */}
-              Select
+              
             </TableCell>
             <TableCell>Plate</TableCell>
             <TableCell>Status</TableCell>
