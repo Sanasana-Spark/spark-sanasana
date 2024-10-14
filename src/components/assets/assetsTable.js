@@ -9,7 +9,7 @@ import {
   TableRow,
   Paper,
   Button,
-  Checkbox,
+
   TablePagination,
 } from "@mui/material";
 
@@ -17,10 +17,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(
     Array(assets.length).fill(false)
   );
+
+
   const [currentPage, setCurrentPage] = useState(0); // State for current page
   const rowsPerPage = 7; // Define number of rows per page
 
-  // Handle opening/closing of details dropdown
+
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => {
       const newDropdowns = [...prevState];
@@ -35,11 +37,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
     setCurrentPage(newPage);
   };
 
-  // Paginate the assets data
+
   const paginatedAssets = assets.slice(
     currentPage * rowsPerPage,
     currentPage * rowsPerPage + rowsPerPage
   );
+
 
   // Handle checkbox selection (can be enhanced for more complex selection logic)
   const [selected, setSelected] = useState([]);
@@ -94,6 +97,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           ))}
         </TableBody>
       </Table>
+
 
       {/* Pagination Component */}
       <TablePagination
