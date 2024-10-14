@@ -21,6 +21,7 @@ const Operators = () => {
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  
   useEffect(() => {
     if (org_id && user_id) {
     const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
