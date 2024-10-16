@@ -7,6 +7,7 @@ import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/operators/actionOperatorNav";
 import OperatorTable from "../components/operators/operatorTable"
 import AddOperatorForm from "../components/operators/addOperator";
+import BulkUploadForm from "../components/assets/upload";
 import OperatorDetails from "../components/operators/operatorDetails";
 
 import Loader from "../components/loader";
@@ -22,6 +23,7 @@ const Operators = () => {
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
   useEffect(() => {
     if (org_id && user_id) {
     const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
@@ -92,11 +94,17 @@ const Operators = () => {
 
   const handleCancel = () => {
     setShowAddPropertyForm(false);
+    setShowBulkUploadForm(false);
   };
 
   const handleAddPropertyClick = () => {
     setShowAddPropertyForm(true);
   };
+
+  const handleBulkUploadClick = () => {
+    setShowBulkUploadForm(true);
+  };
+
   
 
 
@@ -106,12 +114,20 @@ const Operators = () => {
       {!loading && (
         <div className="fluidGrid">
           <div>
-            <ActionNav
+
+          <ActionNav
               title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Operator"
+
+
+              onSecondClick= {handleBulkUploadClick}
+              bulktitle="Bulk Upload"
             />
+        
+
+
            
          
           <OperatorTable
@@ -123,6 +139,12 @@ const Operators = () => {
 
               <AddOperatorForm
                 open={showAddPropertyForm}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+              />
+
+<BulkUploadForm
+                open={showBulkUploadForm}
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
               />
@@ -146,6 +168,10 @@ const Operators = () => {
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Asset"
+
+
+              onSecondClick= {handleAddPropertyClick}
+              bulktitle="Bulk Upload"
             />
            
          
