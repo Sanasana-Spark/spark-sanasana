@@ -8,6 +8,7 @@ import ActionNav from "../components/operators/actionOperatorNav";
 import OperatorTable from "../components/operators/operatorTable"
 import AddOperatorForm from "../components/operators/addOperator";
 import OperatorDetails from "../components/operators/operatorDetails";
+
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
 
@@ -164,6 +165,10 @@ const Operators = () => {
             selectedOperator={selectedOperator}
           />
         </div>
+
+
+
+
         </div>
       )}
 
