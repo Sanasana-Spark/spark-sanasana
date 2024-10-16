@@ -7,6 +7,7 @@ import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import ActionNav from "../components/assets/actionAssetNav";
 import AssetsTable from "../components/assets/assetsTable"
 import AddAssetForm from "../components/assets/addAsset";
+import BulkUploadForm from "../components/assets/upload";
 import AssetDetails from "../components/assets/assetDetails";
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
@@ -21,6 +22,9 @@ const Assets = () => {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
+
+  
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
     if (org_id && user_id) {
@@ -95,11 +99,17 @@ const Assets = () => {
 
   const handleCancel = () => {
     setShowAddPropertyForm(false);
+    setShowBulkUploadForm(false);
   };
 
   const handleAddPropertyClick = () => {
     setShowAddPropertyForm(true);
   };
+
+  const handleBulkUploadClick = () => {
+    setShowBulkUploadForm(true);
+  };
+
 
 
 
@@ -108,12 +118,18 @@ const Assets = () => {
       {!loading && (
         <div className="fluidGrid">
           <div>
+
+
             <ActionNav
               title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Asset"
+
+              onSecondClick= {handleBulkUploadClick}
+              bulktitle="Bulk Upload"
             />
+
            
          
           <AssetsTable
@@ -128,6 +144,14 @@ const Assets = () => {
                 onSubmit={handleSubmit}
                 onCancel={handleCancel}
               />
+
+<BulkUploadForm
+                open={showBulkUploadForm}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+              />
+
+
         
 
         </div>
@@ -148,6 +172,10 @@ const Assets = () => {
               icons={icons}
               onAddClick={handleAddPropertyClick}
               icontitle="Add Asset"
+
+
+              onSecondClick= {handleAddPropertyClick}
+              bulktitle="Bulk Upload"
             />
            
          
@@ -185,6 +213,7 @@ const Assets = () => {
   const icons = [
     currentView === "TableView" ? (
       <DisabledByDefaultIcon />
+
     ) : (
       <>
         <Reorder onClick={() => handleIconClick(0)} />
