@@ -10,7 +10,6 @@ import {
   Checkbox,
   TablePagination,
   Button,
-  Collapse,  // New for showing details
 } from '@mui/material';
 
 const OperatorTable = ({ operators, onViewUnitsClick }) => {
@@ -65,8 +64,8 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
           </TableHead>
           <TableBody>
             {paginatedOperators.map((operator, index) => (
-              <React.Fragment key={operator.id}>
-                <TableRow>
+            
+                <TableRow key={operator.id} >
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={selected.includes(operator.id)}
@@ -95,25 +94,7 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
                     </Button>
                   </TableCell>
                 </TableRow>
-                
-                {/* Collapsible details section */}
-                <TableRow>
-                  <TableCell colSpan={7} style={{ padding: 0 }}>
-                    <Collapse in={isDropdownOpen[index]} timeout="auto" unmountOnExit>
-                      <div style={{ padding: '16px' }}>
-                        <p><strong>Name:</strong> {operator.o_name}</p>
-                        <p><strong>Email:</strong> {operator.o_email}</p>
-                        <p><strong>Phone:</strong> {operator.o_phone}</p>
-                        <p><strong>Status:</strong> {operator.o_status}</p>
-                        <p><strong>Role:</strong> {operator.o_role}</p>
-                        <p><strong>Experience:</strong> {operator.o_expirence}</p>
-                        <p><strong>Mileage:</strong> {operator.o_cum_mileage}</p>
-                        {/* Add more fields if necessary */}
-                      </div>
-                    </Collapse>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
+
             ))}
           </TableBody>
         </Table>
