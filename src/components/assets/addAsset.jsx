@@ -79,11 +79,15 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     });
   };
 
+  if (loading) {
+    return <>Loading...</>;
+  }
+
   return (
     <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Add Asset</DialogTitle>
       <DialogContent>
-        <Paper className={"classes.paper"}>
+        <Paper >
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -98,15 +102,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  label="Asset Name"
-                  name="a_name"
-                  value={asset.a_name}
-                  onChange={handleChange}
-                />
-              </Grid>
+
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
@@ -144,14 +140,19 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
+
+
               <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Type"
-                  name="a_type"
-                  value={asset.a_type}
+                  required
+                  label="Engine Size"
+                  name="a_engine_size"
+                  type="number"
+                  value={asset.a_engine_size}
                   onChange={handleChange}
                 />
               </Grid>
+            
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="MSRP"
@@ -169,16 +170,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  label="Engine Size"
-                  name="a_engine_size"
-                  type="number"
-                  value={asset.a_engine_size}
-                  onChange={handleChange}
-                />
-              </Grid>
+           
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
@@ -212,9 +204,30 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   <MenuItem value="Diesel">Diesel</MenuItem>
                 </Select>
               </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <InputLabel id="status-label">Status</InputLabel>
+                <Select
+                  labelId="a_status"
+                  label="Status"
+                  name="a_status"
+                  value={asset.a_status}
+                  onChange={handleChange}
+                >
+ {statusOptions.map((status) => (
+            <MenuItem key={status.id} value={status.s_name}>
+              {status.s_name}
+            </MenuItem>
+          ))}
+
+
+                </Select>
+              </Grid>
+
+
+
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   label="Cost"
                   name="a_cost"
                   type="number"
@@ -224,7 +237,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   label="Value"
                   name="a_value"
                   type="number"
@@ -242,16 +254,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  label="Appreciation Rate"
-                  name="a_apreciation_rate"
-                  type="number"
-                  value={asset.a_apreciation_rate}
-                  onChange={handleChange}
-                />
-              </Grid>
+            
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
@@ -263,32 +266,8 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 />
               </Grid>
 
+
               <Grid item xs={12} sm={6}>
-                <InputLabel id="status-label">Status</InputLabel>
-                <Select
-                  labelId="status-label"
-                  label="Status"
-                  name="a_status"
-                  value={asset.a_status}
-                  onChange={handleChange}
-                >
-
-{!loading && (
-<>
-
-
-
-                  {statusOptions.map((status) => (
-            <MenuItem key={status.id} value={status.s_name}>
-              {status.s_name}
-            </MenuItem>
-          ))}
-
-</> )}
-                </Select>
-              </Grid>
-
-              <Grid item xs={12}>
                 <FormControl fullWidth>
                   <FormLabel>Attachment 1</FormLabel>
                   <input
@@ -300,7 +279,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <FormLabel>Attachment 2</FormLabel>
                   <input
@@ -311,7 +290,10 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   />
                 </FormControl>
               </Grid>
+
+              
             </Grid>
+
             <DialogActions>
               <Button type="submit" variant="contained" color="primary">
                 Submit

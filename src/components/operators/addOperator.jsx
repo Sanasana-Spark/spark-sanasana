@@ -170,7 +170,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   required
-                  label="Lincense Type"
+                  label="License Type"
                   name="o_lincense_type"
                   value={operator.o_lincense_type}
                   onChange={handleChange}
@@ -202,6 +202,19 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                   name="o_expirence"
                   type="number"
                   value={operator.o_expirence}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                   abelId="status-label"
+                  label="Lincense Expiry"
+                  name="o_lincense_expiry"
+                  type="date"
+                  value={operator.o_lincense_expiry}
                   onChange={handleChange}
                 />
               </Grid>
@@ -254,16 +267,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 </Select>
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  label="Lincense Expiry"
-                  name="o_lincense_expiry"
-                  type="date"
-                  value={operator.o_lincense_expiry}
-                  onChange={handleChange}
-                />
-              </Grid>
 
               <Grid item xs={12}>
                 <FormControl fullWidth>
