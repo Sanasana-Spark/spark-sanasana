@@ -14,11 +14,13 @@ body, html {
 :root {
     --main-bg-color: #f0f0f0;
     --primary-color: #047A9A;
+    --faded-primary-color: #E5ECF6;
     --secondary-color: #01947A;
     --font-family: 'Poppins, sans-serif';
     --padding: 16px;
     --margin: 8px;
   }
+
 
   .fluidGrid {
     position: relative;
