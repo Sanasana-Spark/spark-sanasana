@@ -16,7 +16,8 @@ import Logout_icon from '../../assets/logout_icon.png'
 import Operator_icon from '../../assets/operator_icon.png'
 import Fuel_icon from '../../assets/fuel_icon.png'
 import Routes_icon from '../../assets/routes_icon.png'
-
+import Logo from "../../assets/logo.png";
+import '../../App.css';
 const drawerWidth = 250
 
 
@@ -33,10 +34,10 @@ export default function VerticalSidebar({ children }) {
             flexShrink: 0,
             '& .MuiDrawer-paper': {
               width: drawerWidth,
-             backgroundColor: '#E5ECF6',
+             backgroundColor: 'var(--main-bg-color)',
               color: 'black',
-              marginTop: '50px',
               paddingTop:'15px',
+              paddingLeft:'15px',
               zIndex: 0
             },
           }}
@@ -44,6 +45,23 @@ export default function VerticalSidebar({ children }) {
           anchor='left'>
    
           <List>
+
+          <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            justifyContent: "space-between",
+            paddingBottom: "20px",
+          }}
+        >
+                    <img
+            src={Logo}
+            alt="logo driver"
+            style={{
+              maxHeight: "50px",
+            }}
+          /> </div>
            
 
             <ListItemWithLink
