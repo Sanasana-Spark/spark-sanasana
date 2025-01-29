@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Box, Button } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import './Dashboard.css';
 import { useAuthContext } from '../components/onboarding/authProvider';
+import '../App.css';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -138,36 +140,48 @@ const Dashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h5" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }} gutterBottom>Dashboard</Typography>
+    <Container maxWidth="inherit" sx={{fontfamily: 'var(--font-family)'}}>
+
+<Box
+      sx={{
+        width: '100%',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
+        gap: 2,
+      }}
+    >
+     
+      <Card>
+        <CardContent> 
+        <Typography variant="body2" >Total Assets</Typography>
+        <Typography variant="h6">{dashboardSummary.totalAssets}</Typography>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent> 
+        <Typography variant="h6" >Assets Value</Typography>
+        <Typography variant="h4">${dashboardSummary.overallAssetsValue}</Typography>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent> 
+        <Typography variant="h6" >Fuel Cost</Typography>
+        <Typography variant="h4">${dashboardSummary.totalFuelCost}</Typography>
+        </CardContent>
+      </Card>
+
+  
+
+      <Card>
+        <CardContent> 
+        <Typography variant="h6" >Carbon Reduction</Typography>
+        <Typography variant="h4">{dashboardSummary.carbonReduction}</Typography>
+        </CardContent>
+      </Card>
       </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}} >Total Assets</Typography>
-            <Typography variant="h4">{dashboardSummary.totalAssets}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Overall Assets Value</Typography>
-            <Typography variant="h4">${dashboardSummary.overallAssetsValue}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Total Fuel Cost</Typography>
-            <Typography variant="h4">${dashboardSummary.totalFuelCost}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Carbon Reduction</Typography>
-            <Typography variant="h4">{dashboardSummary.carbonReduction}</Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+  
 
 
       <Box sx={{ my: 6 }}>
@@ -194,6 +208,7 @@ const Dashboard = () => {
               </LineChart>
             </Paper>
           </Grid>
+          
           <Grid item xs={4.1}>
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h6">Upcoming Trips</Typography>
