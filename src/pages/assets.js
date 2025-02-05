@@ -4,18 +4,28 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import ActionNav from "../components/assets/actionAssetNav";
-import AssetsTable from "../components/assets/assetsTable"
+import AssetsTable from "../components/assets/assetsTable";
 import AddAssetForm from "../components/assets/addAsset";
 import BulkUploadForm from "../components/assets/upload";
 import AssetDetails from "../components/assets/assetDetails";
 import Loader from "../components/loader";
-import { useAuthContext } from '../components/onboarding/authProvider';
+import { useAuthContext } from "../components/onboarding/authProvider";
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  IconButton,
+  TextField,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import UploadIcon from "@mui/icons-material/Upload";
+import { Search } from "@mui/icons-material";
 
 const Assets = () => {
-  
-  const baseURL = process.env.REACT_APP_BASE_URL
-  const { user_id} = useAuthContext();
+  const baseURL = process.env.REACT_APP_BASE_URL;
+  const { user_id } = useAuthContext();
   const { org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
@@ -24,37 +34,34 @@ const Assets = () => {
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 
-  
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
     if (org_id && user_id) {
-    const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setAssets(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
-  }}, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
-
-
-
+      const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setAssets(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }
+  }, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
     const url = `${baseURL}/assets/create`;
     const data = {
       a_created_by: user_id,
-      a_organisation_id:org_id,
+      a_organisation_id: org_id,
       a_name: assetData.a_name,
       a_make: assetData.a_make,
       a_model: assetData.a_model,
@@ -110,97 +117,331 @@ const Assets = () => {
     setShowBulkUploadForm(true);
   };
 
-
-
-
   const AssetView = () => (
     <>
       {!loading && (
-        <div className="fluidGrid">
-          <div>
+        <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+          <Box  >
+
+              <Grid item xs={12} marginBottom={5}>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography variant="h6">Assets</Typography>
+
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    gap={2}
+                    color="var(--primary-text-color)"
+                  >
+                    {/* Bulk Button */}
+                    <IconButton
+                      onClick={handleBulkUploadClick}
+                      sx={{
+                        border: "1px solid #01947A", // Change color for differentiation
+                        borderRadius: "4px",
+                        padding: "4.5px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 30,
+                          height: 32,
+                          backgroundColor: "#01947A",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <UploadIcon sx={{ fontSize: 20, color: "white" }} />
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          paddingLeft: "3px",
+                          color: "var(--primary-text-color)",
+                        }}
+                      >
+                        Bulk Upload
+                      </Typography>
+                    </IconButton>
+
+                    {/* Add button  */}
+                    <IconButton
+                      onClick={handleAddPropertyClick}
+                      sx={{
+                        border: "1px solid #047A9A",
+                        borderRadius: " 4px",
+                        padding: "4.5px",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: 30,
+                          height: 32,
+                          backgroundColor: "#047A9A",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <AddIcon sx={{ fontSize: 20, color: "white" }} />
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          paddingLeft: "3px",
+                          color: "var(--primary-text-color)",
+                        }}
+                      >
+                        Add Asset
+                      </Typography>
+                    </IconButton>
+                  </Box>
+                </Box>
+              </Grid>
 
 
-            <ActionNav
-              title="assets"
-              icons={icons}
-              onAddClick={handleAddPropertyClick}
-              icontitle="Add Asset"
 
-              onSecondClick= {handleBulkUploadClick}
-              bulktitle="Bulk Upload"
-            />
+              <Grid item xs={12} component={Paper} >
 
-           
-         
-          <AssetsTable
-            assets={assets}
-            onViewUnitsClick={handleViewDetailsClick}
+                <Box
+                  sx={{
+                    display: "flex",
+                    padding: '15px 25px'
+                  }}
+                >
+                  {/* Search Box */}
+                  <TextField
+                    label="Search"
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                      },
+                    }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#047A9A",
+                      padding: "8px",
+                      borderTopRightRadius: "5px",
+                      borderBottomRightRadius: "5px",
+                    }}
+                  >
+                    <Search sx={{ color: "white" }} />
+                  </Box>
+                  {/* Icons */}
+                  <Box>
+                    {icons.map((icon, index) => (
+                      <IconButton key={index}>{icon}</IconButton>
+                    ))}
+                  </Box>
+
+                </Box>
+
+              <Box>
+                <AssetsTable
+                  assets={assets}
+                  onViewUnitsClick={handleViewDetailsClick}
+                />
+                </Box>
+
+
+              </Grid>
+
+       
+          </Box>
+
+          <AddAssetForm
+            open={showAddPropertyForm}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
           />
-           </div>
 
-
-              <AddAssetForm
-                open={showAddPropertyForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-
-<BulkUploadForm
-                open={showBulkUploadForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-
-
-        
-
-        </div>
+          <BulkUploadForm
+            open={showBulkUploadForm}
+            onSubmit={handleSubmit}
+            onCancel={handleCancel}
+          />
+        </Container>
       )}
 
-
-{ loading && (<Loader/> )}
+      {loading && <Loader />}
     </>
   );
 
   const DetailView = ({ selectedAsset, isOpen }) => (
     <>
       {!loading && (
-         <div className="fluidGrid">
+           <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+           <Box  >
+ 
+               <Grid item xs={12} marginBottom={5}>
+                 <Box display="flex" justifyContent="space-between">
+                   <Typography variant="h6">Assets</Typography>
+ 
+                   <Box
+                     display="flex"
+                     justifyContent="flex-end"
+                     gap={2}
+                     color="var(--primary-text-color)"
+                   >
+                     {/* Bulk Button */}
+                     <IconButton
+                       onClick={handleBulkUploadClick}
+                       sx={{
+                         border: "1px solid #01947A", // Change color for differentiation
+                         borderRadius: "4px",
+                         padding: "4.5px",
+                       }}
+                     >
+                       <Box
+                         sx={{
+                           width: 30,
+                           height: 32,
+                           backgroundColor: "#01947A",
+                           display: "flex",
+                           justifyContent: "center",
+                           alignItems: "center",
+                         }}
+                       >
+                         <UploadIcon sx={{ fontSize: 20, color: "white" }} />
+                       </Box>
+                       <Typography
+                         variant="body2"
+                         sx={{
+                           paddingLeft: "3px",
+                           color: "var(--primary-text-color)",
+                         }}
+                       >
+                         Bulk Upload
+                       </Typography>
+                     </IconButton>
+ 
+                     {/* Add button  */}
+                     <IconButton
+                       onClick={handleAddPropertyClick}
+                       sx={{
+                         border: "1px solid #047A9A",
+                         borderRadius: " 4px",
+                         padding: "4.5px",
+                       }}
+                     >
+                       <Box
+                         sx={{
+                           width: 30,
+                           height: 32,
+                           backgroundColor: "#047A9A",
+                           display: "flex",
+                           justifyContent: "center",
+                           alignItems: "center",
+                         }}
+                       >
+                         <AddIcon sx={{ fontSize: 20, color: "white" }} />
+                       </Box>
+                       <Typography
+                         variant="body2"
+                         sx={{
+                           paddingLeft: "3px",
+                           color: "var(--primary-text-color)",
+                         }}
+                       >
+                         Add Asset
+                       </Typography>
+                     </IconButton>
+                   </Box>
+                 </Box>
+               </Grid>
+ 
+ 
+ 
+               <Grid item xs={12} component={Paper} >
+ 
+                 <Box
+                   sx={{
+                     display: "flex",
+                     padding: '15px 25px'
+                   }}
+                 >
+                   {/* Search Box */}
+                   <TextField
+                     label="Search"
+                     variant="outlined"
+                     size="small"
+                     sx={{
+                       "& .MuiOutlinedInput-notchedOutline": {
+                         borderTopRightRadius: 0,
+                         borderBottomRightRadius: 0,
+                       },
+                     }}
+                   />
+ 
+                   <Box
+                     sx={{
+                       display: "flex",
+                       justifyContent: "center",
+                       alignItems: "center",
+                       backgroundColor: "#047A9A",
+                       padding: "8px",
+                       borderTopRightRadius: "5px",
+                       borderBottomRightRadius: "5px",
+                     }}
+                   >
+                     <Search sx={{ color: "white" }} />
+                   </Box>
+                   {/* Icons */}
+                   <Box>
+                     {icons.map((icon, index) => (
+                       <IconButton key={index}>{icon}</IconButton>
+                     ))}
+                   </Box>
+ 
+                 </Box>
+ 
+               <Box>
+                 <AssetsTable
+                   assets={assets}
+                   onViewUnitsClick={handleViewDetailsClick}
+                 />
+                 </Box>
+ 
+ 
+               </Grid>
 
-<ActionNav
-              title="assets"
-              icons={icons}
-              onAddClick={handleAddPropertyClick}
-              icontitle="Add Asset"
+                  <div className={`slider ${isOpen ? "open" : ""}`}>
+             <AssetDetails selectedAsset={selectedAsset} />
+          </div>
 
-
-              onSecondClick= {handleAddPropertyClick}
-              bulktitle="Bulk Upload"
-            />
-           
-         
-          <AssetsTable
-            assets={assets}
-            onViewUnitsClick={handleViewDetailsClick}
-          />
-
-<AddAssetForm
-                open={showAddPropertyForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
+ 
         
-        <div className={`slider ${isOpen ? 'open' : ''}`}>
-          <AssetDetails
-            selectedAsset={selectedAsset}
-          />
-        </div>
-        </div>
+           </Box>
+ 
+           <AddAssetForm
+             open={showAddPropertyForm}
+             onSubmit={handleSubmit}
+             onCancel={handleCancel}
+           />
+ 
+           <BulkUploadForm
+             open={showBulkUploadForm}
+             onSubmit={handleSubmit}
+             onCancel={handleCancel}
+           />
+         </Container>
+
       )}
 
-{ loading && ( <div className="loader-container">
-        <Loader />
-      </div> )}
+      {loading && (
+        <div className="loader-container">
+          <Loader />
+        </div>
+      )}
     </>
   );
 
@@ -213,7 +454,6 @@ const Assets = () => {
   const icons = [
     currentView === "TableView" ? (
       <DisabledByDefaultIcon />
-
     ) : (
       <>
         <Reorder onClick={() => handleIconClick(0)} />
@@ -234,13 +474,8 @@ const Assets = () => {
       case "RequestDetails":
         return (
           <>
-         
-          <DetailView
-          selectedAsset={selectedAsset}
-          isOpen={isSliderOpen}
-          />
+            <DetailView selectedAsset={selectedAsset} isOpen={isSliderOpen} />
           </>
-        
         ); // Replace with actual rendering logic for RequestDetails
       default:
         return null;
