@@ -13,9 +13,12 @@ body, html {
 
 :root {
     --main-bg-color: white;
-    --primary-color: #047A9A;
+    --secondary-bg-color: whitesmoke;
     --faded-primary-color: whitesmoke;
+    --primary-color: #047A9A;
     --secondary-color: #01947A;
+    --primary-text-color: black;
+    --secondary-text-color: gray;
     --font-family: 'lato', sans-serif;
     --padding: 16px;
     --margin: 8px;
