@@ -453,15 +453,15 @@ const Assets = () => {
 
   const icons = [
     currentView === "TableView" ? (
-      <DisabledByDefaultIcon />
+      <Reorder/>
     ) : (
       <>
-        <Reorder onClick={() => handleIconClick(0)} />
+        <DisabledByDefaultIcon onClick={() => handleIconClick(0)} />
       </>
     ),
 
     currentView === "RequestDetails" ? (
-      <DisabledByDefaultIcon />
+      <Reorder />
     ) : (
       <DragIndicator onClick={() => handleIconClick(1)} />
     ),

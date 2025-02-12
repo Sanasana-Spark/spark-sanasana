@@ -56,7 +56,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
     <TableContainer >
       <Table stickyHeader aria-label="sticky table" >
         <TableHead >
-          <TableRow style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
+          <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
             <TableCell padding="checkbox"> {/* Replace Action with Checkbox */}
               
             </TableCell>

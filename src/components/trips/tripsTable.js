@@ -7,7 +7,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Button,TablePagination,
 } from "@mui/material";
 // import actionicon from "../../assets/actionicon.svg"
@@ -32,10 +31,10 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
+    <TableContainer >
+       <Table stickyHeader aria-label="sticky table" >
+             <TableHead >
+               <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
             <TableCell>Details</TableCell>
             <TableCell>LPO</TableCell>
             <TableCell>Status</TableCell>
@@ -50,7 +49,13 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         <TableBody>
           {/* Render a TableRowItem for each asset in the assets array */}
           {paginatedAssets.map((asset) => (
-            <TableRow key={asset.id}>
+            <TableRow key={asset.id}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
+            sx={{ border: 'none' }} 
+            >
+
+
               <TableCell onClick={() => handleCellClick(asset.id)}>
                 {!isDropdownOpen[asset.id] && <Button> View </Button>}
 
