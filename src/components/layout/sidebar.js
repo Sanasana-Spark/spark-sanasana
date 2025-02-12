@@ -2,7 +2,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
-import CssBaseline from '@mui/material/CssBaseline'
 import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import ListItemWithLink from './ListItemWithLink'
@@ -18,6 +17,7 @@ import Fuel_icon from '../../assets/fuel_icon.png'
 import Routes_icon from '../../assets/routes_icon.png'
 import Logo from "../../assets/logo.png";
 import '../../App.css';
+// import {Typography} from "@mui/material";
 const drawerWidth = 250
 
 
@@ -26,19 +26,20 @@ export default function VerticalSidebar({ children }) {
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
+       
         <Drawer
           open={true}
           sx={{
             width: drawerWidth,
             flexShrink: 0,
             '& .MuiDrawer-paper': {
-              width: drawerWidth,
+              minWidthwidth: 'inherit',
              backgroundColor: 'var(--main-bg-color)',
               color: 'black',
               paddingTop:'15px',
               paddingLeft:'15px',
-              zIndex: 0
+              zIndex: 0,
+              border: 'none'
             },
           }}
           variant='persistent'
@@ -106,6 +107,7 @@ export default function VerticalSidebar({ children }) {
               to='/reports'
             />
           </List>
+
           <Divider />
 
           {/* <Typography variant='subtitle1' gutterBottom> GENERAL</Typography> */}

@@ -62,24 +62,19 @@ const Assets = () => {
     const data = {
       a_created_by: user_id,
       a_organisation_id: org_id,
-      a_name: assetData.a_name,
       a_make: assetData.a_make,
       a_model: assetData.a_model,
       a_year: assetData.a_year,
-      a_license_plate: assetData.a_license_plate,
-      a_type: assetData.a_type,
-      a_chasis_no: assetData.a_chasis_no,
-      a_msrp: assetData.a_msrp,
-      a_engine_size: assetData.a_engine_size,
-      a_tank_size: assetData.a_tank_size,
-      a_efficiency_rate: assetData.a_efficiency_rate,
       a_fuel_type: assetData.a_fuel_type,
-      a_cost: assetData.a_cost,
-      a_value: assetData.a_value,
-      a_depreciation_rate: assetData.a_depreciation_rate,
-      a_apreciation_rate: assetData.a_aprecition_rate,
-      a_accumulated_dep: assetData.a_accumulated_dep,
+      a_tank_size: assetData.a_tank_size,
       a_status: assetData.a_status,
+      a_license_plate: assetData.a_license_plate,
+      a_displacement: assetData.a_displacement,
+      a_mileage: assetData.a_mileage,
+      a_horsepower: assetData.a_horsepower,
+      a_acceleration: assetData.a_acceleration,
+      a_insurance_expiry: assetData.a_insurance_expiry,
+  
     };
     const options = {
       method: "POST", // Specify the HTTP method
