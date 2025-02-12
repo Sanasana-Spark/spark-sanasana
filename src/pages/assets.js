@@ -274,6 +274,7 @@ const Assets = () => {
   const DetailView = ({ selectedAsset, isOpen }) => (
     <>
       {!loading && (
+        <>
            <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
            <Box  >
  
@@ -409,10 +410,6 @@ const Assets = () => {
  
                </Grid>
 
-                  <div className={`slider ${isOpen ? "open" : ""}`}>
-             <AssetDetails selectedAsset={selectedAsset} />
-          </div>
-
  
         
            </Box>
@@ -428,7 +425,16 @@ const Assets = () => {
              onSubmit={handleSubmit}
              onCancel={handleCancel}
            />
+
+
+<div className={`slider ${isOpen ? "open" : ""}`}>
+             <AssetDetails selectedAsset={selectedAsset} />
+          </div>
+
          </Container>
+
+        
+         </>
 
       )}
 
