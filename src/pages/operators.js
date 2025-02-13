@@ -9,9 +9,20 @@ import OperatorTable from "../components/operators/operatorTable"
 import AddOperatorForm from "../components/operators/addOperator";
 import BulkUploadForm from "../components/assets/upload";
 import OperatorDetails from "../components/operators/operatorDetails";
-
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  IconButton,
+  TextField,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import UploadIcon from "@mui/icons-material/Upload";
+import { Search } from "@mui/icons-material";
 
 const Operators = () => {
   
@@ -105,52 +116,164 @@ const Operators = () => {
     setShowBulkUploadForm(true);
   };
 
-  
-
 
 
   const AssetView = () => (
     <>
       {!loading && (
-        <div className="fluidGrid">
-          <div>
 
-          <ActionNav
-              title="assets"
-              icons={icons}
-              onAddClick={handleAddPropertyClick}
-              icontitle="Add Operator"
+<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Box  >
+
+    <Grid item xs={12} marginBottom={5}>
+      <Box display="flex" justifyContent="space-between">
+        <Typography variant="h6">Operators</Typography>
+
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          gap={2}
+          color="var(--primary-text-color)"
+        >
+          {/* Bulk Button */}
+          <IconButton
+            onClick={handleBulkUploadClick}
+            sx={{
+              border: "1px solid #01947A", // Change color for differentiation
+              borderRadius: "4px",
+              padding: "4.5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 30,
+                height: 32,
+                backgroundColor: "#01947A",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <UploadIcon sx={{ fontSize: 20, color: "white" }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                paddingLeft: "3px",
+                color: "var(--primary-text-color)",
+              }}
+            >
+              Bulk Upload
+            </Typography>
+          </IconButton>
+
+          {/* Add button  */}
+          <IconButton
+            onClick={handleAddPropertyClick}
+            sx={{
+              border: "1px solid #047A9A",
+              borderRadius: " 4px",
+              padding: "4.5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 30,
+                height: 32,
+                backgroundColor: "#047A9A",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AddIcon sx={{ fontSize: 20, color: "white" }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                paddingLeft: "3px",
+                color: "var(--primary-text-color)",
+              }}
+            >
+              Add Operator
+            </Typography>
+          </IconButton>
+        </Box>
+      </Box>
+    </Grid>
 
 
-              onSecondClick= {handleBulkUploadClick}
-              bulktitle="Bulk Upload"
-            />
-        
+
+    <Grid item xs={12} component={Paper} >
+
+      <Box
+        sx={{
+          display: "flex",
+          padding: '15px 25px'
+        }}
+      >
+        {/* Search Box */}
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            },
+          }}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#047A9A",
+            padding: "8px",
+            borderTopRightRadius: "5px",
+            borderBottomRightRadius: "5px",
+          }}
+        >
+          <Search sx={{ color: "white" }} />
+        </Box>
+        {/* Icons */}
+        <Box>
+          {icons.map((icon, index) => (
+            <IconButton key={index}>{icon}</IconButton>
+          ))}
+        </Box>
+
+      </Box>
+
+    <Box>
+      <OperatorTable
+        operators={assets}
+        onViewUnitsClick={handleViewDetailsClick}
+      />
+      </Box>
 
 
-           
-         
-          <OperatorTable
-            operators={assets}
-            onViewUnitsClick={handleViewDetailsClick}
-          />
-           </div>
+    </Grid>
 
 
-              <AddOperatorForm
-                open={showAddPropertyForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
+</Box>
+
+<AddOperatorForm
+  open={showAddPropertyForm}
+  onSubmit={handleSubmit}
+  onCancel={handleCancel}
+
+/>
 
 <BulkUploadForm
-                open={showBulkUploadForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-        
+  open={showBulkUploadForm}
+  onSubmit={handleSubmit}
+  onCancel={handleCancel}
+/>
+</Container>
 
-        </div>
       )}
 
 
@@ -167,7 +290,7 @@ const Operators = () => {
               title="assets"
               icons={icons}
               onAddClick={handleAddPropertyClick}
-              icontitle="Add Asset"
+              icontitle="Add Operator"
 
 
               onSecondClick= {handleAddPropertyClick}
@@ -212,15 +335,15 @@ const Operators = () => {
 
   const icons = [
     currentView === "TableView" ? (
-      <DisabledByDefaultIcon />
+      <Reorder />
     ) : (
       <>
-        <Reorder onClick={() => handleIconClick(0)} />
+        <DisabledByDefaultIcon onClick={() => handleIconClick(0)} />
       </>
     ),
 
     currentView === "RequestDetails" ? (
-      <DisabledByDefaultIcon />
+      <Reorder />
     ) : (
       <DragIndicator onClick={() => handleIconClick(1)} />
     ),
@@ -254,7 +377,7 @@ const Operators = () => {
   console.log(currentView, selectedTicket);
 
   return (
-    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
+    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> Add Operators </p>}</>
   );
 };
 

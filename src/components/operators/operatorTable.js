@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Checkbox,
   TablePagination,
   Button,
@@ -49,11 +48,11 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
 
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
+       <TableContainer >
+            <Table stickyHeader aria-label="sticky table" >
+              <TableHead >
+                <TableRow style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
+              <TableCell padding="checkbox"> </TableCell>
               <TableCell>Image</TableCell>
               <TableCell>Full Name</TableCell>
               <TableCell>Email address</TableCell>
@@ -65,7 +64,11 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
           <TableBody>
             {paginatedOperators.map((operator, index) => (
             
-                <TableRow key={operator.id} >
+                <TableRow key={operator.id}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
+                sx={{ border: 'none' }} 
+                 >
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={selected.includes(operator.id)}
