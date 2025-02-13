@@ -4,12 +4,22 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import ActionNav from "../components/trips/actionTripNav";
 import AssetsTable from "../components/trips/tripsTable"
 import AddAssetForm from "../components/trips/addTripMap";
 import AssetDetails from "../components/trips/tripDetails";
 import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
+import {
+  Container,
+  Box,
+  Grid,
+  Typography,
+  IconButton,
+  TextField,
+  Paper,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { Search } from "@mui/icons-material";
 
 const Trips = () => {
   
@@ -108,32 +118,124 @@ const Trips = () => {
   const AssetView = () => (
     <>
       {!loading && (
-        <div className="fluidGrid">
-          <div>
 
-<ActionNav
-              title="assets"
-              icons={icons}
-              onAddClick={handleAddPropertyClick}
-              icontitle="Add Trip"
-            />
-           
-         
-          <AssetsTable
-            assets={assets}
-            onViewUnitsClick={handleViewDetailsClick}
-          />
-           </div>
+<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Box  >
+
+    <Grid item xs={12} marginBottom={5}>
+      <Box display="flex" justifyContent="space-between">
+        <Typography variant="h6">Trips</Typography>
+
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          gap={2}
+          color="var(--primary-text-color)"
+        >
+   
+          {/* Add button  */}
+          <IconButton
+            onClick={handleAddPropertyClick}
+            sx={{
+              border: "1px solid #047A9A",
+              borderRadius: " 4px",
+              padding: "4.5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 30,
+                height: 32,
+                backgroundColor: "#047A9A",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AddIcon sx={{ fontSize: 20, color: "white" }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                paddingLeft: "3px",
+                color: "var(--primary-text-color)",
+              }}
+            >
+              Add Trip
+            </Typography>
+          </IconButton>
+        </Box>
+      </Box>
+    </Grid>
 
 
-              <AddAssetForm
-                open={showAddPropertyForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-        
 
-        </div>
+    <Grid item xs={12} component={Paper} >
+
+      <Box
+        sx={{
+          display: "flex",
+          padding: '15px 25px'
+        }}
+      >
+        {/* Search Box */}
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            },
+          }}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#047A9A",
+            padding: "8px",
+            borderTopRightRadius: "5px",
+            borderBottomRightRadius: "5px",
+          }}
+        >
+          <Search sx={{ color: "white" }} />
+        </Box>
+        {/* Icons */}
+        <Box>
+          {icons.map((icon, index) => (
+            <IconButton key={index}>{icon}</IconButton>
+          ))}
+        </Box>
+
+      </Box>
+
+    <Box>
+      <AssetsTable
+        assets={assets}
+        onViewUnitsClick={handleViewDetailsClick}
+      />
+      </Box>
+
+
+    </Grid>
+
+
+</Box>
+
+<AddAssetForm
+  open={showAddPropertyForm}
+  onSubmit={handleSubmit}
+  onCancel={handleCancel}
+
+/>
+
+
+</Container>
+
       )}
 
 
@@ -144,33 +246,126 @@ const Trips = () => {
   const DetailView = ({ selectedAsset, isOpen }) => (
     <>
       {!loading && (
-         <div className="fluidGrid">
+<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Box  >
 
-<ActionNav
-              title="assets"
-              icons={icons}
-              onAddClick={handleAddPropertyClick}
-              icontitle="Add Asset"
-            />
-           
-         
-          <AssetsTable
-            assets={assets}
-            onViewUnitsClick={handleViewDetailsClick}
-          />
+    <Grid item xs={12} marginBottom={5}>
+      <Box display="flex" justifyContent="space-between">
+        <Typography variant="h6">Trips</Typography>
+
+        <Box
+          display="flex"
+          justifyContent="flex-end"
+          gap={2}
+          color="var(--primary-text-color)"
+        >
+     
+          {/* Add button  */}
+          <IconButton
+            onClick={handleAddPropertyClick}
+            sx={{
+              border: "1px solid #047A9A",
+              borderRadius: " 4px",
+              padding: "4.5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 30,
+                height: 32,
+                backgroundColor: "#047A9A",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AddIcon sx={{ fontSize: 20, color: "white" }} />
+            </Box>
+            <Typography
+              variant="body2"
+              sx={{
+                paddingLeft: "3px",
+                color: "var(--primary-text-color)",
+              }}
+            >
+              Add Trip
+            </Typography>
+          </IconButton>
+        </Box>
+      </Box>
+    </Grid>
+
+
+
+    <Grid item xs={12} component={Paper} >
+
+      <Box
+        sx={{
+          display: "flex",
+          padding: '15px 25px'
+        }}
+      >
+        {/* Search Box */}
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+            },
+          }}
+        />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#047A9A",
+            padding: "8px",
+            borderTopRightRadius: "5px",
+            borderBottomRightRadius: "5px",
+          }}
+        >
+          <Search sx={{ color: "white" }} />
+        </Box>
+        {/* Icons */}
+        <Box>
+          {icons.map((icon, index) => (
+            <IconButton key={index}>{icon}</IconButton>
+          ))}
+        </Box>
+
+      </Box>
+
+    <Box>
+      <AssetsTable
+        assets={assets}
+        onViewUnitsClick={handleViewDetailsClick}
+      />
+      </Box>
+
+
+    </Grid>
+
+       <div className={`slider ${isOpen ? "open" : ""}`}>
+  <AssetDetails selectedAsset={selectedAsset} />
+</div>
+
+
+
+</Box>
 
 <AddAssetForm
-                open={showAddPropertyForm}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-              />
-        
-        <div className={`slider ${isOpen ? 'open' : ''}`}>
-          <AssetDetails
-            selectedAsset={selectedAsset}
-          />
-        </div>
-        </div>
+  open={showAddPropertyForm}
+  onSubmit={handleSubmit}
+  onCancel={handleCancel}
+/>
+
+
+</Container>
       )}
 
 { loading && ( <div className="loader-container">
@@ -187,15 +382,17 @@ const Trips = () => {
 
   const icons = [
     currentView === "TableView" ? (
-      <DisabledByDefaultIcon />
+       <Reorder/>
+      
     ) : (
-      <>
-        <Reorder onClick={() => handleIconClick(0)} />
-      </>
+      
+        <DisabledByDefaultIcon onClick={() => handleIconClick(0)} />
+      
     ),
 
     currentView === "RequestDetails" ? (
-      <DisabledByDefaultIcon />
+      <Reorder />
+      
     ) : (
       <DragIndicator onClick={() => handleIconClick(1)} />
     ),

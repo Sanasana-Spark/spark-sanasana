@@ -12,11 +12,14 @@ body, html {
 }
 
 :root {
-    --main-bg-color: #f0f0f0;
+    --main-bg-color: white;
+    --secondary-bg-color: whitesmoke;
+    --faded-primary-color: whitesmoke;
     --primary-color: #047A9A;
-    --faded-primary-color: #E5ECF6;
     --secondary-color: #01947A;
-    --font-family: 'Poppins, sans-serif';
+    --primary-text-color: black;
+    --secondary-text-color: gray;
+    --font-family: 'lato', sans-serif;
     --padding: 16px;
     --margin: 8px;
   }
@@ -27,13 +30,15 @@ body, html {
   }
   
   .slider {
-    position: fixed;
+    position: absolute;
     right: 0;
-    top:70px;
-    height: calc(100vh - 70px);
+    top: 8vh;
+    height: 80vh;
+    z-index: 100;
+    /* height: calc(100vh - 70px);
     min-height: calc(100vh - 70px);
-    max-height: 100vh;
-    width: 30vw; /* Adjust width as needed */
+    max-height: 100vh; */
+    width: auto; 
     background-color: white;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
     transform: translateX(100%);

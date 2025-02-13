@@ -53,19 +53,19 @@ const Fuel = () => {
           <Grid container spacing={3}>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
-                <Typography variant="h6">Total Fuel Cost (USD)</Typography>
+                <Typography variant="h6">Total Fuel Cost </Typography>
                 <Typography variant="h4">${totalFuelCost}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
-                <Typography variant="h6">Total Volume (gallons)</Typography>
+                <Typography variant="h6">Total Volume (Litres)</Typography>
                 <Typography variant="h4">{totalLitres}</Typography>
               </Paper>
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
-                <Typography variant="h6">Avg. Fuel Economy (MPG)</Typography>
+                <Typography variant="h6">Avg. Fuel Economy (Km/L)</Typography>
                 <Typography variant="h4">{avgFuelEconomyMPG}</Typography>
               </Paper>
             </Grid>
@@ -77,7 +77,7 @@ const Fuel = () => {
             </Grid>
             <Grid item xs={2.4}>
               <Paper sx={{ backgroundColor:'#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
-                <Typography variant="h6">Avg. Cost Per Gallon</Typography>
+                <Typography variant="h6">Avg. Cost Per Litre</Typography>
                 <Typography variant="h4">${avgCostPerGallon}</Typography>
               </Paper>
             </Grid>
@@ -95,8 +95,8 @@ const Fuel = () => {
                 <TableRow>
                   <TableCell>Vehicle</TableCell>
                   <TableCell>Date</TableCell>
-                  <TableCell>Volume (gallons)</TableCell>
-                  <TableCell>Fuel Price/gallon</TableCell>
+                  <TableCell>Volume (Litres)</TableCell>
+                  <TableCell>Fuel Price/Litre</TableCell>
                   <TableCell>Fuel Type</TableCell>
                   <TableCell>Vendor</TableCell>
                   <TableCell>Distance</TableCell>

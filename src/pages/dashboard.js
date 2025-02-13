@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper, Typography, Box, Button } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import './Dashboard.css';
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { useAuthContext } from '../components/onboarding/authProvider';
+import '../App.css';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -20,9 +22,13 @@ const center = {
 };
 
 const Dashboard = () => {
-  const { user_id} = useAuthContext();
   const { org_id } = useAuthContext();
-  console.log("user", user_id, "org", org_id);
+  console.log( "org", org_id);
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey:process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API Key
+    libraries: ["places"]
+  });
+
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dashboardSummary, setDashboardSummary] = useState({
@@ -85,7 +91,7 @@ const Dashboard = () => {
   }, );
 
   useEffect(() => {
-    fetch(`${baseURL}/trips`)
+    fetch(`${baseURL}/trips/${org_id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -100,13 +106,13 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[] );
+  },[org_id] );
 
   useEffect(() => {
 
-    if (org_id && user_id) {
+    if (org_id) {
 
-    fetch(`${baseURL}/summaries/${org_id}/${user_id}/`)
+    fetch(`${baseURL}/summaries/${org_id}/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -121,7 +127,7 @@ const Dashboard = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }},[org_id,user_id] );
+  }},[org_id] );
 
 
   // Pagination controls
@@ -138,42 +144,48 @@ const Dashboard = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 4 }}>
-        <Typography variant="h5" sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }} gutterBottom>Dashboard</Typography>
-      </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}} >Total Assets</Typography>
-            <Typography variant="h4">{dashboardSummary.totalAssets}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Overall Assets Value</Typography>
-            <Typography variant="h4">${dashboardSummary.overallAssetsValue}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Total Fuel Cost</Typography>
-            <Typography variant="h4">${dashboardSummary.totalFuelCost}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={2.9}>
-          <Paper sx={{ backgroundColor: '#E0ECEF', padding: 2, textAlign: 'center', color: 'text.secondary',  height: '150px' }}>
-            <Typography variant="h6" sx={{ fontFamily: 'Poppins, sans-serif'}}>Carbon Reduction</Typography>
-            <Typography variant="h4">{dashboardSummary.carbonReduction}</Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+    <Container maxWidth="inherit" sx={{ fontFamily: 'var(--font-family)' }}>
+      <Box
+        sx={{
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(200px, 100%), 1fr))',
+          gap: 2,
+        }}
+      >
+        <Card>
+          <CardContent>
+            <Typography variant="body2">Total Assets</Typography>
+            <Typography variant="h6">{dashboardSummary.totalAssets}</Typography>
+          </CardContent>
+        </Card>
 
+        <Card>
+          <CardContent>
+            <Typography variant="body2">Assets Value</Typography>
+            <Typography variant="h6">${dashboardSummary.overallAssetsValue}</Typography>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography variant="body2">Fuel Cost</Typography>
+            <Typography variant="h6">${dashboardSummary.totalFuelCost}</Typography>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography variant="body2">Carbon Reduction</Typography>
+            <Typography variant="h6">{dashboardSummary.carbonReduction}</Typography>
+          </CardContent>
+        </Card>
+      </Box>
 
       <Box sx={{ my: 6 }}>
         <Grid container spacing={3}>
           <Grid item xs={7.5}>
-            <Paper sx={{ padding: 2 }}>
+            <Paper sx={{ padding: 2, height: '100%' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" sx={{ marginRight: 2 }}>Fuel used</Typography>
                 <Typography variant="body2" sx={{ marginRight: 2 }}>Estimated</Typography>
@@ -194,18 +206,26 @@ const Dashboard = () => {
               </LineChart>
             </Paper>
           </Grid>
-          <Grid item xs={4.1}>
-            <Paper sx={{ padding: 2 }}>
-              <Typography variant="h6">Upcoming Trips</Typography>
-              
-              { loading && trips.map((trip) => (
-                <Typography key={trip.id}>{trip.a_license_plate}</Typography>
+
+          <Grid item xs={4.5} sx={{ maxHeight: 400, overflowY: 'scroll' }}>
+            <Paper sx={{ padding: 2, height: 'inherit' }}>
+              <Typography variant="h6">Recent Trips</Typography>
+
+              {!loading && trips.map((trip) => (
+                <Card key={trip.id}>
+                  <CardContent>
+                    <Typography variant="body2">{trip.a_driver_name} - {trip.a_license_plate}</Typography>
+                    <Typography variant="body2">From {trip.a_start_location} Dest {trip.a_end_location}</Typography>
+                    <Typography variant="body2">{trip.status}</Typography>
+                  </CardContent>
+                </Card>
               ))}
-              {/* Pagination Buttons */}
+
               <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
                 <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
                   Previous
                 </Button>
+
                 <Button
                   onClick={handleNextPage}
                   disabled={indexOfLastTrip >= trips.length}
@@ -214,15 +234,19 @@ const Dashboard = () => {
                 </Button>
               </Box>
             </Paper>
+
           </Grid>
+
         </Grid>
+      </Box>
 
-
-
+      <Box sx={{ my: 6 }}>
         <Grid container spacing={3}>
-          <Grid item xs={11.6}>
+          <Grid item xs={12}>
             <Box sx={{ my: 4, height: 300, backgroundColor: '#f5f5f5', borderRadius: 1, position: 'relative' }}>
-              <LoadScript googleMapsApiKey="AIzaSyACIsovAIGLyWjhP-KZAK7wz-smt0NPTCY">
+             
+             {
+                isLoaded && (   
                 <GoogleMap
                   mapContainerStyle={containerStyle}
                   center={center}
@@ -230,7 +254,10 @@ const Dashboard = () => {
                 >
                   <Marker position={center} />
                 </GoogleMap>
-              </LoadScript>
+                )
+             }
+               
+             
               <Box sx={{ position: 'absolute', bottom: 16, left: 16, backgroundColor: '#fff', padding: 2, borderRadius: 1 }}>
                 <Typography variant="h6">Merc</Typography>
                 <Typography variant="body2">East Legon</Typography>
@@ -241,9 +268,7 @@ const Dashboard = () => {
             </Box>
           </Grid>
         </Grid>
-
       </Box>
-
     </Container>
   );
 };

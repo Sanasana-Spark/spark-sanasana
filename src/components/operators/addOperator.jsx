@@ -177,14 +177,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  label="Assiged card"
-                  name="o_payment_card_id"
-                  value={operator.o_payment_card_id}
-                  onChange={handleChange}
-                />
-              </Grid>
+            
               <Grid item xs={12} sm={6}>
                 <TextField
                   required

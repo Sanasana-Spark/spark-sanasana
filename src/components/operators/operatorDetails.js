@@ -1,11 +1,19 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import 'leaflet/dist/leaflet.css';
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Grid, Box, Container, Typography } from '@mui/material';
 import Loader from '../loader';
+import Map from "../maps/singleTripMap";
 
 const PropCard = ({ selectedOperator }) => {
 
+  const startLat = 5.6037;
+  const startLong = -0.187;
+  const endLat = 5.9037;
+  const endLong = -0.117;
+
+  const start = { lat: startLat, lng: startLong };
+  const end = { lat: endLat, lng: endLong };
 
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -18,65 +26,117 @@ const PropCard = ({ selectedOperator }) => {
   
 
   return (
-    <>
+    <Container>
   
         {!loading && (
           
-              <div>
+              <Box>
                  {selectedOperator.map((Operator) => ( <>
 
-                  <Card variant="outlined" style={{ marginTop: "20px" }}>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Typography>Name:</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>{Operator.o_name}</Typography>
-                    </Grid>
+                  <Box>
+                <Grid item xs={12} sm={12} sx={{ padding: 2, textAlign: "center" }}>
+                 
+                   
+                    Most Recent Trip
+                </Grid>
+              </Box>
 
-                    <Grid item xs={6}>
-                      <Typography>Status:</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>{Operator.o_status}</Typography>
-                    </Grid>
+              <Box sx={{ maxHeight: '20vh', overflow: "hidden" }} >
+                <Map
+                  origin={start}
+                  destination={end}
+                  key={Operator.id}
+                  center={start}
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </Box>
 
-                    <Grid item xs={6}>
-                      <Typography>cum mileage:</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>{Operator.o_cum_mileage}</Typography>
-                    </Grid>
 
-                    <Grid item xs={6}>
-                      <Typography>Phone:</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>{Operator.o_phone}</Typography>
-                    </Grid>
+              <Box
+      sx={{
+        p: 3,
+        borderRadius: 2,
+        width: "320px",
+       
+        backgroundColor: "inherit",
+      }}
+    >
+      <Typography variant="body1" sx={{ mb: 2, fontWeight: "bold", color: "#333" }}>
+        Mileage covered vs fuel requested in last:
+      </Typography>
 
-                    <Grid item xs={6}>
-                      <Typography>Expirence:</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography>{Operator.o_expirence}</Typography>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
+      {/* Styled Vertical List */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        {/* Daily Mileage */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 1,
+            borderRadius: 1,
+            // backgroundColor: "white",
+            // boxShadow: 1,
+            // border: "1px solid #ddd",
+          }}
+        >
+          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
+            24 Hours:
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
+            {Operator?.daily_mileage ?? "N/A"} KM - {Operator?.daily_cost ?? "N/A Ksh"}
+          </Typography>
+        </Box>
+
+        {/* Weekly Mileage */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 1,
+            borderRadius: 1,
+          }}
+        >
+          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
+            Week:
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
+            {Operator?.weekly_mileage ?? "N/A"} KM - {Operator?.weekly_cost ?? "N/A Ksh"}
+          </Typography>
+        </Box>
+
+        {/* Monthly Mileage */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            p: 1,
+            borderRadius: 1,
+          }}
+        >
+          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
+            Month:
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
+            {Operator?.monthly_mileage ?? "N/A"} KM - {Operator?.monthly_cost ?? "N/A Ksh"}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
 
               </>
 
 ))}
-            </div>
+            </Box>
            
         )}
         
         { loading && ( <Loader/>
         )}
      
-    </>
+    </ Container>
   );
 };
 
