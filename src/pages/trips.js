@@ -7,7 +7,6 @@ import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import AssetsTable from "../components/trips/tripsTable"
 import AddAssetForm from "../components/trips/addTripMap";
 import AssetDetails from "../components/trips/tripDetails";
-import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
 import {
   Container,
@@ -31,6 +30,7 @@ const Trips = () => {
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  console.log(loading)
   useEffect(() => {
     if (org_id && user_id) {
     fetch(`${baseURL}/trips/${org_id}/${user_id}`)
@@ -116,8 +116,6 @@ const Trips = () => {
 
 
   const AssetView = () => (
-    <>
-      {!loading && (
 
 <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
 <Box  >
@@ -236,16 +234,10 @@ const Trips = () => {
 
 </Container>
 
-      )}
-
-
-{ loading && (<Loader/> )}
-    </>
   );
 
   const DetailView = ({ selectedAsset, isOpen }) => (
-    <>
-      {!loading && (
+   
 <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
 <Box  >
 
@@ -366,12 +358,7 @@ const Trips = () => {
 
 
 </Container>
-      )}
-
-{ loading && ( <div className="loader-container">
-        <Loader />
-      </div> )}
-    </>
+   
   );
 
   const handleIconClick = (iconIndex) => {

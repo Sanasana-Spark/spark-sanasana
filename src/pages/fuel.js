@@ -10,6 +10,7 @@ const Fuel = () => {
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [fuelEntries, setFuelEntries] = useState([]);
+  console.log(loading)
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -31,8 +32,6 @@ const Fuel = () => {
         setLoading(false);
       });
   }}, [baseURL, org_id, user_id]);
-
-  if (loading) return <> Loading...</>;
 
 
   const avgFuelEconomyMPG = 0 ;
