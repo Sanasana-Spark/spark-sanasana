@@ -8,7 +8,6 @@ import AssetsTable from "../components/assets/assetsTable";
 import AddAssetForm from "../components/assets/addAsset";
 import BulkUploadForm from "../components/assets/upload";
 import AssetDetails from "../components/assets/assetDetails";
-import Loader from "../components/loader";
 import { useAuthContext } from "../components/onboarding/authProvider";
 import {
   Container,
@@ -33,6 +32,7 @@ const Assets = () => {
   const [loading, setLoading] = useState(true);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
+  console.log(loading)
 
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   useEffect(() => {
@@ -113,8 +113,7 @@ const Assets = () => {
   };
 
   const AssetView = () => (
-    <>
-      {!loading && (
+
         <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
           <Box  >
 
@@ -265,16 +264,11 @@ const Assets = () => {
             onCancel={handleCancel}
           />
         </Container>
-      )}
-
-      {loading && <Loader />}
-    </>
+  
   );
 
   const DetailView = ({ selectedAsset, isOpen }) => (
-    <>
-      {!loading && (
-        <>
+     
            <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
            <Box  >
  
@@ -433,17 +427,7 @@ const Assets = () => {
 
          </Container>
 
-        
-         </>
-
-      )}
-
-      {loading && (
-        <div className="loader-container">
-          <Loader />
-        </div>
-      )}
-    </>
+     
   );
 
   const handleIconClick = (iconIndex) => {
