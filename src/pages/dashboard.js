@@ -23,7 +23,6 @@ const center = {
 
 const Dashboard = () => {
   const { org_id } = useAuthContext();
-  console.log( "org", org_id);
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey:process.env.REACT_APP_GOOGLE_MAPS_API_KEY, // Replace with your API Key
     libraries: ["places"]
@@ -69,7 +68,7 @@ const Dashboard = () => {
     // Fetch data from the backend
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${baseURL}/summary`);
+        const response = await axios.get(`${baseURL}/summaries/${org_id}`);
         const fetchedData = response.data;
         //Map the fetched fuel usage data to the static months
         const updatedFuelUsage = dashboardData.fuelUsage.map(month => {
