@@ -6,26 +6,23 @@ const baseURL = process.env.REACT_APP_BASE_URL
 export const useAuth = () => {
     
     const { user } = useUser();
+    console.log(user)
     const [organization, setOrganization] = useState(null);
 
     const userId = user?.id;
     const user_id = user?.id;
-    const userEmail = user?.emailAddresses[0]?.emailAddress;
+    const userEmail = user?.emailAddresses[0]?.emailAddress; 
     const user_email = user?.emailAddresses[0]?.emailAddress;
 
   useEffect(() => {
     const fetchOrganization = async () => {
-      if (userId) {
+      if (user_id) {
         try {
-          const response = await fetch(`${baseURL}/organizations/?userId=${userId}`);
+          // const response = await fetch(`${baseURL}/organizations/?userId=${userId}`);
+          const response = await fetch(`${baseURL}/organizations/user_org/?user_id=${user_id}&user_email=${user_email}`);
           if (response.ok) {
             const data = await response.json();
-            // Assuming data is an array with one item
-            if (Array.isArray(data) && data.length > 0) {
-              setOrganization(data[0]);
-            } else {
-              console.error('Error: Organization data is not an array or is empty');
-            }
+            setOrganization(data);
           } else {
             console.error('Error fetching organization:', response.statusText);
           }
@@ -36,7 +33,9 @@ export const useAuth = () => {
     };
 
     fetchOrganization();
-  }, [userId]);
+  }, [user_id, user_email]);
+
+  console.log(organization)
 
   const org_id = organization?.id;
   const org_name = organization?.org_name;

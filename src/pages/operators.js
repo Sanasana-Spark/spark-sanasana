@@ -9,7 +9,6 @@ import OperatorTable from "../components/operators/operatorTable"
 import AddOperatorForm from "../components/operators/addOperator";
 import BulkUploadForm from "../components/assets/upload";
 import OperatorDetails from "../components/operators/operatorDetails";
-import Loader from "../components/loader";
 import { useAuthContext } from '../components/onboarding/authProvider';
 import {
   Container,
@@ -35,6 +34,7 @@ const Operators = () => {
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
+  console.log(loading)
   useEffect(() => {
     if (org_id && user_id) {
     const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
@@ -119,8 +119,7 @@ const Operators = () => {
 
 
   const AssetView = () => (
-    <>
-      {!loading && (
+
 
 <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
 <Box  >
@@ -274,16 +273,11 @@ const Operators = () => {
 />
 </Container>
 
-      )}
 
-
-{ loading && (<Loader/> )}
-    </>
   );
 
   const DetailView = ({ selectedOperator, isOpen }) => (
-    <>
-      {!loading && (
+     
          <div className="fluidGrid">
 
 <ActionNav
@@ -319,12 +313,7 @@ const Operators = () => {
 
 
         </div>
-      )}
-
-{ loading && ( <div className="loader-container">
-        <Loader />
-      </div> )}
-    </>
+  
   );
 
   const handleIconClick = (iconIndex) => {
