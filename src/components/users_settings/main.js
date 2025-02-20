@@ -39,26 +39,32 @@ const UserSettings = () => {
 
   // Save changes
   const handleSave = async () => {
-    try {
-      const response = await fetch(`${baseURL}/users/${editedUser.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedUser),
+ 
+    const url = `${baseURL}/organizations/users/${org_id}/${user_id}/`;
+    const options =  {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editedUser),
+    };
+    fetch(url, options)
+      .then((response) => {
+        if (!response.ok) {
+          console.error("Error saving user:", response.statusText);
+          throw new Error("Failed to add Operator");
+        }
+          // Update local state
+      setUsers((prev) =>
+        prev.map((user) => (user.default_id === editedUser.id ? editedUser : user))
+      );
+      setSelectedUser(null);
+      })
+      .catch((error) => {
+        console.error("Error saving user:", error);
       });
-      if (response.ok) {
-        // Update local state
-        setUsers((prev) =>
-          prev.map((user) => (user.default_id === editedUser.id ? editedUser : user))
-        );
-        setSelectedUser(null);
-      } else {
-        console.error("Error saving user:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error saving user:", error);
-    }
+
+
   };
 
   // Cancel edits

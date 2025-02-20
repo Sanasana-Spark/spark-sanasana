@@ -4,7 +4,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const OrganizationForm = () => {
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { user_id} = useAuthContext();
+  const { user_id, org_id} = useAuthContext();
   // State to hold organization details fetched from backend
   const [organization, setOrganization] = useState({
     logo: "",
@@ -26,7 +26,7 @@ const OrganizationForm = () => {
     const fetchOrganization = async () => {
       if (user_id) {
         try {
-          const response = await fetch(`${baseURL}/organizations/?userId=${user_id}`);
+          const response = await fetch(`${baseURL}/organizations/${org_id}`);
           if (response.ok) {
             const data = await response.json();
             // Assuming data is an array with one item
@@ -45,7 +45,7 @@ const OrganizationForm = () => {
       }
     };
     fetchOrganization();
-  },[ baseURL, user_id]);
+  },[ baseURL, org_id, user_id]);
 
   const handleFieldChange = (field, value) => {
     const updatedOrg = {

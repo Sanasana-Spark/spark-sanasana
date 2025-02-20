@@ -33,7 +33,7 @@ const Trips = () => {
   console.log(loading)
   useEffect(() => {
     if (org_id && user_id) {
-    fetch(`${baseURL}/trips/${org_id}/${user_id}`)
+    fetch(`${baseURL}/trips/${org_id}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -53,7 +53,7 @@ const Trips = () => {
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/trips/create`;
+    const url = `${baseURL}/trips/create/`;
     const data = {
       t_created_by: user_id,
       t_organization_id:org_id,
