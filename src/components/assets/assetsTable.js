@@ -91,7 +91,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
               <TableCell> to set</TableCell>
               <TableCell>{asset.a_milage}</TableCell>
               <TableCell>{asset.a_make}</TableCell>
-              <TableCell>{asset.a_model-asset.a_year}</TableCell>
+              <TableCell>{asset.a_model}-{asset.a_year}</TableCell>
               <TableCell> {/* Move Details button here */}
                 <Button onClick={() => handleCellClick(asset.id)}>
                   {isDropdownOpen[asset.id] ? 'Back' : 'Details'}
