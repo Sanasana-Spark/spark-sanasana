@@ -58,13 +58,13 @@ const Assets = () => {
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/assets/create`;
+    const url = `${baseURL}/assets/${org_id}/${user_id}`;
     const data = {
-      a_created_by: user_id,
-      a_organisation_id: org_id,
+      
       a_make: assetData.a_make,
       a_model: assetData.a_model,
       a_year: assetData.a_year,
+      
       a_fuel_type: assetData.a_fuel_type,
       a_tank_size: assetData.a_tank_size,
       a_status: assetData.a_status,
