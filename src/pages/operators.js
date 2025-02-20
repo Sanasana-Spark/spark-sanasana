@@ -61,10 +61,8 @@ const Operators = () => {
 
   const handleSubmit = (operatorData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/operators/create`;
+    const url = `${baseURL}/operators/${org_id}/${user_id}`;
     const data = {
-      o_created_by: user_id,
-      o_organisation_id:org_id,
       o_name: operatorData.o_name,
       o_email: operatorData.o_email,
       o_phone: operatorData.o_phone,
