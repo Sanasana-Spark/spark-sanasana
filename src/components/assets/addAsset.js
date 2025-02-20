@@ -50,16 +50,16 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     a_model: "",
     a_year: "",
     a_fuel_type: "Diesel",
-    a_tankSize: "",
+    a_tankSize: 100,
     a_displacement: "",
     a_mileage: "",
-    a_horsepower: "",
-    a_acceleration: "",
+    a_horsepower: null,
+    a_acceleration: null,
     a_insurance_expiry: null,
     a_license_plate: null,
-    a_status: "",
-    a_cost: "",
-    a_value: "",
+    a_status: "Active",
+    a_cost: null,
+    a_value: null,
     a_attachment1: null,
     a_attachment2: null,
     aattachment3: null,
@@ -80,7 +80,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     // Optionally, you can reset the form after submission
     setFormData({
       a_status: "Active",
-      a_fuel_type:"Petrol"
+      a_fuel_type:"Diesel"
 
     });
   };
@@ -156,11 +156,11 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
         <TextField required label="Reg No" name="a_license_plate" fullWidth margin="dense" onChange={handleChange} />
         
         <TextField label="Status" name="a_status" fullWidth margin="dense" onChange={handleChange} > 
-           {statusOptions.map((status) => (
+ {statusOptions.map((status) => (
                       <MenuItem key={status.id} value={status.s_name}>
                         {status.s_name}
                       </MenuItem>
-                    ))}
+                    ))} 
 
         </TextField>
         <TextField required label="Insurance Expiry Date"  name="a_insurance_expiry"
