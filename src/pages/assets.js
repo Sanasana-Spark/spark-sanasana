@@ -58,7 +58,7 @@ const Assets = () => {
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/assets/${org_id}/${user_id}`;
+    const url = `${baseURL}/assets/${org_id}/${user_id}/`;
     const data = {
       
       a_make: assetData.a_make,
