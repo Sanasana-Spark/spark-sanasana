@@ -1,19 +1,21 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
-  DialogActions,
-  Button,
+  Modal,
+  Box,
   Typography,
-  Grid,
   TextField,
-  Select,
+  Button,
   MenuItem,
+  IconButton,
+  DialogActions,
+  Grid,
+  Select,
   InputLabel,
-  Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Divider,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
+
 import {
   useJsApiLoader,
   GoogleMap,
@@ -31,6 +33,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
+  const [autocomplete, setAutocomplete] = useState(null);
+
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -150,19 +154,13 @@ console.log(directionsResponse)
   );
 
 
+
+
+
   const onLoad = (autocomplete) => {
     setAutocomplete(autocomplete);
   };
-
-  const [autocomplete, setAutocomplete] = useState(null);
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      console.log(autocomplete.getPlace());
-    } else {
-      console.log("Autocomplete is not loaded yet!");
-    }
-  };
+  const onPlaceChanged = () => {};
 
 
   if (!isLoaded) return <div>Loading...</div>;
@@ -179,6 +177,8 @@ console.log(directionsResponse)
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
     });
+    console.log('ref is ', originRef)
+
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
@@ -186,8 +186,8 @@ console.log(directionsResponse)
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
-    setOriginLat(results.routes[0].bounds.di.lo);
-    setDestinationLat(results.routes[0].bounds.di.hi);
+    setOriginLat(results.routes[0].bounds.ji.lo);
+    setDestinationLat(results.routes[0].bounds.ji.hi);
     setOriginLng(results.routes[0].bounds.Gh.lo);
     setDestinationLng(results.routes[0].bounds.Gh.hi);
   }
@@ -214,11 +214,42 @@ console.log(directionsResponse)
   }
 
   return (
-    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title" maxWidth="false"  fullWidth
-    sx={{ '& .MuiDialog-paper': { width: '60%', maxWidth: 'none' } }} >
-      <DialogTitle id="form-dialog-title">Add Trip</DialogTitle>
-      <DialogContent>
-        <Paper className={"classes.paper"} style={{ padding: '16px' }}>
+    <Modal open={open} onClose={onCancel} sx={{ zIndex: 100}} >
+            <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 700,
+          maxHeight: "80vh",
+          overflowY: "auto",
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
+            top: 0,
+            bgcolor: "background.paper",
+            zIndex: 10,
+            pb: 1,
+          }}
+        >
+          <Typography variant="h6">Add Vehicle</Typography>
+          <IconButton onClick={onCancel}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+
+
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
@@ -228,7 +259,7 @@ console.log(directionsResponse)
                     type="text"
                     label="Origin"
                     inputRef={originRef}
-                    autoComplete="off"
+                    autoComplete="on"
                     margin="normal"
                   />
                 </Autocomplete>
@@ -418,9 +449,8 @@ console.log(directionsResponse)
             </DialogActions>
          
           </form>
-        </Paper>
-      </DialogContent>
-    </Dialog>
+</Box>
+</Modal>
   );
 };
 export default AddTripMapForm;
