@@ -6,7 +6,6 @@ const baseURL = process.env.REACT_APP_BASE_URL
 export const useAuth = () => {
     
     const { user } = useUser();
-    console.log(user)
     const [organization, setOrganization] = useState(null);
 
     const userId = user?.id;
@@ -35,7 +34,6 @@ export const useAuth = () => {
     fetchOrganization();
   }, [user_id, user_email]);
 
-  console.log(organization)
 
   const org_id = organization?.id;
   const org_name = organization?.org_name;
