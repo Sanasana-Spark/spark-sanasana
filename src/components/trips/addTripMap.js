@@ -34,6 +34,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
   const [autocomplete, setAutocomplete] = useState(null);
+  console.log(autocomplete)
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
