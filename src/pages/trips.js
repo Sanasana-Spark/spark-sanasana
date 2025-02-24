@@ -53,10 +53,8 @@ const Trips = () => {
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/trips/create/`;
+    const url = `${baseURL}/trips/${org_id}/${user_id}/`;
     const data = {
-      t_created_by: user_id,
-      t_organization_id:org_id,
       t_type: assetData.t_type,
       t_start_lat: assetData.t_start_lat,
       t_start_long: assetData.t_start_long,
@@ -237,128 +235,114 @@ const Trips = () => {
   );
 
   const DetailView = ({ selectedAsset, isOpen }) => (
-   
-<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
-<Box  >
+    <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
 
-    <Grid item xs={12} marginBottom={5}>
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="h6">Trips</Typography>
-
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          gap={2}
-          color="var(--primary-text-color)"
-        >
+      <Box>
+        <Grid item xs={12} marginBottom={5}></Grid>
+          <Box display="flex" justifyContent="space-between"></Box>
+            <Typography variant="h6">Trips</Typography>
+            <Box
+              display="flex"
+              justifyContent="flex-end"
+              gap={2}
+              color="var(--primary-text-color)"
+            >
+              {/* Add button */}
+              <IconButton
+                onClick={handleAddPropertyClick}
+                sx={{
+                  border: "1px solid #047A9A",
+                  borderRadius: "4px",
+                  padding: "4.5px",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 30,
+                    height: 32,
+                    backgroundColor: "#047A9A",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <AddIcon sx={{ fontSize: 20, color: "white" }} />
+                </Box>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    paddingLeft: "3px",
+                    color: "var(--primary-text-color)",
+                  }}
+                >
+                  Add Trip
+                </Typography>
+              </IconButton>
+            </Box>
+          </Box>
      
-          {/* Add button  */}
-          <IconButton
-            onClick={handleAddPropertyClick}
+          <Box
             sx={{
-              border: "1px solid #047A9A",
-              borderRadius: " 4px",
-              padding: "4.5px",
+              display: "flex",
+              padding: '15px 25px'
             }}
           >
+            {/* Search Box */}
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              sx={{
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                },
+              }}
+            />
             <Box
               sx={{
-                width: 30,
-                height: 32,
-                backgroundColor: "#047A9A",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                backgroundColor: "#047A9A",
+                padding: "8px",
+                borderTopRightRadius: "5px",
+                borderBottomRightRadius: "5px",
               }}
             >
-              <AddIcon sx={{ fontSize: 20, color: "white" }} />
+              <Search sx={{ color: "white" }} />
             </Box>
-            <Typography
-              variant="body2"
-              sx={{
-                paddingLeft: "3px",
-                color: "var(--primary-text-color)",
-              }}
-            >
-              Add Trip
-            </Typography>
-          </IconButton>
-        </Box>
-      </Box>
-    </Grid>
+            {/* Icons */}
+            <Box>
+              {icons.map((icon, index) => (
+                <IconButton key={index}>{icon}</IconButton>
+              ))}
+            </Box>
+          </Box>
 
+          <Box>
+            <AssetsTable
+              assets={assets}
+              onViewUnitsClick={handleViewDetailsClick}
+            />
+          </Box>
 
+ 
 
-    <Grid item xs={12} component={Paper} >
+        <div className={`slider ${isOpen ? "open" : ""}`}>
+          <Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
+          <AssetDetails selectedAsset={selectedAsset} />
+          </Box>
+        </div>
 
-      <Box
-        sx={{
-          display: "flex",
-          padding: '15px 25px'
-        }}
-      >
-        {/* Search Box */}
-        <TextField
-          label="Search"
-          variant="outlined"
-          size="small"
-          sx={{
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-            },
-          }}
-        />
+    
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#047A9A",
-            padding: "8px",
-            borderTopRightRadius: "5px",
-            borderBottomRightRadius: "5px",
-          }}
-        >
-          <Search sx={{ color: "white" }} />
-        </Box>
-        {/* Icons */}
-        <Box>
-          {icons.map((icon, index) => (
-            <IconButton key={index}>{icon}</IconButton>
-          ))}
-        </Box>
-
-      </Box>
-
-    <Box>
-      <AssetsTable
-        assets={assets}
-        onViewUnitsClick={handleViewDetailsClick}
+      <AddAssetForm
+        open={showAddPropertyForm}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
       />
-      </Box>
-
-
-    </Grid>
-
-       <div className={`slider ${isOpen ? "open" : ""}`}>
-  <AssetDetails selectedAsset={selectedAsset} />
-</div>
-
-
-
-</Box>
-
-<AddAssetForm
-  open={showAddPropertyForm}
-  onSubmit={handleSubmit}
-  onCancel={handleCancel}
-/>
-
-
-</Container>
-   
+    </Container>
   );
 
   const handleIconClick = (iconIndex) => {

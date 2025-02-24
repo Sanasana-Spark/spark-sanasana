@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../App.css";
 import { useAuthContext } from "../onboarding/authProvider";
-import { UserButton } from "@clerk/clerk-react";
 
 const UserSettings = () => {
   const baseURL = process.env.REACT_APP_BASE_URL;
@@ -13,6 +12,7 @@ const UserSettings = () => {
   // State for modal form
   const [selectedUser, setSelectedUser] = useState(null);
   const [editedUser, setEditedUser] = useState(null);
+  const [invitedUser, setInvitedUser] = useState(false);
 
   useEffect(() => {
     // Fetch users data
@@ -38,9 +38,8 @@ const UserSettings = () => {
   };
 
   // Save changes
-  const handleSave = async () => {
- 
-    const url = `${baseURL}/organizations/users/${org_id}/${user_id}/`;
+  const handleSave =  () => {
+    const url = `${baseURL}/organizations/edituser/${org_id}/${user_id}/`;
     const options =  {
       method: "PUT",
       headers: {
@@ -52,7 +51,7 @@ const UserSettings = () => {
       .then((response) => {
         if (!response.ok) {
           console.error("Error saving user:", response.statusText);
-          throw new Error("Failed to add Operator");
+          throw new Error("Failed to edit user");
         }
           // Update local state
       setUsers((prev) =>
@@ -71,6 +70,53 @@ const UserSettings = () => {
   const handleCancel = () => {
     setEditedUser(null);
     setSelectedUser(null);
+    setInvitedUser(false);
+  };
+
+
+  // invite user
+  const [userData, setUserData] = useState({
+    email: null,
+    username:null,
+    role: "Driver",
+    phone: null
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prevAsset) => ({
+      ...prevAsset,
+      [name]: value,
+    }));
+  };
+
+  const handleInvite = (e) => {
+    // Define the URL for the POST request
+    const url = `${baseURL}/organizations/users/${org_id}/${user_id}/`;
+    const data = {
+      email: userData.email,
+      username:userData.username,
+      role: userData.role,
+      phone: userData.phone
+    };
+    const options = {
+      method: "POST", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json", // Specify the content type of the request body
+      },
+      body: JSON.stringify(data), // Convert data to JSON string for the request body
+    };
+    fetch(url, options)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to invite user confirm user email");
+        }
+        console.log("user invited successfully");
+        setInvitedUser(false);
+      })
+      .catch((error) => {
+        console.error("Error inviting user:", error);
+      });
   };
 
   return (
@@ -78,8 +124,12 @@ const UserSettings = () => {
     
       <div style={{ display:"flex", alignItems: "center",}}>
 <div style={{padding: "10px 20px",}} > Select the permissions for your team members </div>
+
 <button
           type="button"
+          onClick={() => {
+            setInvitedUser(true);
+          }}
           style={{
             padding: "10px 15px",
             backgroundColor: "var(--primary-color)" ,
@@ -95,7 +145,6 @@ const UserSettings = () => {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ marginBottom:"30px", backgroundColor:"gray" }}>
-            <th></th>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
@@ -111,7 +160,6 @@ const UserSettings = () => {
             paddingBottom:"15px",
              marginTop:"15px"
               }}>
-              <td><UserButton/></td>
               <td>{user.username}</td>
               <td>{user.email}</td>
               <td>{user.role}</td>
@@ -248,6 +296,100 @@ const UserSettings = () => {
           onClick={handleCancel}
         />
       )}
+
+
+{invitedUser && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "white",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            padding: "20px",
+            borderRadius: "8px",
+            zIndex: 1000,
+          }}
+        >
+          <h3>Invite new User</h3>
+          <form>
+            <div style={{ marginBottom: "10px" }}>
+              <label>Name: </label>
+              <input
+                type="text"
+                name="username"
+                onChange={handleChange}
+                style={{ width: "100%", padding: "5px" }}
+              />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+              <label>Email: </label>
+              <input
+                type="email"
+                name="email"
+                onChange={handleChange}
+                style={{ width: "100%", padding: "5px" }}
+              />
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+            <label>Role: </label>
+            <select
+              value={userData.role}
+              name="role"
+              onChange={handleChange}
+              style={{ width: "100%", padding: "5px" }}
+            >
+              <option value="driver">Driver</option>
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+            <div style={{ marginBottom: "10px" }}>
+              <label>Phone: </label>
+              <input
+                type="text"
+                name="phone"
+                onChange={handleChange}
+                style={{ width: "100%", padding: "5px" }}
+              />
+            </div>
+ 
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <button
+                type="button"
+                onClick={handleInvite}
+                style={{
+                  padding: "10px",
+                  backgroundColor: "var(--primary-color)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                }}
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                style={{
+                  padding: "10px",
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "5px",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+
+
+
     </div>
   );
 };
