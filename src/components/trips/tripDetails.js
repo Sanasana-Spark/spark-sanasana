@@ -3,7 +3,7 @@ import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import Loader from "../loader";
 import Map from "../maps/singleTripMap";
-// import Map1 from "../maps/newmap";
+//  import Map1 from "../maps/newmap";
 
 
 
@@ -30,12 +30,14 @@ const PropCard = ({ selectedAsset }) => {
       {selectedAsset.map((asset) => {
         const startLat = parseFloat(asset.t_start_lat);
         const startLong = parseFloat(asset.t_start_long);
-        const endLat = parseFloat(asset.t_end_lat);
-        const endLong = parseFloat(asset.t_end_long);
+        // const endLat = parseFloat(asset.t_end_lat);
+        // const endLong = parseFloat(asset.t_end_long);
 
         const start = { lat: startLat, lng: startLong };
-        const end = { lat: endLat, lng: endLong };
-        console.log("origin",start, "destination", end )
+        // const end = { lat: endLat, lng: endLong };
+        const origin = asset.t_origin_place_query
+        const destination = asset.t_destination_place_query
+        console.log("origin",origin, "destination", destination )
 
         // const center = { lat:(startLat+endLat), lng:(startLong + endLong) };
 
@@ -51,8 +53,8 @@ const PropCard = ({ selectedAsset }) => {
            /> */}
 
 <Map
-           origin= {start}
-           destination={end}
+           origin= {origin}
+           destination={destination}
             key={asset.id}
             center = {start}
            />
@@ -62,7 +64,7 @@ const PropCard = ({ selectedAsset }) => {
            destination={end}
            key={asset.id}
            center = {start}
-           /> */}
+           />  */}
 
 
 
@@ -77,7 +79,7 @@ const PropCard = ({ selectedAsset }) => {
                     <Typography>end: {JSON.stringify(end)}</Typography>
                   </Grid> */}
                   <Grid item xs={12}>
-                    <Typography>Truck:{asset.a_license_plate}( {asset.t_a_make}-{asset.t_a_model})</Typography>
+                    <Typography> {asset.a_license_plate} ({asset.a_make}-{asset.a_model}) </Typography>
                   </Grid>
    
    <Grid item xs={12 } sm={6}>
@@ -97,7 +99,7 @@ const PropCard = ({ selectedAsset }) => {
                     <Typography>Status: {asset.t_status}</Typography>
                   </Grid>
                   <Grid item xs={12} sm={6} >
-                    <Typography>Driver: {asset.t_operator_name}</Typography>
+                    <Typography>Driver: {asset.o_name}</Typography>
                   </Grid>
                   
                   <Grid item xs={12} sm={6} >
