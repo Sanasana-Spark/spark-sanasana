@@ -64,7 +64,6 @@ const Assets = () => {
       a_make: assetData.a_make,
       a_model: assetData.a_model,
       a_year: assetData.a_year,
-      
       a_fuel_type: assetData.a_fuel_type,
       a_tank_size: assetData.a_tank_size,
       a_status: assetData.a_status,
