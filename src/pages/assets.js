@@ -64,7 +64,6 @@ const Assets = () => {
       a_make: assetData.a_make,
       a_model: assetData.a_model,
       a_year: assetData.a_year,
-      
       a_fuel_type: assetData.a_fuel_type,
       a_tank_size: assetData.a_tank_size,
       a_status: assetData.a_status,
@@ -74,6 +73,8 @@ const Assets = () => {
       a_horsepower: assetData.a_horsepower,
       a_acceleration: assetData.a_acceleration,
       a_insurance_expiry: assetData.a_insurance_expiry,
+      a_attachment1: null,
+      a_attachment2: null,
   
     };
     const options = {
