@@ -22,35 +22,36 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   );
 
   useEffect(() => {
-    const apiUrl = `${baseURL}/assets/status`;
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setStatusOptions(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      });
-  },[baseURL]);
+    if(open){
+      const apiUrl = `${baseURL}/assets/status`;
+      fetch(apiUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setStatusOptions(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+  }
+},[baseURL, open]);
 
 
 
 
   //   const classes = useStyles();
   const [formData, setFormData] = useState({
-
     a_make: "",
     a_model: "",
     a_year: "",
     a_fuel_type: "Diesel",
-    a_tankSize: 100,
+    a_tank_size: 100,
     a_displacement: "",
     a_mileage: "",
     a_horsepower: null,
@@ -62,7 +63,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
     a_value: null,
     a_attachment1: null,
     a_attachment2: null,
-    aattachment3: null,
+    a_attachment3: null,
 
   });
 
@@ -148,7 +149,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
           <MenuItem value="Petrol">Petrol</MenuItem>
           <MenuItem value="Diesel">Diesel</MenuItem>
         </TextField>
-        <TextField required label="Tank Size" name="a_tankSize" fullWidth margin="dense" onChange={handleChange} />
+        <TextField required label="Tank Size" name="a_tank_size" fullWidth margin="dense" onChange={handleChange} />
         <TextField required label="Displacement/cc" name="a_displacement" fullWidth margin="dense" onChange={handleChange} />
         <TextField required label="Mileage" name="a_mileage" fullWidth margin="dense" onChange={handleChange} />
         <TextField label="Horsepower" name="a_horsepower" fullWidth margin="dense" onChange={handleChange} />

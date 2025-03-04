@@ -73,6 +73,8 @@ const Assets = () => {
       a_horsepower: assetData.a_horsepower,
       a_acceleration: assetData.a_acceleration,
       a_insurance_expiry: assetData.a_insurance_expiry,
+      a_attachment1: null,
+      a_attachment2: null,
   
     };
     const options = {
