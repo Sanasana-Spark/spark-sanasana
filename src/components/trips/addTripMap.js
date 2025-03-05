@@ -53,6 +53,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [trip, setTrip] = useState({
     t_load: 0,
     t_status: "Pending",
+    t_type: "N/A",
+    t_start_date: null,
+    t_end_date: null,
   },[]);
 
   useEffect(() => {
@@ -114,7 +117,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_start_lat:origin_lat,
       t_end_lat:destination_lat,
       t_start_long:origin_lng,
-      t_end_long:destination_lng
+      t_end_long:destination_lng,
+      t_type:trip.t_type,
 
     }));
 console.log(directionsResponse)
@@ -130,13 +134,15 @@ console.log(directionsResponse)
     t_start_lat:origin_lat,
     t_end_lat:destination_lat,
     t_start_long:origin_lng,
-    t_end_long:destination_lng
+    t_end_long:destination_lng,
+    t_type:trip.t_type
   });
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
       t_operator_id: "",
       t_asset_id: "",
+      t_type: "N/A",
     });
   };
 
