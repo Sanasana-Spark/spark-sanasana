@@ -51,6 +51,7 @@ const PropCard = ({ selectedAsset }) => {
                 </Grid>
               </Box>
               <Box sx={{ maxHeight: '20vh', overflow: "hidden" }} >
+
                 <Map
                   origin={start}
                   destination={end}
@@ -58,6 +59,7 @@ const PropCard = ({ selectedAsset }) => {
                   center={start}
                   style={{ width: "100%", height: "100%" }}
                 />
+                
               </Box>
 
               <Box>
