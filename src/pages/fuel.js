@@ -45,7 +45,7 @@ const Fuel = () => {
 
 		// search by vehicle or operator
 		if (search) {
-			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.f_operator.toLowerCase().includes(search.toLowerCase()));
+			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.o_name.toLowerCase().includes(search.toLowerCase()));
 		}
 
 		// filtering by date
