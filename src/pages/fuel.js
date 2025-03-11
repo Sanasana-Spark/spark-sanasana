@@ -43,7 +43,7 @@ const Fuel = () => {
 	useEffect(() => {
 		let filtered = fuelEntries;
 
-		// search by vehicle or operator
+		// search by vehicle/ operator
 		if (search) {
 			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.f_operator.toLowerCase().includes(search.toLowerCase()));
 		}
