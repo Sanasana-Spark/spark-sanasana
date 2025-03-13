@@ -42,21 +42,29 @@ const Fuel = () => {
 	//Implementing  Filter & Search Logic
 	useEffect(() => {
 		let filtered = fuelEntries;
+		const searchQuery = search ? String(search).toLowerCase() : '';
 
-		// search by vehicle or operator
-		if (search) {
-			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.o_name.toLowerCase().includes(search.toLowerCase()));
+		// Search by vehicle license plate or operator name
+		if (searchQuery) {
+			filtered = filtered.filter(entry => {
+				const plate = entry.a_license_plate ? entry.a_license_plate.toLowerCase() : '';
+				const operator = entry.f_operator ? entry.f_operator.toLowerCase() : '';
+
+				return plate.includes(searchQuery) || operator.includes(searchQuery);
+			});
 		}
 
-		// filtering by date
+		// Filter by start date
 		if (startDate) {
-			filtered = filtered.filter(entry => new Date(entry.f_created_at) >= new Date(startDate));
-		}
-		if (endDate) {
-			filtered = filtered.filter(entry => new Date(entry.f_created_at) <= new Date(endDate));
+			filtered = filtered.filter(entry => entry.f_created_at && new Date(entry.f_created_at) >= new Date(startDate));
 		}
 
-		// filtering by vehicle number plate
+		// Filter by end date
+		if (endDate) {
+			filtered = filtered.filter(entry => entry.f_created_at && new Date(entry.f_created_at) <= new Date(endDate));
+		}
+
+		// Filter by vehicle number plate
 		if (vehicle) {
 			filtered = filtered.filter(entry => entry.a_license_plate === vehicle);
 		}
