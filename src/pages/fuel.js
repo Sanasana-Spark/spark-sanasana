@@ -42,11 +42,17 @@ const Fuel = () => {
 	//Implementing  Filter & Search Logic
 	useEffect(() => {
 		let filtered = fuelEntries;
+
 		const searchQuery = search ? String(search).toLowerCase() : '';
 
-		// search by vehicle/ operator
-		if (search) {
-			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.o_name.toLowerCase().includes(search.toLowerCase()));
+		// Search by vehicle license plate or operator name
+		if (searchQuery) {
+			filtered = filtered.filter(entry => {
+				const plate = entry.a_license_plate ? entry.a_license_plate.toLowerCase() : '';
+				const operator = entry.o_name ? entry.o_name.toLowerCase() : '';
+
+				return plate.includes(searchQuery) || operator.includes(searchQuery);
+			});
 		}
 
 		// Filter by start date
