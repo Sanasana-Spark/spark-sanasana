@@ -165,7 +165,7 @@ const Fuel = () => {
 
 							<TableBody>
 								{filteredEntries.length > 0 ? (
-									filteredEntries.map(entry => (
+									loading & filteredEntries.map(entry => (
 										<TableRow key={entry.id}>
 											<TableCell sx={{ border: 'none' }}>{entry.a_license_plate}</TableCell>
 											<TableCell sx={{ border: 'none' }}>{entry.f_created_at}</TableCell>
