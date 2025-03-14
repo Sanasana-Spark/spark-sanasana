@@ -1,86 +1,76 @@
-/* eslint-disable no-undef */
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { CSVLink } from "react-csv";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useAuthContext } from '../components/onboarding/authProvider';
+import React, { useState } from "react";
+import  "../App.css";
+import General from "../components/reports/general";
+import Operators from "../components/reports/operators";
+import Assets from "../components/reports/assets";
 
 const Reports = () => {
-  const baseURL = process.env.REACT_APP_BASE_URL
-  const { org_id } = useAuthContext();
+  const [activeTab, setActiveTab] = useState("General");
 
-  const [trips, setTrips] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-
-  useEffect(() => {
-      fetchTrips();
-  },);
-
-  const fetchTrips = async () => {
-      try {
-          const response = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
-              params: {organization_id: org_id, start_date: startDate, end_date: endDate }
-          });
-          setTrips(response.data);
-      } catch (error) {
-          console.error("Error fetching reports:", error);
-      }
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
   };
 
+  const tabButtonStyle = (isActive) => ({
+    padding: "10px 20px",
+    margin: "10px 20px",
+    fontWeight: "bold",
+    fontSize: "0.75em",
+    cursor: "pointer",
+    borderRadius: "20px",
+    background: isActive ? "var( --faded-primary-color)" : "transparent",
+    border: "none",
+    borderBottom: isActive ? "var(--primary-color)" : "none",
+  });
+
+
   return (
-      <div className="p-4">
-          <h2 className="text-xl font-bold">Trip Reports</h2>
-
-          {/* Filters */}
-          <div className="mb-4">
-              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-              <button onClick={fetchTrips} className="bg-blue-500 text-white px-4 py-2">Fetch Report</button>
-          </div>
-
-          {/* Export as CSV */}
-          <CSVLink data={trips} filename="trip_report.csv" className="bg-green-500 text-white px-4 py-2">
-              Export as CSV
-          </CSVLink>
-
-          {/* Chart Visualization */}
-          <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={trips}>
-                  <XAxis dataKey="id" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="t_est_cost" fill="#8884d8" name="Estimated Cost" />
-                  <Bar dataKey="t_actual_cost" fill="#82ca9d" name="Actual Cost" />
-              </BarChart>
-          </ResponsiveContainer>
-
-          {/* Table */}
-          <table className="min-w-full bg-white border border-gray-300 mt-4">
-              <thead>
-                  <tr className="bg-gray-200">
-                      <th className="border px-4 py-2">ID</th>
-                      <th className="border px-4 py-2">Status</th>
-                      <th className="border px-4 py-2">Est. Cost</th>
-                      <th className="border px-4 py-2">Actual Cost</th>
-                      <th className="border px-4 py-2">Created At</th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {trips.map((trip) => (
-                      <tr key={trip.id}>
-                          <td className="border px-4 py-2">{trip.id}</td>
-                          <td className="border px-4 py-2">{trip.t_status}</td>
-                          <td className="border px-4 py-2">${trip.t_est_cost}</td>
-                          <td className="border px-4 py-2">${trip.t_actual_cost}</td>
-                          <td className="border px-4 py-2">{new Date(trip.t_created_at).toLocaleDateString()}</td>
-                      </tr>
-                  ))}
-              </tbody>
-          </table>
+    <div>
+     
+      <div style={{ display: "flex",fontWeight: "bold",fontSize: "1em",  }} >
+        Reports
       </div>
+      <div style={{ display: "grid", border: "1px solid gray", margin:"2em", overflow: "scroll" }} >
+
+    
+
+      <div style={{ display: "flex"}}>
+
+        <button
+          onClick={() => handleTabClick("General")}
+          style={tabButtonStyle(activeTab === "General")}
+        >
+         General
+        </button>
+        <button
+          onClick={() => handleTabClick("Operators")}
+          style={tabButtonStyle(activeTab === "Operators")}
+        >
+          By-Operators
+        </button>
+        <button
+          onClick={() => handleTabClick("Assets")}
+          style={tabButtonStyle(activeTab === "Assets")}
+        >
+          By-Asset
+        </button>
+       
+        
+
+    
+
+      </div>
+
+      <div style={{ padding: "20px", height:"70vh" }}>
+        {activeTab === "General" &&  <General/>}
+        {activeTab === "Operators" && <Operators/>}
+        {activeTab === "Assets" && <Assets/> }
+      </div>
+
+      </div>
+
+    </div>
   );
 };
 
-export default Reports
+export default Reports;
