@@ -15,6 +15,7 @@ const Fuel = () => {
 	const [endDate, setEndDate] = useState('');
 	const [vehicle, setVehicle] = useState('');
 	const [filteredEntries, setFilteredEntries] = useState([]);
+	console.log(loading)
 
 	useEffect(() => {
 		if (org_id && user_id) {
@@ -165,7 +166,7 @@ const Fuel = () => {
 
 							<TableBody>
 								{filteredEntries.length > 0 ? (
-									loading & filteredEntries.map(entry => (
+									 filteredEntries.map(entry => (
 										<TableRow key={entry.id}>
 											<TableCell sx={{ border: 'none' }}>{entry.a_license_plate}</TableCell>
 											<TableCell sx={{ border: 'none' }}>{entry.f_created_at}</TableCell>
