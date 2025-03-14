@@ -20,6 +20,7 @@ const Reports = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [operator, setOperator] = useState(null)
+    // eslint-disable-next-line
     const [previewReport, setPreviewReport] = useState(null);
 
     useEffect(() => {
