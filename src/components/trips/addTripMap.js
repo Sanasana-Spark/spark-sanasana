@@ -33,8 +33,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
-  const [autocomplete, setAutocomplete] = useState(null);
-  console.log(autocomplete)
+  const [, setAutocomplete] = useState(null);
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
@@ -57,6 +56,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_start_date: null,
     t_end_date: null,
   },[]);
+  console.log(origin_lat)
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -193,8 +193,8 @@ console.log(directionsResponse)
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
-    setOriginLat(results.routes[0].bounds.ji.lo);
-    setDestinationLat(results.routes[0].bounds.ji.hi);
+    setOriginLat(results.routes[0].bounds.fi.lo);
+    setDestinationLat(results.routes[0].bounds.fi.hi);
     setOriginLng(results.routes[0].bounds.Gh.lo);
     setDestinationLng(results.routes[0].bounds.Gh.hi);
   }

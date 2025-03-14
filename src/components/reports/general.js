@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { CSVLink } from "react-csv";
@@ -19,6 +21,7 @@ const Reports = () => {
     console.log(reports)
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
+    // eslint-disable-next-line
     const [previewReport, setPreviewReport] = useState(null);
 
     useEffect(() => {
@@ -120,9 +123,9 @@ const Reports = () => {
 
                     </button>
 
-                    <button onClick={() => generatePDF(data, key)} className="bg-red-500 text-white px-4 py-2 ml-2 rounded">
+                    {/* <button onClick={() => generatePDF(data, key)} className="bg-red-500 text-white px-4 py-2 ml-2 rounded">
                     Download PDF
-                    </button>
+                    </button> */}
                 </div>
             ))}
 

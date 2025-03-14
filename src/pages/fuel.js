@@ -15,7 +15,6 @@ const Fuel = () => {
 	const [endDate, setEndDate] = useState('');
 	const [vehicle, setVehicle] = useState('');
 	const [filteredEntries, setFilteredEntries] = useState([]);
-	console.log(loading);
 
 	useEffect(() => {
 		if (org_id && user_id) {
