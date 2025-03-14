@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, TablePagination, Button } from '@mui/material';
 
-const OperatorTable = ({ operators, onViewUnitsClick }) => {
+const OperatorTable = React.memo(({ operators, onViewUnitsClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -70,6 +70,6 @@ const OperatorTable = ({ operators, onViewUnitsClick }) => {
 			<TablePagination rowsPerPageOptions={[]} component='div' count={operators.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 		</>
 	);
-};
+});
 
-export default OperatorTable;
+export default React.memo(OperatorTable);

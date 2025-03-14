@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import DragIndicator from '@mui/icons-material/DragIndicator';
 import Reorder from '@mui/icons-material/Reorder';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
@@ -25,7 +25,6 @@ const Operators = () => {
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
-	const [filteredAssets, setFilteredAssets] = useState([]);
 	console.log(loading);
 
 	useEffect(() => {
@@ -104,19 +103,15 @@ const Operators = () => {
 	};
 
 	//handling search by drivers name or contact
-	useEffect(() => {
-		let filtered = assets;
-		if (search) {
-			filtered = filtered.filter(operator => {
-				const searchQuery = search ? search.toString().toLowerCase() : '';
-				const phone = operator.o_phone ? operator.o_phone.toString() : '';
-				const localFormat = phone.startsWith('254') ? '0' + phone.slice(3) : phone; // Converts 254 to 07 format
+	const filteredAssets = assets.filter(operator => {
+		if (!search) return true;
 
-				return operator.o_name?.toLowerCase().includes(searchQuery) || phone.includes(searchQuery) || localFormat.includes(searchQuery);
-			});
-		}
-		setFilteredAssets(filtered);
-	}, [search, assets]);
+		const searchQuery = search.toLowerCase();
+		const phone = operator.o_phone ? operator.o_phone.toString() : '';
+		const localFormat = phone.startsWith('254') ? '0' + phone.slice(3) : phone;
+
+		return operator.o_name?.toLowerCase().includes(searchQuery) || phone.includes(searchQuery) || localFormat.includes(searchQuery);
+	});
 
 	const AssetView = () => (
 		<Container width='100%' sx={{ fontFamily: 'var(--font-family)', padding: 1 }}>
@@ -227,7 +222,7 @@ const Operators = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<OperatorTable operators={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} />
+							<OperatorTable operators={filteredAssets} onViewUnitsClick={handleViewDetailsClick} />
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -292,11 +287,12 @@ const Operators = () => {
 		}
 	};
 
-	const handleViewDetailsClick = rowIndex => {
+	const handleViewDetailsClick = useCallback(rowIndex => {
 		setCurrentView('RequestDetails');
 		setSelectedTicket(rowIndex);
 		setIsSliderOpen(true);
-	};
+	}, []);
+
 	console.log(currentView, selectedTicket);
 
 	return <>{assets.length > 0 ? <>{renderView()}</> : <p> Add Operators </p>}</>;
