@@ -48,7 +48,7 @@ const Fuel = () => {
 		if (searchQuery) {
 			filtered = filtered.filter(entry => {
 				const plate = entry.a_license_plate ? entry.a_license_plate.toLowerCase() : '';
-				const operator = entry.f_operator ? entry.f_operator.toLowerCase() : '';
+				const operator = entry.o_name ? entry.o_name.toLowerCase() : '';
 
 				return plate.includes(searchQuery) || operator.includes(searchQuery);
 			});

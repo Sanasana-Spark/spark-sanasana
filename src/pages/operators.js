@@ -13,7 +13,6 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
-import { Search } from '@mui/icons-material';
 
 const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -49,7 +48,7 @@ const Operators = () => {
 					setLoading(false);
 				});
 		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
+	}, [baseURL, org_id, user_id, showAddPropertyForm]);
 
 	const handleSubmit = operatorData => {
 		// Define the URL for the POST request
@@ -124,7 +123,9 @@ const Operators = () => {
 			<Box>
 				<Grid item xs={12} marginBottom={5}>
 					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Operators</Typography>
+						<Typography variant='h6' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }}>
+							Operators
+						</Typography>
 
 						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
 							{/* Bulk Button */}
@@ -203,7 +204,7 @@ const Operators = () => {
 					>
 						{/* Search Box */}
 						<TextField
-							label='Search'
+							placeholder='Search'
 							variant='outlined'
 							size='small'
 							value={search}
@@ -216,19 +217,6 @@ const Operators = () => {
 							}}
 						/>
 
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								backgroundColor: '#047A9A',
-								padding: '8px',
-								borderTopRightRadius: '5px',
-								borderBottomRightRadius: '5px',
-							}}
-						>
-							<Search sx={{ color: 'white' }} />
-						</Box>
 						{/* Icons */}
 						<Box>
 							{icons.map((icon, index) => (
@@ -272,9 +260,9 @@ const Operators = () => {
 	);
 
 	const handleIconClick = iconIndex => {
-		const newView = iconIndex === 0 ? 'TableView' : 'RequestDetails'; // Determine view based on index
+		const newView = iconIndex === 0 ? 'TableView' : 'RequestDetails';
 		setCurrentView(newView);
-		setIsSliderOpen(iconIndex !== 0); // Open slider if iconIndex is not 0
+		setIsSliderOpen(iconIndex !== 0);
 	};
 
 	const icons = [
@@ -298,7 +286,7 @@ const Operators = () => {
 					<>
 						<DetailView selectedOperator={selectedOperator} isOpen={isSliderOpen} />
 					</>
-				); // Replace with actual rendering logic for RequestDetails
+				);
 			default:
 				return null;
 		}
