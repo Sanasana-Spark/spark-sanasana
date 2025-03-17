@@ -57,8 +57,43 @@ const OrganizationForm = () => {
 
 
   const handleSave = (field) => {
+    console.log(editedOrganization);
+    const url = `${baseURL}/organizations/${org_id}/${user_id}/`;
+    const data = {
+      org_currency:editedOrganization.org_currency,
+      org_diesel_price:editedOrganization.org_diesel_price,
+      org_petrol_price:editedOrganization.org_petrol_price,
+      org_email:editedOrganization.org_email,
+      org_name:editedOrganization.org_name,
+      org_size:editedOrganization.org_size,
+      org_fiscal_start: editedOrganization.org_fiscal_start,
+      org_fiscal_stop:editedOrganization.org_fiscal_stop
+    }
+    console.log("Payload Data:", data); // Log the payload
+
+    const options = {
+      method: "PUT", // Specify the HTTP method
+      headers: {
+        "Content-Type": "application/json", // Specify the content type of the request body
+      },
+      body: JSON.stringify(data), // Convert data to JSON string for the request body
+    };
+    fetch(url, options)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to add trip");
+      }
+      console.log("trip added successfully");
+      setEditingField(null); // Exit edit mode for the field
+    })
+    .catch((error) => {
+      console.error("Error adding trip:", error);
+    });
+
+
+
     setOrganization(editedOrganization);
-    setEditingField(null); // Exit edit mode for the field
+ 
   };
 
   return(
@@ -316,7 +351,7 @@ const OrganizationForm = () => {
 
 
     {/* Phone */}
-    <div
+  <div
   style={{
     paddingBottom: "20px",
     marginTop: "15px",
@@ -402,7 +437,187 @@ const OrganizationForm = () => {
       </div>
     )}
   </div>
+
+
 </div>
+
+
+ {/* Diesel price */}
+ <div
+  style={{
+    paddingBottom: "20px",
+    marginTop: "15px",
+    display: "flex",
+    alignItems: "center",
+    borderBottom: "solid 0.75px gray",
+  }}
+>
+<div style={{ flex: 1, fontWeight: "light"  }}>Diesel Price</div>
+  <div style={{ flex: 2 }}>
+    {editingField === "org_diesel_price" ? (
+      // Edit Mode: Show Input and Save/Cancel Buttons
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <input
+          type="text"
+          value={editedOrganization.org_phone}
+          onChange={(e) => handleFieldChange("org_diesel_price", e.target.value)}
+          style={{
+            flex: 1,
+            padding: "5px",
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => handleSave("org_diesel_price")}
+          style={{
+            padding: "5px 10px",
+             backgroundColor: "var(--primary-color)",
+            color: "white",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            // Cancel changes: Reset the edited field and exit edit mode
+            setEditedOrganization((prev) => ({
+              ...prev,
+              org_diesel_price: organization.org_diesel_price,
+            }));
+            setEditingField(null);
+          }}
+          style={{
+            padding: "5px 10px",
+            backgroundColor: "red",
+            color: "white",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    ) : (
+      // View Mode: Show Field Value and Edit Button
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <p style={{ margin: 0, flex: 1 }}>{organization.org_diesel_price}</p>
+        <button
+          type="button"
+          onClick={() => setEditingField("org_diesel_price")}
+          style={{
+            padding: "5px 10px",
+           backgroundColor: "var( --faded-primary-color)",
+            color: "black",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Edit
+        </button>
+      </div>
+    )}
+  </div>
+
+  </div>
+
+
+   {/* Petrol price */}
+ <div
+  style={{
+    paddingBottom: "20px",
+    marginTop: "15px",
+    display: "flex",
+    alignItems: "center",
+    borderBottom: "solid 0.75px gray",
+  }}
+>
+<div style={{ flex: 1, fontWeight: "light"  }}>Petrol Price</div>
+  <div style={{ flex: 2 }}>
+    {editingField === "org_petrol_price" ? (
+      // Edit Mode: Show Input and Save/Cancel Buttons
+      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+        <input
+          type="text"
+          value={editedOrganization.org_phone}
+          onChange={(e) => handleFieldChange("org_petrol_price", e.target.value)}
+          style={{
+            flex: 1,
+            padding: "5px",
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => handleSave("org_petrol_price")}
+          style={{
+            padding: "5px 10px",
+             backgroundColor: "var(--primary-color)",
+            color: "white",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Save
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            // Cancel changes: Reset the edited field and exit edit mode
+            setEditedOrganization((prev) => ({
+              ...prev,
+              org_petrol_price: organization.org_petrol_price,
+            }));
+            setEditingField(null);
+          }}
+          style={{
+            padding: "5px 10px",
+            backgroundColor: "red",
+            color: "white",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Cancel
+        </button>
+      </div>
+    ) : (
+      // View Mode: Show Field Value and Edit Button
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <p style={{ margin: 0, flex: 1 }}>{organization.org_petrol_price}</p>
+        <button
+          type="button"
+          onClick={() => setEditingField("org_petrol_price")}
+          style={{
+            padding: "5px 10px",
+           backgroundColor: "var( --faded-primary-color)",
+            color: "black",
+            border: "none",
+            borderRadius: "3px",
+          }}
+        >
+          Edit
+        </button>
+      </div>
+    )}
+  </div>
+
+  </div>
+
+
 
 <div
   style={{
