@@ -40,7 +40,8 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setAssets(data.filter((trip) => ["Requested", ""].includes(trip.t_status)));
+        setAssets(data.filter((trip) => ["Requested", "In-Progress", "Completed"].includes(trip.t_status) && trip.t_actual_cost === null));
+       
 
 
         setLoading(false);
