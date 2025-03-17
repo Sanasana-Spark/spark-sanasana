@@ -68,7 +68,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
               <TableCell>{asset.t_origin_place_query}</TableCell>
               <TableCell>{asset.t_destination_place_query}</TableCell>
               <TableCell>{asset.t_distance}</TableCell>
-              <TableCell>{asset.t_actual_cost}</TableCell>
+              <TableCell> {asset.t_actual_cost}</TableCell>
             </TableRow>
           ))}
         </TableBody>
