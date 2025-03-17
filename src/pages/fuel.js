@@ -15,7 +15,7 @@ const Fuel = () => {
 	const [endDate, setEndDate] = useState('');
 	const [vehicle, setVehicle] = useState('');
 	const [filteredEntries, setFilteredEntries] = useState([]);
-	console.log(loading)
+	console.log(loading);
 
 	useEffect(() => {
 		if (org_id && user_id) {
@@ -43,20 +43,29 @@ const Fuel = () => {
 	useEffect(() => {
 		let filtered = fuelEntries;
 
-		// search by vehicle or operator
-		if (search) {
-			filtered = filtered.filter(entry => entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) || entry.f_operator.toLowerCase().includes(search.toLowerCase()));
+		const searchQuery = search ? String(search).toLowerCase() : '';
+
+		// Search by vehicle license plate or operator name
+		if (searchQuery) {
+			filtered = filtered.filter(entry => {
+				const plate = entry.a_license_plate ? entry.a_license_plate.toLowerCase() : '';
+				const operator = entry.o_name ? entry.o_name.toLowerCase() : '';
+
+				return plate.includes(searchQuery) || operator.includes(searchQuery);
+			});
 		}
 
-		// filtering by date
+		// Filter by start date
 		if (startDate) {
-			filtered = filtered.filter(entry => new Date(entry.f_created_at) >= new Date(startDate));
-		}
-		if (endDate) {
-			filtered = filtered.filter(entry => new Date(entry.f_created_at) <= new Date(endDate));
+			filtered = filtered.filter(entry => entry.f_created_at && new Date(entry.f_created_at) >= new Date(startDate));
 		}
 
-		// filtering by vehicle number plate
+		// Filter by end date
+		if (endDate) {
+			filtered = filtered.filter(entry => entry.f_created_at && new Date(entry.f_created_at) <= new Date(endDate));
+		}
+
+		// Filter by vehicle number plate
 		if (vehicle) {
 			filtered = filtered.filter(entry => entry.a_license_plate === vehicle);
 		}
@@ -166,7 +175,7 @@ const Fuel = () => {
 
 							<TableBody>
 								{filteredEntries.length > 0 ? (
-									 filteredEntries.map(entry => (
+									filteredEntries.map(entry => (
 										<TableRow key={entry.id}>
 											<TableCell sx={{ border: 'none' }}>{entry.a_license_plate}</TableCell>
 											<TableCell sx={{ border: 'none' }}>{entry.f_created_at}</TableCell>
