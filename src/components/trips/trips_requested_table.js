@@ -44,24 +44,24 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
     setSelectedTrip(trip);
   };
 
-
   const handleChange = (e) => {
-    if (!e || !e.target) return;
-
-  const { name, value } = e.target;
-
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,  // Dynamically update formData fields
-  }));
-
+    const { name, value, files } = e.target;
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,  // Store file object properly
+    }));
+  
+    e.stopPropagation(); // Prevent unexpected closing behavior
   };
 
   const handleSubmit = async () => {
   console.log(formData);
     const payload = {
       t_id : selectedtrip.id,
-      t_actual_cost: formData.t_actual_cost,
+      a_fuel_type: selectedtrip.a_fuel_type,
+      t_actual_cost : formData.t_actual_cost,
+      // image : formData.image
     }
 
     try {
@@ -164,9 +164,9 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       <Dialog open={showFuelRequestForm} fullWidth>
         <DialogTitle>Approve Request</DialogTitle>
         <DialogContent>
-        <Typography> This is a fuel request by {selectedtrip.o_name} for asset {selectedtrip.a_license_plate} </Typography>
-    
+          <Typography> This is a fuel request by {selectedtrip.o_name} for asset {selectedtrip.a_license_plate} </Typography>
           <Typography>Distance: {selectedtrip.t_distance} </Typography>
+          
           <TextField
             label="Amt disbursed"
             variant="outlined"
@@ -177,6 +177,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             value={formData.t_actual_cost}
             onChange={(e) => handleChange(e)}
           />
+          {/* <input
+  type="file"
+  name="image"
+  onChange={handleChange}
+  style={{ marginTop: '10px', display: 'block' }} 
+/> */}
         </DialogContent>
 
         <DialogActions>
