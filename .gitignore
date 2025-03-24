@@ -4,7 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
-.env
+
+
 
 /src/index.js
 
@@ -15,6 +16,7 @@
 /build
 
 # misc
+.env
 .DS_Store
 .env.local
 .env.development.local
