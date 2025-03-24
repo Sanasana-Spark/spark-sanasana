@@ -334,7 +334,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="LPO number"
+                  label="LPO/Description"
                   name="t_type"
                   type="text"
                   value={trip.t_type}
@@ -346,7 +346,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="start_date"
+                  label="Start Date"
                   name="t_start_date"
                   type="date"
                   value={trip.t_start_date}
@@ -356,7 +356,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_end_date"
+                  label="End Date"
                   name="t_end_date"
                   type="date"
                   value={trip.t_end_date}
@@ -368,7 +368,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_distance"
+                  label="Distance"
                   name="t_distance"
                   value={distance}
                   onChange={handleChange}
