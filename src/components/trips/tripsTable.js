@@ -9,9 +9,9 @@ import {
   TableRow,
   Button,TablePagination,
 } from "@mui/material";
-// import actionicon from "../../assets/actionicon.svg"
+// import actionicon from "../../trips/actionicon.svg"
 
-const AssetsTable = ({ assets, onViewUnitsClick }) => {
+const AssetsTable = ({ trips, onViewUnitsClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
@@ -19,7 +19,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => ({
       ...prevState,
-      [rowIndex]: !prevState[rowIndex], // Toggle the state for the specific asset id
+      [rowIndex]: !prevState[rowIndex], // Toggle the state for the specific trip id
     }));
     onViewUnitsClick(rowIndex);
   };
@@ -27,7 +27,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const paginatedAssets = assets.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedAssets = trips.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
 
   return (
@@ -47,35 +47,35 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* Render a TableRowItem for each asset in the assets array */}
-          {paginatedAssets.map((asset) => (
-            <TableRow key={asset.id}
+          {/* Render a TableRowItem for each trip in the trips array */}
+          {paginatedAssets.map((trip) => (
+            <TableRow key={trip.id}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
             sx={{ border: 'none' }} 
             >
 
 
-              <TableCell onClick={() => handleCellClick(asset.id)}>
-                {!isDropdownOpen[asset.id] && <Button> View </Button>}
+              <TableCell onClick={() => handleCellClick(trip.id)}>
+                {!isDropdownOpen[trip.id] && <Button> View </Button>}
 
-                {isDropdownOpen[asset.id] && <Button>Back </Button>}
+                {isDropdownOpen[trip.id] && <Button>Back </Button>}
               </TableCell>
-              <TableCell>{asset.t_type}</TableCell>
-              <TableCell>{asset.t_status}</TableCell>
-              <TableCell>{asset.o_name}</TableCell>
-              <TableCell>{asset.a_license_plate}</TableCell>
-              <TableCell>{asset.t_origin_place_query}</TableCell>
-              <TableCell>{asset.t_destination_place_query}</TableCell>
-              <TableCell>{asset.t_distance}</TableCell>
-              <TableCell> {asset.t_actual_cost}</TableCell>
+              <TableCell>{trip.t_type}</TableCell>
+              <TableCell>{trip.t_status}</TableCell>
+              <TableCell>{trip.o_name}</TableCell>
+              <TableCell>{trip.a_license_plate}</TableCell>
+              <TableCell>{trip.t_origin_place_query}</TableCell>
+              <TableCell>{trip.t_destination_place_query}</TableCell>
+              <TableCell>{trip.t_distance}</TableCell>
+              <TableCell> {trip.t_actual_cost}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
       <TablePagination
         component="div"
-        count={assets.length} // Total number of records
+        count={trips.length} // Total number of records
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
