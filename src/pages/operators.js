@@ -102,7 +102,7 @@ const Operators = () => {
 		setShowBulkUploadForm(true);
 	};
 
-	//handling search by drivers name or contact
+	//handling search by driver name or contact
 	const filteredAssets = assets.filter(operator => {
 		if (!search) return true;
 
