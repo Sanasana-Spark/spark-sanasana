@@ -25,7 +25,7 @@ const Trips = () => {
   const { user_id, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
-  const [assets, setAssets] = useState([]);
+  const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
@@ -40,7 +40,7 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setAssets(data.filter((trip) => ["In-Progress", "Pending"].includes(trip.t_status)));
+        setTrips(data.filter((trip) => ["In-Progress", "Pending"].includes(trip.t_status)));
 
 
         setLoading(false);
@@ -100,7 +100,7 @@ const Trips = () => {
         console.error("Error adding trip:", error);
       });
   };
-  const selectedAsset = assets.filter(
+  const selectedAsset = trips.filter(
     (asset) => asset["id"] === selectedTicket
   );
 
@@ -207,7 +207,7 @@ const Trips = () => {
 
     <Box>
       <AssetsTable
-        assets={assets}
+        trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
       </Box>
@@ -318,7 +318,7 @@ const Trips = () => {
 
           <Box>
             <AssetsTable
-              assets={assets}
+              trips={trips}
               onViewUnitsClick={handleViewDetailsClick}
             />
           </Box>
@@ -392,7 +392,7 @@ const Trips = () => {
   };
 
   return (
-    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
+    <>{setTrips.length > 0 ? <>{renderView()}</> : <p> {renderView()} </p>}</>
   );
 };
 
