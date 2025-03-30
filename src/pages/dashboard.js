@@ -128,7 +128,7 @@ const Dashboard = () => {
     return () => controller.abort(); // Cleanup previous fetch request
   
   }, 
-  [org_id, prevOrgId]); // Runs only when org_id changes
+  [org_id, ]); // Runs only when org_id changes
 
   // Pagination controls
   const handleNextPage = () => {
@@ -169,28 +169,28 @@ const Dashboard = () => {
           gap: 2,
         }}
       >
-        <Card>
+        <Card sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }} >
           <CardContent>
             <Typography variant="body2">Total Assets</Typography>
             <Typography variant="h6">{dashboardSummary.totalAssets}</Typography>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }} >
           <CardContent>
             <Typography variant="body2">Assets Value</Typography>
             <Typography variant="h6">${dashboardSummary.overallAssetsValue}</Typography>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ backgroundColor: '#E3F5FF', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
           <CardContent>
             <Typography variant="body2">Fuel Cost</Typography>
             <Typography variant="h6">${dashboardSummary.totalFuelCost}</Typography>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card sx={{ backgroundColor: '#E5ECF6', padding: 2, textAlign: 'center', color: 'text.secondary', height: '100%' }}>
           <CardContent>
             <Typography variant="body2">Carbon Reduction</Typography>
             <Typography variant="h6">{dashboardSummary.carbonReduction}</Typography>
