@@ -128,7 +128,7 @@ const Dashboard = () => {
     return () => controller.abort(); // Cleanup previous fetch request
   
   }, 
-  [org_id, ]); // Runs only when org_id changes
+  [org_id,prevOrgId ]); // Runs only when org_id changes
 
   // Pagination controls
   const handleNextPage = () => {
