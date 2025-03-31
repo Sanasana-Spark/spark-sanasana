@@ -195,8 +195,8 @@ console.log(directionsResponse)
     setDestinationPlaceQuery(destiantionRef.current.value);
     setOriginLat(results.routes[0].bounds.fi.lo);
     setDestinationLat(results.routes[0].bounds.fi.hi);
-    setOriginLng(results.routes[0].bounds.Gh.lo);
-    setDestinationLng(results.routes[0].bounds.Gh.hi);
+    setOriginLng(results.routes[0].bounds.Ih.lo);
+    setDestinationLng(results.routes[0].bounds.Ih.hi);
   }
 
 
