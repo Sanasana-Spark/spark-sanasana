@@ -95,12 +95,15 @@ const Dashboard = () => {
   // eslint-disable-next-line
   [org_id, user_id] );
 
-  const [prevOrgId, setPrevOrgId] = useState(null);
+  const [, setPrevOrgId] = useState(null);
 
   useEffect(() => {
-    if (!org_id || org_id === prevOrgId) return; // Prevent re-fetching for the same org_id
-  
-    setPrevOrgId(org_id); // Store the last fetched org_id
+    if (!org_id) return;
+
+  setPrevOrgId((prev) => {
+      if (prev === org_id) return prev; // Prevent unnecessary state update
+      return org_id;
+  });
   
     const controller = new AbortController();
     const signal = controller.signal;
@@ -128,7 +131,7 @@ const Dashboard = () => {
     return () => controller.abort(); // Cleanup previous fetch request
   
   }, 
-  [org_id,prevOrgId ]); // Runs only when org_id changes
+  [org_id ]); // Runs only when org_id changes
 
   // Pagination controls
   const handleNextPage = () => {
