@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Select, MenuItem, InputLabel, Box, FormControl } from "@mui/material";
+import { Select, MenuItem, Box, FormControl } from "@mui/material";
 
 const carbonEmissionData = {
   monthOnMonth: [
