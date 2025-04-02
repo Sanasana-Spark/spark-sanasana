@@ -193,8 +193,8 @@ console.log(directionsResponse)
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
-    setOriginLat(results.routes[0].bounds.fi.lo);
-    setDestinationLat(results.routes[0].bounds.fi.hi);
+    setOriginLat(results.routes[0].bounds.ei.lo);
+    setDestinationLat(results.routes[0].bounds.ei.hi);
     setOriginLng(results.routes[0].bounds.Ih.lo);
     setDestinationLng(results.routes[0].bounds.Ih.hi);
   }
