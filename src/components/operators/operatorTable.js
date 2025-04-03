@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, TablePagination, Button } from '@mui/material';
+import { IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
-const OperatorTable = React.memo(({ operators, onViewUnitsClick }) => {
+const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -44,6 +46,7 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick }) => {
 							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Position</TableCell>
 							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Contact</TableCell>
 							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -60,6 +63,11 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick }) => {
 								<TableCell>{operator.o_status}</TableCell>
 								<TableCell>
 									<Button onClick={() => handleCellClick(operator.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
+								</TableCell>
+								<TableCell>
+									<IconButton onClick={() => onEditClick(operator.id)} style={{ marginLeft: '10px' }}>
+										<EditIcon />
+									</IconButton>
 								</TableCell>
 							</TableRow>
 						))}

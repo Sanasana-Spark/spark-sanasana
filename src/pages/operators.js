@@ -10,6 +10,7 @@ import AddOperatorForm from '../components/operators/addOperator';
 import BulkUploadForm from '../components/assets/upload';
 import OperatorDetails from '../components/operators/operatorDetails';
 import { useAuthContext } from '../components/onboarding/authProvider';
+import EditOperatorDetails from '../components/operators/editOperatorDetails';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -25,6 +26,7 @@ const Operators = () => {
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
+	const [editOperator, setEditOperator] = useState(null);
 	console.log(loading);
 
 	useEffect(() => {
@@ -87,7 +89,7 @@ const Operators = () => {
 				console.error('Error adding Operator:', error);
 			});
 	};
-	const selectedOperator = assets.filter(operator => operator['id'] === selectedTicket);
+	const selectedOperator = assets.find(operator => operator['id'] === selectedTicket);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -100,6 +102,39 @@ const Operators = () => {
 
 	const handleBulkUploadClick = () => {
 		setShowBulkUploadForm(true);
+	};
+
+	//handling edit
+	const handleEditClick = operatorId => {
+		const operator = assets.find(o => o.id === operatorId);
+		setEditOperator(operator);
+		setIsSliderOpen(true);
+	};
+
+	const handleEditCancel = () => {
+		setEditOperator(null);
+		setIsSliderOpen(false);
+	};
+
+	const handleSaveEdit = updatedOperator => {
+		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}`;
+		const options = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(updatedOperator),
+		};
+		fetch(url, options)
+			.then(response => response.json())
+			.then(() => {
+				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedOperator.id ? updatedOperator : asset)));
+				setEditOperator(null);
+				setIsSliderOpen(false);
+			})
+			.catch(error => {
+				console.error('Error updating operator:', error);
+			});
 	};
 
 	//handling search by driver name or contact
@@ -222,7 +257,7 @@ const Operators = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<OperatorTable operators={filteredAssets} onViewUnitsClick={handleViewDetailsClick} />
+							<OperatorTable operators={filteredAssets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -237,6 +272,7 @@ const Operators = () => {
 			<AddOperatorForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
+			{editOperator && isSliderOpen && <EditOperatorDetails selectedOperator={editOperator} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
 		</Container>
 	);
 
