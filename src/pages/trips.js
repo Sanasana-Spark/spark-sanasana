@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tabs, Tab, Typography, Paper } from "@mui/material";
 import New from "../components/trips/trips_main";
-import Requested from "../components/trips/trips_requested";
+import Requested from "../components/trips/trips_cashflow";
 import History from "../components/trips/trips_history";
 
 const Trips = () => {
@@ -26,7 +26,7 @@ const Trips = () => {
           indicatorColor="primary"
         >
           <Tab label="New/In-Progress" value="New" />
-          <Tab label="Fuel Requests" value="Fuel_Requests" />
+          <Tab label="Income/Expenses" value="Fuel_Requests" />
           <Tab label="History" value="History" />
         </Tabs>
 
