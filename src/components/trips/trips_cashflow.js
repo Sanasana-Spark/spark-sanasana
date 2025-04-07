@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import AssetsTable from "./trips_requested_table";
+import AssetsTable from "./trips_cashflow_table";
 import AddAssetForm from "./addTripMap";
-import AssetDetails from "./tripDetails";
+import AssetDetails from "./trip_cashflow_details";
 import { useAuthContext } from '../onboarding/authProvider';
 import {
   Container,
