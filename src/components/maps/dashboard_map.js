@@ -73,8 +73,8 @@ const DirectionsMap = ({ trips }) => {
             // Add custom markers for start & end points
             setMarkers((prev) => [
               ...prev,
-              { position: origin, trip, title: `Start: ${trip.a_license_plate}`, type: "start" },
-              { position: destination, trip, title: `End: ${trip.a_license_plate}`, type: "end" },
+              { position: origin, trip, title: `. ${trip.a_license_plate}`, type: "start" },
+              { position: destination, trip, title: `. ${trip.a_license_plate}`, type: "end" },
             ]);
 
             } else {
