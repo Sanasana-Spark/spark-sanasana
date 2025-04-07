@@ -20,8 +20,10 @@ import CarbonEmissionChart from "../components/carbon_emission/main";
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Dashboard = () => {
-  const { org_id, user_id } = useAuthContext();
+  const { org_id, user_id, org_currency} = useAuthContext();
+  console.log('org_currency', org_currency);
   const [trips, setTrips] = useState([]);
+  const [assetPerformance, setAssetPerformance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dashboardSummary, setDashboardSummary] = useState({
     totalAssets: 0,
@@ -33,6 +35,45 @@ const Dashboard = () => {
     fuelUsage: [],
     mileage: [],
   });
+
+  // Format dates to 'YYYY-MM-DD'
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits for month
+    const day = date.getDate().toString().padStart(2, '0'); // Ensure two digits for day
+    return `${year}-${month}-${day}`;
+  };
+   // Get the date 7 days ago
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  const [startDate, ] = useState(formatDate(sevenDaysAgo));
+  const [endDate, ] = useState(formatDate(today));
+
+  useEffect(
+    () => {
+      if (!org_id) return; // Prevent unnecessary updates
+      fetch(`${baseURL}/assets/fleet_performance/${org_id}/?start_date=${startDate}&end_date=${endDate}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setAssetPerformance(data.fleet_data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    },
+    // eslint-disable-next-line
+    [org_id]
+  );
+  console.log(assetPerformance);
+
 
   useEffect(() => {
     if (!trips.length) return; // Prevent unnecessary updates
@@ -209,7 +250,7 @@ const Dashboard = () => {
           <CardContent>
             <Typography variant="body2">Assets Value</Typography>
             <Typography variant="h6">
-              ${dashboardSummary.overallAssetsValue}
+              {dashboardSummary.overallAssetsValue} {org_currency}
             </Typography>
           </CardContent>
         </Card>
@@ -226,7 +267,8 @@ const Dashboard = () => {
           <CardContent>
             <Typography variant="body2">Fuel Cost</Typography>
             <Typography variant="h6">
-              ${dashboardSummary.totalFuelCost}
+             {dashboardSummary.totalFuelCost} {org_currency}
+            
             </Typography>
           </CardContent>
         </Card>
@@ -241,7 +283,7 @@ const Dashboard = () => {
           }}
         >
           <CardContent>
-            <Typography variant="body2">Carbon Reduction</Typography>
+            <Typography variant="body2">Carbon Emission</Typography>
             <Typography variant="h6">
               {dashboardSummary.carbonReduction}
             </Typography>
@@ -383,50 +425,64 @@ const Dashboard = () => {
 
           <Grid item xs={4.5} sx={{ maxHeight: 400, overflowY: "scroll" }}>
             <Paper sx={{ padding: 2, height: "inherit" }}>
-              <Typography variant="h6">Fleet Performace</Typography>
+              <Typography variant="h6">Fleet Performance</Typography>
               <Table >
                       <TableHead >
                         <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
                       <TableCell>Vehicle</TableCell>
-                      <TableCell>Operator</TableCell>
-                      <TableCell>Cost</TableCell>
-                      <TableCell>Distance</TableCell>
+                      <TableCell>No of Trips</TableCell>
+                      <TableCell>Mileage(KMs)</TableCell>
+                      <TableCell>Fuel(Ltr)</TableCell>
+                      <TableCell>Cost ({org_currency}) </TableCell>
                     </TableRow>
                       </TableHead>
 
-              {!loading &&
-                trips.map((trip) => (
+              {!loading &&  Array.isArray(assetPerformance) && assetPerformance.length > 0 ?(
+                assetPerformance.map((asset) => (
 
-                  
 
                     <TableBody>
-                      <TableRow key={trip.id}
+                      <TableRow key={asset.id}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
                       sx={{ border: 'none' }}
                       >
                         <TableCell>
-                          <strong> {trip.a_license_plate}</strong>{" "}
+                          <strong> {asset.a_license_plate}</strong>{" "}
                         </TableCell>
                         <TableCell>
-                         {trip.o_name}
+                         {asset.trip_count}
                         </TableCell>
                      
                         <TableCell>
-                           {trip.t_actual_cost}
+                        {parseFloat(asset.total_miles) > 0 ? parseFloat(asset.total_miles).toFixed(2) : '0.00'}
                         </TableCell>
                         <TableCell>
-                         {trip.t_distance}
+                        {parseFloat(asset.total_fuel) > 0 ? parseFloat(asset.total_fuel).toFixed(2) : '0.00'}
+                        </TableCell>
+
+                        <TableCell>
+                        {parseFloat(asset.total_cost) > 0 ? parseFloat(asset.total_cost).toFixed(2) : '0.00'}
                         </TableCell>
                      
                       </TableRow>
 
                     </TableBody>
-                
+              
 
 
-
-                ))}
+                )))
+                : (
+                  <TableBody>
+                    <TableRow>
+                      <TableCell colSpan={5}>
+                        {loading ? "Loading..." : "No asset performance data available."}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                )
+              
+              }
                   </Table>
 
               <Box
