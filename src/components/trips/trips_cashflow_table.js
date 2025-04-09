@@ -104,6 +104,76 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 
   };
 
+  const handleIncomeSubmit = async () => {
+    const payload = {
+      ti_trip_id : selectedtrip.id,
+      ti_asset_id : selectedtrip.t_asset_id,
+      ti_operator_id : selectedtrip.t_operator_id,
+      ti_client_id : null,
+      ti_type: formData.ti_type,
+      ti_description: formData.ti_description,
+      ti_amount: formData.ti_amount,
+    }
+    try {
+      const response = await fetch(
+        `${baseURL}/trips/income/${org_id}/${userId}/${selectedtrip.id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to submit income entry");
+      }
+      setSuccess("Income entry submitted successfully!");
+      setAddIncomeForm(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {  
+      setLoading(false);
+    }
+  };  
+
+
+  const handleExpenseSubmit = async () => {
+    const payload = {
+      te_trip_id : selectedtrip.id,
+      te_asset_id : selectedtrip.t_asset_id,
+      te_operator_id : selectedtrip.t_operator_id,
+      te_type: formData.te_type,
+      te_description: formData.te_description,
+      te_amount: formData.te_amount,
+    }
+    try {
+      const response = await fetch(
+        `${baseURL}/trips/expense/${org_id}/${userId}/${selectedtrip.id}/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to submit income entry");
+      }
+      setSuccess("Income entry submitted successfully!");
+      setAddExpenseForm(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {  
+      setLoading(false);
+    }
+  }; 
+
+
+
+
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -289,22 +359,25 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           required
         />
 
-        {/* Client */}
+        {/* Client drop down */}
         <TextField
+          select
           label="Client"
           fullWidth
           name="ti_client"
           value={formData.ti_client}
           onChange={(e) => handleChange(e)}
           margin="dense"
-          required
-        />
+        >
+            <MenuItem value={null} >No Client available </MenuItem>
+          </TextField>
+
       </DialogContent>
 
       <DialogActions>
       <Button onClick={() => setAddIncomeForm(false)}>Cancel</Button>
        
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Button variant="contained" color="primary" onClick={handleIncomeSubmit}>
           Submit
         </Button>
       </DialogActions>
@@ -330,11 +403,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           margin="dense"
           required
         >
-          <MenuItem value="Rental">Fuel</MenuItem>
-          <MenuItem value="Service">Charging</MenuItem>
-          <MenuItem value="Other">Labour</MenuItem>
-          <MenuItem value="Other">Parking</MenuItem>
-          <MenuItem value="Other">Compliance</MenuItem>
+          <MenuItem value="Fuel">Fuel</MenuItem>
+          <MenuItem value="Labour">Labour</MenuItem>
+          <MenuItem value="Parking">Parking</MenuItem>
+          <MenuItem value="Compliance">Compliance</MenuItem>
+          <MenuItem value="Charging">Charging</MenuItem>
+          <MenuItem value="Other">Other</MenuItem>
         </TextField>
 
         {/* Description */}
@@ -361,22 +435,13 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           required
         />
 
-        {/* Client */}
-        <TextField
-          label="Client"
-          fullWidth
-          name="ti_client"
-          value={formData.te_client}
-          onChange={(e) => handleChange(e)}
-          margin="dense"
-          required
-        />
+       
       </DialogContent>
 
       <DialogActions>
       <Button onClick={() => setAddExpenseForm(false)}>Cancel</Button>
        
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Button variant="contained" color="primary" onClick={handleExpenseSubmit}>
           Submit
         </Button>
       </DialogActions>

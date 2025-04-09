@@ -30,6 +30,7 @@ const Trips = () => {
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   console.log(loading)
+  
   useEffect(() => {
     if (org_id && user_id) {
     fetch(`${baseURL}/trips/${org_id}/${user_id}/`)

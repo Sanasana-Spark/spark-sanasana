@@ -6,12 +6,71 @@ import Map from "../maps/singleTripMap";
 import { useAuthContext } from '../onboarding/authProvider';
 
 const PropCard = ({ selectedAsset }) => {
-   const { org_currency } = useAuthContext();
+  const baseURL = process.env.REACT_APP_BASE_URL
+  const {org_id, user_id , org_currency } = useAuthContext();
+  const [tripIncome, setTripIncome] = useState([]);
+  const [tripExpense, setTripExpense] = useState([]);
+  const [tripSummary, setTripSummary] = useState([]);
   const [loading, setLoading] = useState(true);
+  const trip_id  = selectedAsset[0]?.id;
 
   useEffect(() => {
-    setLoading(!selectedAsset);
-  }, [selectedAsset]);
+      if (org_id && user_id && trip_id) {
+      fetch(`${baseURL}/trips/income/${org_id}/${user_id}/${trip_id}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTripIncome(data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }},[baseURL,org_id, user_id, trip_id] );
+
+    useEffect(() => {
+      if (org_id && user_id && trip_id) {
+      fetch(`${baseURL}/trips/expense/${org_id}/${user_id}/${trip_id}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTripExpense(data);
+
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }},[baseURL,org_id, user_id, trip_id] );
+
+  // Calculate income, expense, and profit summaries
+  // when tripIncome or tripExpense changes
+  // and when org_id, user_id, and trip_id are available
+  // This ensures that the summaries are updated whenever the data changes
+  // and that the calculations are only done when the necessary data is available
+  // This is a good practice to avoid unnecessary calculations
+  // and to ensure that the component behaves correctly
+  useEffect(() => {
+    if (org_id && user_id && trip_id) {
+      setTripSummary((prevSummary) => ({
+        ...prevSummary,
+        income_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0),
+        expense_summary: tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
+        profit_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0) - tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
+      }));
+    }
+  }, [org_id, user_id, trip_id, tripIncome, tripExpense]);
+
 
   if (loading) {
     return <Loader />;
@@ -56,16 +115,18 @@ const PropCard = ({ selectedAsset }) => {
                       <Table size="small">
                         <TableHead>
                           <TableRow>
+                          <TableCell>Type</TableCell>
                             <TableCell>Description</TableCell>
                             <TableCell>Amount ({org_currency})</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {asset.income_list && asset.income_list.length > 0 ? (
-                            asset.income_list.map((income, index) => (
-                              <TableRow key={index}>
-                                <TableCell>{income.date}</TableCell>
-                                <TableCell>{income.amount}</TableCell>
+                          {tripIncome && tripIncome.length > 0 ? (
+                            tripIncome.map((income) => (
+                              <TableRow key={income.id}>
+                                <TableCell>{income.ti_type}</TableCell>
+                                <TableCell>{income.ti_description}</TableCell>
+                                <TableCell>{income.ti_amount}</TableCell>
                               </TableRow>
                             ))
                           ) : (
@@ -95,12 +156,12 @@ const PropCard = ({ selectedAsset }) => {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {asset.expense_list && asset.expense_list.length > 0 ? (
-                            asset.expense_list.map((expense, index) => (
-                              <TableRow key={index}>
-                                <TableCell>{expense.category}</TableCell>
-                                <TableCell>{expense.date}</TableCell>
-                                <TableCell>{expense.amount}</TableCell>
+                          {tripExpense && tripExpense.length > 0 ? (
+                            tripExpense.map((expense) => (
+                              <TableRow key={expense.id}>
+                                <TableCell>{expense.te_type}</TableCell>
+                                <TableCell>{expense.te_description}</TableCell>
+                                <TableCell>{expense.te_amount}</TableCell>
                               </TableRow>
                             ))
                           ) : (
@@ -125,7 +186,7 @@ const PropCard = ({ selectedAsset }) => {
                       Income
                     </Typography>
                     <Typography variant="h4" fontWeight="bold" color="green">
-                      {org_currency} {asset.income_summary || "0.00"}
+                      {org_currency} {tripSummary.income_summary || "0.00"}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -138,11 +199,26 @@ const PropCard = ({ selectedAsset }) => {
                       Expenses
                     </Typography>
                     <Typography variant="h4" fontWeight="bold" color="red">
-                      {org_currency} {asset.expense_summary || "0.00"}
+                      {org_currency} {tripSummary.expense_summary || "0.00"}
                     </Typography>
                   </CardContent>
                 </Card>
               </Grid>
+
+
+              <Grid item xs={12} md={3}>
+                <Card sx={{ backgroundColor: "#ECFDF5", textAlign: "center" }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">
+                      Gross Profit
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="green">
+                      {org_currency} {tripSummary.profit_summary|| "0.00"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
 
 
             </Grid>
