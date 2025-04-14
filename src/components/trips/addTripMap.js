@@ -33,8 +33,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
-  const [autocomplete, setAutocomplete] = useState(null);
-  console.log(autocomplete)
+  const [, setAutocomplete] = useState(null);
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
@@ -57,6 +56,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_start_date: null,
     t_end_date: null,
   },[]);
+  console.log(origin_lat)
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -193,10 +193,13 @@ console.log(directionsResponse)
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
-    setOriginLat(results.routes[0].bounds.ji.lo);
-    setDestinationLat(results.routes[0].bounds.ji.hi);
-    setOriginLng(results.routes[0].bounds.Gh.lo);
-    setDestinationLng(results.routes[0].bounds.Gh.hi);
+
+    const route = results.routes[0];
+    const leg = route.legs[0];
+    setOriginLat(leg.start_location.lat());
+    setOriginLng(leg.start_location.lng());
+    setDestinationLat(leg.end_location.lat());
+    setDestinationLng(leg.end_location.lng());
   }
 
 
@@ -249,7 +252,7 @@ console.log(directionsResponse)
             pb: 1,
           }}
         >
-          <Typography variant="h6">Add Vehicle</Typography>
+          <Typography variant="h6">Add Trip</Typography>
           <IconButton onClick={onCancel}>
             <CloseIcon />
           </IconButton>
@@ -284,7 +287,13 @@ console.log(directionsResponse)
                   variant="outlined"
                   color="primary"
                   onClick={calculateRoute}
-                  style={{ marginTop: '16px', marginRight: '8px' }}
+                  sx={{ marginTop: '16px', marginRight: '8px',
+                    backgroundColor: "var(--secondary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--secondary-hover-color)",
+                    },
+                    color: "white",
+                   }}
                 >
                   Calculate Route
                 </Button>
@@ -292,7 +301,15 @@ console.log(directionsResponse)
                   variant="contained"
                   color="primary"
                   onClick={clearRoute}
-                  style={{ marginTop: '16px' }}
+                  sx={{
+                     marginTop: '16px',
+                    backgroundColor: "var(--primary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--primary-hover-color)",
+                    },
+                    color: "white",
+                   }}
+                  
                 >
                   Clear Route
                 </Button>
@@ -334,7 +351,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="LPO number"
+                  label="LPO/Description"
                   name="t_type"
                   type="text"
                   value={trip.t_type}
@@ -346,7 +363,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="start_date"
+                  label="Start Date"
                   name="t_start_date"
                   type="date"
                   value={trip.t_start_date}
@@ -356,7 +373,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_end_date"
+                  label="End Date"
                   name="t_end_date"
                   type="date"
                   value={trip.t_end_date}
@@ -368,7 +385,7 @@ console.log(directionsResponse)
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_distance"
+                  label="Distance"
                   name="t_distance"
                   value={distance}
                   onChange={handleChange}
@@ -401,56 +418,33 @@ console.log(directionsResponse)
                 </Select>
               </Grid>
 
-{/* 
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                  disabled // Disable the select box to prevent manual changes
-                >
-                  {selectedOperator ? (
-                    <MenuItem value={selectedOperator.o_assigned_asset}>
-                      {selectedOperator.o_a_license_plate}
-                    </MenuItem>
-                  ) : (
-                    assetOptions.map((asset) => (
-                      <MenuItem key={asset.id} value={asset.id}>
-                        {asset.a_license_plate}: {asset.a_make} - {asset.a_model}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </Grid> */}
 
-
-              {/* <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                >
-                  {assetOptions.map((trip) => (
-                    <MenuItem key={trip.id} value={trip.id}>
-                      {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid> */}
             </Grid>
             <DialogActions>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained"
+              sx={{
+
+                backgroundColor: "var(--secondary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--secondary-hover-color)",
+                },
+                color: "white",
+              }
+              } >
                 Submit
               </Button>
-              <Button variant="contained" color="primary" onClick={onCancel}>
+              <Button variant="contained"
+              sx={{
+
+                backgroundColor: "var(--primary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--primary-hover-color)",
+                },
+                color: "white",
+              }
+              } 
+              
+              onClick={onCancel}>
                 Cancel
               </Button>
             </DialogActions>
