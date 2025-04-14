@@ -193,10 +193,13 @@ console.log(directionsResponse)
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
-    setOriginLat(results.routes[0].bounds.ei.lo);
-    setDestinationLat(results.routes[0].bounds.ei.hi);
-    setOriginLng(results.routes[0].bounds.Ih.lo);
-    setDestinationLng(results.routes[0].bounds.Ih.hi);
+
+    const route = results.routes[0];
+    const leg = route.legs[0];
+    setOriginLat(leg.start_location.lat());
+    setOriginLng(leg.start_location.lng());
+    setDestinationLat(leg.end_location.lat());
+    setDestinationLng(leg.end_location.lng());
   }
 
 
@@ -249,7 +252,7 @@ console.log(directionsResponse)
             pb: 1,
           }}
         >
-          <Typography variant="h6">Add Vehicle</Typography>
+          <Typography variant="h6">Add Trip</Typography>
           <IconButton onClick={onCancel}>
             <CloseIcon />
           </IconButton>
@@ -284,7 +287,13 @@ console.log(directionsResponse)
                   variant="outlined"
                   color="primary"
                   onClick={calculateRoute}
-                  style={{ marginTop: '16px', marginRight: '8px' }}
+                  sx={{ marginTop: '16px', marginRight: '8px',
+                    backgroundColor: "var(--secondary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--secondary-hover-color)",
+                    },
+                    color: "white",
+                   }}
                 >
                   Calculate Route
                 </Button>
@@ -292,7 +301,15 @@ console.log(directionsResponse)
                   variant="contained"
                   color="primary"
                   onClick={clearRoute}
-                  style={{ marginTop: '16px' }}
+                  sx={{
+                     marginTop: '16px',
+                    backgroundColor: "var(--primary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--primary-hover-color)",
+                    },
+                    color: "white",
+                   }}
+                  
                 >
                   Clear Route
                 </Button>
@@ -401,56 +418,33 @@ console.log(directionsResponse)
                 </Select>
               </Grid>
 
-{/* 
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                  disabled // Disable the select box to prevent manual changes
-                >
-                  {selectedOperator ? (
-                    <MenuItem value={selectedOperator.o_assigned_asset}>
-                      {selectedOperator.o_a_license_plate}
-                    </MenuItem>
-                  ) : (
-                    assetOptions.map((asset) => (
-                      <MenuItem key={asset.id} value={asset.id}>
-                        {asset.a_license_plate}: {asset.a_make} - {asset.a_model}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </Grid> */}
 
-
-              {/* <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                >
-                  {assetOptions.map((trip) => (
-                    <MenuItem key={trip.id} value={trip.id}>
-                      {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid> */}
             </Grid>
             <DialogActions>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained"
+              sx={{
+
+                backgroundColor: "var(--secondary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--secondary-hover-color)",
+                },
+                color: "white",
+              }
+              } >
                 Submit
               </Button>
-              <Button variant="contained" color="primary" onClick={onCancel}>
+              <Button variant="contained"
+              sx={{
+
+                backgroundColor: "var(--primary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--primary-hover-color)",
+                },
+                color: "white",
+              }
+              } 
+              
+              onClick={onCancel}>
                 Cancel
               </Button>
             </DialogActions>
