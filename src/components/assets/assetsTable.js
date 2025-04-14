@@ -60,13 +60,14 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             <TableCell padding="checkbox"> {/* Replace Action with Checkbox */}
               
             </TableCell>
+            <TableCell>Details</TableCell>
             <TableCell>Reg</TableCell>
             <TableCell>Status</TableCell>    
             <TableCell>Driver</TableCell>
-            <TableCell>Millage</TableCell>
-            <TableCell>Manufacturer</TableCell>
+            <TableCell>T.miles</TableCell>
+            <TableCell>Make</TableCell>
             <TableCell>Model</TableCell>
-            <TableCell>Details</TableCell>
+           
             
             {/* Move Details button to the right */}
           </TableRow>
@@ -85,18 +86,19 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
                   onChange={() => handleSelectRow(asset.id)}
                 />
               </TableCell>
-              <TableCell>{asset.a_license_plate}</TableCell>
-              <TableCell>{asset.a_status}</TableCell>
-              
-              <TableCell> to set</TableCell>
-              <TableCell>{asset.a_milage}</TableCell>
-              <TableCell>{asset.a_make}</TableCell>
-              <TableCell>{asset.a_model}-{asset.a_year}</TableCell>
               <TableCell> {/* Move Details button here */}
                 <Button onClick={() => handleCellClick(asset.id)}>
                   {isDropdownOpen[asset.id] ? 'Back' : 'Details'}
                 </Button>
               </TableCell>
+              <TableCell>{asset.a_license_plate}</TableCell>
+              <TableCell>{asset.a_status}</TableCell>
+              
+              <TableCell> </TableCell>
+              <TableCell>{asset.a_milage}</TableCell>
+              <TableCell>{asset.a_make}</TableCell>
+              <TableCell>{asset.a_model}-{asset.a_year}</TableCell>
+            
             </TableRow>
           ))}
         </TableBody>

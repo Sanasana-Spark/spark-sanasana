@@ -423,7 +423,10 @@ const Assets = () => {
 
 
 <div className={`slider ${isOpen ? "open" : ""}`}>
-             <AssetDetails selectedAsset={selectedAsset} />
+<Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
+          <AssetDetails selectedAsset={selectedAsset} />
+          </Box>
+            
           </div>
 
          </Container>
