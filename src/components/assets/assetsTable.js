@@ -37,13 +37,10 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 				<TableHead>
 					<TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
 						<TableCell padding='checkbox'> {/* Replace Action with Checkbox */}</TableCell>
-
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Details </TableCell>
-
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Reg</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Driver</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>T.miles</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Mileage</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Make</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Model</TableCell>
 					</TableRow>
@@ -55,16 +52,9 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 							<TableCell padding='checkbox'>
 								<Checkbox checked={selected.includes(asset.id)} onChange={() => handleSelectRow(asset.id)} />
 							</TableCell>
-
-							<TableCell>
-								{' '}
-								{/* Move Details button here */}
-								<Button onClick={() => handleCellClick(asset.id)}>{isDropdownOpen[asset.id] ? 'Back' : 'Details'}</Button>
-							</TableCell>
-
 							<TableCell>{asset.a_license_plate}</TableCell>
 							<TableCell>{asset.a_status}</TableCell>
-							<TableCell> </TableCell>
+							<TableCell>to set </TableCell>
 							<TableCell>{asset.a_mileage}</TableCell>
 							<TableCell>{asset.a_make}</TableCell>
 							<TableCell>
@@ -84,14 +74,7 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 			</Table>
 
 			{/* Pagination Component */}
-			<TablePagination
-				rowsPerPageOptions={[]} // Hide the rows per page options
-				component='div'
-				count={assets.length} // Total number of assets
-				rowsPerPage={rowsPerPage} // Rows per page
-				page={currentPage} // Current page
-				onPageChange={handleChangePage} // Page change handler
-			/>
+			<TablePagination rowsPerPageOptions={[]} component='div' count={assets.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 		</TableContainer>
 	);
 };
