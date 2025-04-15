@@ -37,6 +37,7 @@ export const useAuth = () => {
 
   const org_id = organization?.id;
   const org_name = organization?.org_name;
+  const org_currency = organization?.org_currency;
 
-  return { userId,user_id,userEmail,user_email,org_id, org_name };
+  return { userId,user_id,userEmail,user_email,org_id, org_name, org_currency };
 };
