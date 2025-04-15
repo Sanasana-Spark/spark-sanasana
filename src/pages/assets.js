@@ -8,6 +8,7 @@ import AssetsTable from '../components/assets/assetsTable';
 import AddAssetForm from '../components/assets/addAsset';
 import BulkUploadForm from '../components/assets/upload';
 import AssetDetails from '../components/assets/assetDetails';
+import EditAssetDetails from '../components/assets/editAssetDetails';
 import { useAuthContext } from '../components/onboarding/authProvider';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,6 +26,7 @@ const Assets = () => {
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
+	const [editAsset, setEditAsset] = useState(null);
 	const [filteredAssets, setFilteredAssets] = useState([]);
 	console.log(loading);
 
@@ -102,6 +104,40 @@ const Assets = () => {
 	const handleBulkUploadClick = () => {
 		setShowBulkUploadForm(true);
 	};
+
+	//handling edit
+	const handleEditClick = operatorId => {
+		const operator = assets.find(o => o.id === operatorId);
+		setEditAsset(operator);
+		setIsSliderOpen(true);
+	};
+
+	const handleEditCancel = () => {
+		setEditAsset(null);
+		setIsSliderOpen(false);
+	};
+
+	const handleSaveEdit = updatedOperator => {
+		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}`;
+		const options = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(updatedOperator),
+		};
+		fetch(url, options)
+			.then(response => response.json())
+			.then(() => {
+				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedOperator.id ? updatedOperator : asset)));
+				setEditAsset(null);
+				setIsSliderOpen(false);
+			})
+			.catch(error => {
+				console.error('Error updating operator:', error);
+			});
+	};
+
 	//handling search by vehicle registration and driver/operator
 	useEffect(() => {
 		let filtered = assets;
@@ -231,7 +267,7 @@ const Assets = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} />
+							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -246,6 +282,7 @@ const Assets = () => {
 			<AddAssetForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
+			{editAsset && isSliderOpen && <EditAssetDetails selectedOperator={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
 		</Container>
 	);
 

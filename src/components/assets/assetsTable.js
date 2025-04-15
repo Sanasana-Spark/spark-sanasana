@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Checkbox, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Checkbox, TablePagination, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
-const AssetsTable = ({ assets, onViewUnitsClick }) => {
+const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(Array(assets.length).fill(false));
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -47,7 +48,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 				</TableHead>
 				<TableBody>
 					{/* Render a TableRowItem for each asset in the assets array */}
-					{paginatedAssets.map(asset => (
+					{paginatedAssets.map((asset, index) => (
 						<TableRow key={asset.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
 							<TableCell padding='checkbox'>
 								<Checkbox checked={selected.includes(asset.id)} onChange={() => handleSelectRow(asset.id)} />
@@ -61,8 +62,12 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 								{asset.a_model}-{asset.a_year}
 							</TableCell>
 							<TableCell>
-								{/* Move Details button here to the right */}
-								<Button onClick={() => handleCellClick(asset.id)}>{isDropdownOpen[asset.id] ? 'Back' : 'Details'}</Button>
+								<Button onClick={() => handleCellClick(asset.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
+							</TableCell>
+							<TableCell>
+								<IconButton onClick={() => onEditClick(asset.id)} style={{ marginLeft: '10px' }}>
+									<EditIcon />
+								</IconButton>
 							</TableCell>
 						</TableRow>
 					))}
