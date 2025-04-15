@@ -413,7 +413,11 @@ const Assets = () => {
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<div className={`slider ${isOpen ? 'open' : ''}`}>
-				<AssetDetails selectedAsset={selectedAsset} />
+        
+        <Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
+          <AssetDetails selectedAsset={selectedAsset} />
+          </Box>
+        
 			</div>
 		</Container>
 	);
@@ -459,6 +463,7 @@ const Assets = () => {
 	console.log(currentView, selectedTicket);
 
 	return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
+
 };
 
 export default Assets;
