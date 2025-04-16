@@ -81,6 +81,13 @@ export default function VerticalSidebar({ children }) {
               icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
               to='/operators'
             />
+
+<ListItemWithLink
+              label='Clients'
+              icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
+              to='/clients'
+            />
+
             <ListItemWithLink
               label='Trips'
               icon={ <img src={Routes_icon} alt="Custom Icon"  className="icon" />}

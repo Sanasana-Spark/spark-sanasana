@@ -16,7 +16,9 @@ body, html {
     --secondary-bg-color: whitesmoke;
     --faded-primary-color: whitesmoke;
     --primary-color: #047A9A;
+    --primary-hover-color: #25c3ef;
     --secondary-color: #01947A;
+    --secondary-hover-color: #85fbe3;
     --primary-text-color: black;
     --secondary-text-color: gray;
     --font-family: 'lato', sans-serif;
