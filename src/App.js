@@ -8,7 +8,7 @@ import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
 import Operators from './pages/operators'
-import clients from './pages/clients'
+import Clients from './pages/clients'
 import Fuel from './pages/fuel'
 import Trips from './pages/trips'
 import Maintenance from './pages/maintenance'
