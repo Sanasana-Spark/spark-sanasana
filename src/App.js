@@ -43,7 +43,7 @@ const App = () => {
        <Route path="/" element={<ProtectedRoute> <Layout> <DashboardPage /> </Layout> </ProtectedRoute>} />
       <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
       <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
-      <Route path="/clients" element={<SignedIn>  <Layout> <clients/> </Layout> </SignedIn> } />
+      <Route path="/clients" element={<SignedIn>  <Layout> <Clients/> </Layout> </SignedIn> } />
       <Route path="/fuel" element={<SignedIn>  <Layout> <Fuel/> </Layout> </SignedIn> } />      
       <Route path="/trips" element={<SignedIn>  <Layout> <Trips/> </Layout> </SignedIn> } />         
       <Route path="/maintenance" element={<SignedIn> <Layout> <Maintenance/> </Layout> </SignedIn>   } />
