@@ -8,6 +8,7 @@ import AssetsTable from '../components/assets/assetsTable';
 import AddAssetForm from '../components/assets/addAsset';
 import BulkUploadForm from '../components/assets/upload';
 import AssetDetails from '../components/assets/assetDetails';
+import EditAssetDetails from '../components/assets/editAssetDetails';
 import { useAuthContext } from '../components/onboarding/authProvider';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,6 +26,7 @@ const Assets = () => {
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
+	const [editAsset, setEditAsset] = useState(null);
 	const [filteredAssets, setFilteredAssets] = useState([]);
 	console.log(loading);
 
@@ -48,7 +50,7 @@ const Assets = () => {
 					setLoading(false);
 				});
 		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm]); // Empty dependency array ensures this effect runs only once when the component mounts
+	}, [baseURL, org_id, user_id, showAddPropertyForm]);
 
 	const handleSubmit = assetData => {
 		// Define the URL for the POST request
@@ -70,11 +72,11 @@ const Assets = () => {
 			a_attachment2: null,
 		};
 		const options = {
-			method: 'POST', // Specify the HTTP method
+			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json', // Specify the content type of the request body
+				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data), // Convert data to JSON string for the request body
+			body: JSON.stringify(data),
 		};
 		fetch(url, options)
 			.then(response => {
@@ -102,7 +104,41 @@ const Assets = () => {
 	const handleBulkUploadClick = () => {
 		setShowBulkUploadForm(true);
 	};
-	//handling search by vehicle registration and driver/operator
+
+	//handling edit
+	const handleEditClick = assetId => {
+		const asset = assets.find(o => o.id === assetId);
+		setEditAsset(asset);
+		setIsSliderOpen(true);
+	};
+
+	const handleEditCancel = () => {
+		setEditAsset(null);
+		setIsSliderOpen(false);
+	};
+
+	const handleSaveEdit = updatedAsset => {
+		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}`;
+		const options = {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(updatedAsset),
+		};
+		fetch(url, options)
+			.then(response => response.json())
+			.then(() => {
+				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedAsset.id ? updatedAsset : asset)));
+				setEditAsset(null);
+				setIsSliderOpen(false);
+			})
+			.catch(error => {
+				console.error('Error updating asset:', error);
+			});
+	};
+
+	//handling search by vehicle registration and driver/asset
 	useEffect(() => {
 		let filtered = assets;
 		if (search) {
@@ -123,7 +159,7 @@ const Assets = () => {
 							<IconButton
 								onClick={handleBulkUploadClick}
 								sx={{
-									border: '1px solid #01947A', // Change color for differentiation
+									border: '1px solid #01947A',
 									borderRadius: '4px',
 									padding: '4.5px',
 								}}
@@ -231,7 +267,7 @@ const Assets = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} />
+							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -246,6 +282,7 @@ const Assets = () => {
 			<AddAssetForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
+			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
 		</Container>
 	);
 
@@ -376,11 +413,9 @@ const Assets = () => {
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<div className={`slider ${isOpen ? 'open' : ''}`}>
-        
-        <Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
-          <AssetDetails selectedAsset={selectedAsset} />
-          </Box>
-        
+				<Box sx={{ fontFamily: 'var(--font-family)', padding: 1, position: 'fixed', right: 0, width: '40vw' }}>
+					<AssetDetails selectedAsset={selectedAsset} />
+				</Box>
 			</div>
 		</Container>
 	);
@@ -426,7 +461,6 @@ const Assets = () => {
 	console.log(currentView, selectedTicket);
 
 	return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
-
 };
 
 export default Assets;
