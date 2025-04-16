@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box } from '@mui/material';
 
-const EditAssetDetails = ({ selectedOperator, onCancel, open, onSave }) => {
+const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
 		o_name: '',
 		o_status: '',
@@ -12,16 +12,16 @@ const EditAssetDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
 	useEffect(() => {
-		if (selectedOperator) {
+		if (selectedAsset) {
 			setFormData({
-				o_name: selectedOperator.a_license_plate || '',
-				o_status: selectedOperator.a_status || '',
-				o_mileage: selectedOperator.a_mileage || '',
-				o_make: selectedOperator.a_make || '',
-				o_model: `${selectedOperator.a_model}-${selectedOperator.a_year}` || '',
+				o_name: selectedAsset.a_license_plate || '',
+				o_status: selectedAsset.a_status || '',
+				o_mileage: selectedAsset.a_mileage || '',
+				o_make: selectedAsset.a_make || '',
+				o_model: `${selectedAsset.a_model}-${selectedAsset.a_year}` || '',
 			});
 		}
-	}, [selectedOperator]);
+	}, [selectedAsset]);
 
 	const handleChange = e => {
 		const { name, value } = e.target;
