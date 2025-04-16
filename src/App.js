@@ -8,6 +8,7 @@ import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
 import Operators from './pages/operators'
+import Clients from './pages/clients'
 import Fuel from './pages/fuel'
 import Trips from './pages/trips'
 import Maintenance from './pages/maintenance'
@@ -42,6 +43,7 @@ const App = () => {
        <Route path="/" element={<ProtectedRoute> <Layout> <DashboardPage /> </Layout> </ProtectedRoute>} />
       <Route path="/assets" element={<SignedIn>  <Layout>  <Assets/> </Layout> </SignedIn> } />  
       <Route path="/operators" element={<SignedIn>  <Layout> <Operators/> </Layout> </SignedIn> } /> 
+      <Route path="/clients" element={<SignedIn>  <Layout> <Clients/> </Layout> </SignedIn> } />
       <Route path="/fuel" element={<SignedIn>  <Layout> <Fuel/> </Layout> </SignedIn> } />      
       <Route path="/trips" element={<SignedIn>  <Layout> <Trips/> </Layout> </SignedIn> } />         
       <Route path="/maintenance" element={<SignedIn> <Layout> <Maintenance/> </Layout> </SignedIn>   } />
