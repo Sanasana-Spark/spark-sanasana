@@ -1,8 +1,9 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Checkbox, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Checkbox, TablePagination, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
-const AssetsTable = ({ assets, onViewUnitsClick }) => {
+const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(Array(assets.length).fill(false));
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -36,58 +37,46 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
 				<TableHead>
 					<TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
 						<TableCell padding='checkbox'> {/* Replace Action with Checkbox */}</TableCell>
-
-
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Details </TableCell>
-
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Reg</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Driver</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>T.miles</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Mileage</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Make</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Model</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{/* Render a TableRowItem for each asset in the assets array */}
-					{paginatedAssets.map(asset => (
+					{paginatedAssets.map((asset, index) => (
 						<TableRow key={asset.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
 							<TableCell padding='checkbox'>
 								<Checkbox checked={selected.includes(asset.id)} onChange={() => handleSelectRow(asset.id)} />
 							</TableCell>
-
- <TableCell> {/* Move Details button here */}
-                <Button onClick={() => handleCellClick(asset.id)}>
-                  {isDropdownOpen[asset.id] ? 'Back' : 'Details'}
-                </Button>
-              </TableCell>
-
 							<TableCell>{asset.a_license_plate}</TableCell>
 							<TableCell>{asset.a_status}</TableCell>
-							<TableCell> </TableCell>
+							<TableCell>to set </TableCell>
 							<TableCell>{asset.a_mileage}</TableCell>
 							<TableCell>{asset.a_make}</TableCell>
 							<TableCell>
 								{asset.a_model}-{asset.a_year}
 							</TableCell>
-						
+							<TableCell>
+								<Button onClick={() => handleCellClick(asset.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
+							</TableCell>
+							<TableCell>
+								<IconButton onClick={() => onEditClick(asset.id)} style={{ marginLeft: '10px' }}>
+									<EditIcon />
+								</IconButton>
+							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
 
 			{/* Pagination Component */}
-			<TablePagination
-				rowsPerPageOptions={[]} // Hide the rows per page options
-				component='div'
-				count={assets.length} // Total number of assets
-				rowsPerPage={rowsPerPage} // Rows per page
-				page={currentPage} // Current page
-				onPageChange={handleChangePage} // Page change handler
-			/>
+			<TablePagination rowsPerPageOptions={[]} component='div' count={assets.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 		</TableContainer>
 	);
-
 };
 
 export default AssetsTable;
