@@ -38,7 +38,7 @@ const Clients = () => {
 	useEffect(() => {
 		const fetchInvoices = async () => {
 			try {
-				const invoiceUrl = `${baseURL}/clients/invoices/${org_id}/${selectedClient.id}`;
+				const invoiceUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}`;
 				const response = await fetch(invoiceUrl);
 				const data = await response.json();
 				setInvoices(data.invoices || []);
@@ -48,7 +48,7 @@ const Clients = () => {
 		};
 
 		fetchInvoices();
-	}, [selectedClient, baseURL, org_id]);
+	}, [selectedClient, baseURL, org_id, user_id]);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -129,6 +129,7 @@ const Clients = () => {
 					Add Client
 				</Button>
 			</Box>
+
 			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} />
 
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
