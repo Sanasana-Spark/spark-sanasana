@@ -41,8 +41,8 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 			<TableContainer
 				component={Paper}
 				sx={{
-					maxWidth: 800,
-					mx: '12',
+					// maxWidth: 800,
+					// mx: '12',
 					boxShadow: 2,
 					borderRadius: 2,
 				}}
@@ -74,11 +74,11 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 									'&:last-child td': { borderBottom: 0 },
 								}}
 							>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.invoice_no || '-'}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.id || '-'}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.balance || '-'}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_balance || invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_status}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.date || '-'}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_created_at || '-'}</TableCell>
 								<TableCell sx={{ padding: '4px 8px', border: 'none' }}>
 									<IconButton size='small' sx={{ color: '#01947A' }}>
 										<EditIcon fontSize='inherit' />
