@@ -2,7 +2,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
-import CssBaseline from '@mui/material/CssBaseline'
 import List from '@mui/material/List'
 import Divider from '@mui/material/Divider'
 import ListItemWithLink from './ListItemWithLink'
@@ -16,7 +15,9 @@ import Logout_icon from '../../assets/logout_icon.png'
 import Operator_icon from '../../assets/operator_icon.png'
 import Fuel_icon from '../../assets/fuel_icon.png'
 import Routes_icon from '../../assets/routes_icon.png'
-
+import Logo from "../../assets/logo.png";
+import '../../App.css';
+// import {Typography} from "@mui/material";
 const drawerWidth = 250
 
 
@@ -25,25 +26,43 @@ export default function VerticalSidebar({ children }) {
   return (
     <div>
       <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
+       
         <Drawer
           open={true}
           sx={{
             width: drawerWidth,
             flexShrink: 0,
             '& .MuiDrawer-paper': {
-              width: drawerWidth,
-             backgroundColor: '#E5ECF6',
+              minWidthwidth: 'inherit',
+             backgroundColor: 'var(--main-bg-color)',
               color: 'black',
-              marginTop: '50px',
               paddingTop:'15px',
-              zIndex: 0
+              paddingLeft:'15px',
+              zIndex: 0,
+              border: 'none'
             },
           }}
           variant='persistent'
           anchor='left'>
    
           <List>
+
+          <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            justifyContent: "space-between",
+            paddingBottom: "20px",
+          }}
+        >
+                    <img
+            src={Logo}
+            alt="logo driver"
+            style={{
+              maxHeight: "50px",
+            }}
+          /> </div>
            
 
             <ListItemWithLink
@@ -62,6 +81,13 @@ export default function VerticalSidebar({ children }) {
               icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
               to='/operators'
             />
+
+<ListItemWithLink
+              label='Clients'
+              icon={ <img src={Operator_icon} alt="Custom Icon"  className="icon" />}
+              to='/clients'
+            />
+
             <ListItemWithLink
               label='Trips'
               icon={ <img src={Routes_icon} alt="Custom Icon"  className="icon" />}
@@ -88,6 +114,7 @@ export default function VerticalSidebar({ children }) {
               to='/reports'
             />
           </List>
+
           <Divider />
 
           {/* <Typography variant='subtitle1' gutterBottom> GENERAL</Typography> */}
@@ -101,7 +128,7 @@ export default function VerticalSidebar({ children }) {
             <ListItemWithLink
               label='Help Center'
               icon={ <img src={Helpcenter_icon} alt="Custom Icon"  className="icon" />}
-              to='/drive'
+              to='/helpcenter'
             />
 
             <ListItemWithLink
