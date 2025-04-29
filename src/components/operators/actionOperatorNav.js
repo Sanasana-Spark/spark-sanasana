@@ -3,9 +3,10 @@ import React from 'react';
 import { Search } from "@mui/icons-material";
 import { Typography, Box, IconButton, TextField } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import UploadIcon from "@mui/icons-material/Upload"
 
 
-export const ActionNav = ({ icons, onAddClick, icontitle }) => {
+export const ActionNav = ({ icons, onAddClick, icontitle, bulktitle, onSecondClick }) => {
   return (
     <Box className="actionNav" id="top">
       <Box
@@ -55,6 +56,36 @@ export const ActionNav = ({ icons, onAddClick, icontitle }) => {
         </Box>
      
         <Box display="flex" id="inner3">
+
+                       {/* Bulk Button */}
+                       <IconButton
+            onClick={onSecondClick}
+            sx={{
+              border: "1px solid #01947A", // Change color for differentiation
+              borderRadius: "4px",
+              padding: "4.5px",
+            }}
+          >
+            <Box
+              sx={{
+                width: 30,
+                height: 32,
+                backgroundColor: "#01947A", // Different color
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <UploadIcon sx={{ fontSize: 20, color: "white" }} />
+            </Box>
+            <Typography
+              sx={{ color: "#01947A", fontWeight: "bold", marginLeft: "8px" }}
+            >
+              {bulktitle}
+            </Typography>
+          </IconButton>
+
+
           {/* Add button  */}
           <IconButton
             onClick={onAddClick}

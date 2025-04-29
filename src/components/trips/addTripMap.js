@@ -1,19 +1,21 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
-  DialogActions,
-  Button,
+  Modal,
+  Box,
   Typography,
-  Grid,
   TextField,
-  Select,
+  Button,
   MenuItem,
+  IconButton,
+  DialogActions,
+  Grid,
+  Select,
   InputLabel,
-  Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
   Divider,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
+
 import {
   useJsApiLoader,
   GoogleMap,
@@ -21,15 +23,18 @@ import {
   Autocomplete,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import { useAuthContext } from "../onboarding/authProvider";
 const libraries = ["places"];
 const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
-
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const [assetOptions, setTripOptions] = useState([]);
+  const { user_id } = useAuthContext();
+  const { org_id } = useAuthContext();
+  const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
-  const [selectedOperator, setSelectedOperator] = useState(null);
+  const [, setAutocomplete] = useState(null);
+
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
@@ -38,55 +43,42 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const [destination_place_id,setDestinationPlaceId] = useState("")
   const [destination_place_query,setDestinationPlaceQuery] = useState("")
 
-
+  const [origin_lat,setOriginLat] = useState()
+  const [destination_lat,setDestinationLat] = useState()
+  const [origin_lng,setOriginLng] = useState()
+  const [destination_lng,setDestinationLng] = useState()
   const originRef = useRef();
   const destiantionRef = useRef();
-
   const [trip, setTrip] = useState({
     t_load: 0,
     t_status: "Pending",
+    t_type: "N/A",
+    t_start_date: null,
+    t_end_date: null,
   },[]);
+  console.log(origin_lat)
 
   useEffect(() => {
-    // Fetch status options from the backend
-    const fetchTripOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/assets`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setTripOptions(data);
-        } else {
-          console.error("Error fetching Trip options:", response.statusText);
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      } catch (error) {
-        console.error("Error fetching Trip options:", error);
-      }
-    };
+        return response.json();
+      })
+      .then((data) => {
+        setOperatorOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }}, [ baseURL, org_id, user_id, open]);
 
-    fetchTripOptions();
-  },[baseURL]);
 
-  useEffect(() => {
-    // Fetch status options from the backend
-    const fetchOperatorOptions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/operators`); // Adjust the URL as needed
-        if (response.ok) {
-          const data = await response.json();
-          setOperatorOptions(data);
-        } else {
-          console.error(
-            "Error fetching operator options:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching operator options:", error);
-      }
-    };
-
-    fetchOperatorOptions();
-  },[baseURL]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,7 +90,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
     if (name === "t_operator_id") {
       const operator = operatorOptions.find((op) => op.id === value);
-      setSelectedOperator(operator);
+      // setSelectedOperator(operator);
       if (operator && operator.o_assigned_asset) {
         setTrip((prevTrip) => ({
           ...prevTrip,
@@ -122,8 +114,14 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_directionsResponse:directionsResponse,
       t_distance:distance,
       t_duration:duration,
-    }));
+      t_start_lat:origin_lat,
+      t_end_lat:destination_lat,
+      t_start_long:origin_lng,
+      t_end_long:destination_lng,
+      t_type:trip.t_type,
 
+    }));
+console.log(directionsResponse)
   onSubmit({
     ...trip, // this includes previous trip values
     t_origin_place_id:origin_place_id,
@@ -132,13 +130,19 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_destination_place_query:destination_place_query,
     t_directionsResponse:directionsResponse,
     t_distance:distance,
-    t_duration:duration
+    t_duration:duration,
+    t_start_lat:origin_lat,
+    t_end_lat:destination_lat,
+    t_start_long:origin_lng,
+    t_end_long:destination_lng,
+    t_type:trip.t_type
   });
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
       t_operator_id: "",
       t_asset_id: "",
+      t_type: "N/A",
     });
   };
 
@@ -157,19 +161,13 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   );
 
 
+
+
+
   const onLoad = (autocomplete) => {
     setAutocomplete(autocomplete);
   };
-
-  const [autocomplete, setAutocomplete] = useState(null);
-
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      console.log(autocomplete.getPlace());
-    } else {
-      console.log("Autocomplete is not loaded yet!");
-    }
-  };
+  const onPlaceChanged = () => {};
 
 
   if (!isLoaded) return <div>Loading...</div>;
@@ -186,6 +184,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.DRIVING,
     });
+    console.log('ref is ', originRef)
+
     setDirectionsResponse(results);
     setDistance(results.routes[0].legs[0].distance.text);
     setDuration(results.routes[0].legs[0].duration.text);
@@ -193,11 +193,18 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setOriginPlaceQuery(originRef.current.value);
     setDestinationPlaceId(results.geocoded_waypoints[1].place_id);
     setDestinationPlaceQuery(destiantionRef.current.value);
+
+    const route = results.routes[0];
+    const leg = route.legs[0];
+    setOriginLat(leg.start_location.lat());
+    setOriginLng(leg.start_location.lng());
+    setDestinationLat(leg.end_location.lat());
+    setDestinationLng(leg.end_location.lng());
   }
 
 
   function clearRoute() {
-    setDirectionsResponse(null);
+    // setDirectionsResponse(null);
     setDistance("");
     setDuration("");
     originRef.current.value = "";
@@ -210,16 +217,49 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
      "origin", origin_place_id,origin_place_query,
      "Dest", destination_place_id,destination_place_query,
      "distance", distance,
-     "time", duration
+     "time", duration,
+     "cordi", origin_lat, destination_lat, origin_lng, destination_lng,
+     "directionsResponse",directionsResponse
     );
   }
 
   return (
-    <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title" maxWidth="false"  fullWidth
-    sx={{ '& .MuiDialog-paper': { width: '60%', maxWidth: 'none' } }} >
-      <DialogTitle id="form-dialog-title">Add Trip</DialogTitle>
-      <DialogContent>
-        <Paper className={"classes.paper"} style={{ padding: '16px' }}>
+    <Modal open={open} onClose={onCancel} sx={{ zIndex: 100}} >
+            <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 700,
+          maxHeight: "80vh",
+          overflowY: "auto",
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            position: "sticky",
+            top: 0,
+            bgcolor: "background.paper",
+            zIndex: 10,
+            pb: 1,
+          }}
+        >
+          <Typography variant="h6">Add Trip</Typography>
+          <IconButton onClick={onCancel}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+
+
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
@@ -229,7 +269,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                     type="text"
                     label="Origin"
                     inputRef={originRef}
-                    autoComplete="off"
+                    autoComplete="on"
                     margin="normal"
                   />
                 </Autocomplete>
@@ -247,7 +287,13 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                   variant="outlined"
                   color="primary"
                   onClick={calculateRoute}
-                  style={{ marginTop: '16px', marginRight: '8px' }}
+                  sx={{ marginTop: '16px', marginRight: '8px',
+                    backgroundColor: "var(--secondary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--secondary-hover-color)",
+                    },
+                    color: "white",
+                   }}
                 >
                   Calculate Route
                 </Button>
@@ -255,7 +301,15 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                   variant="contained"
                   color="primary"
                   onClick={clearRoute}
-                  style={{ marginTop: '16px' }}
+                  sx={{
+                     marginTop: '16px',
+                    backgroundColor: "var(--primary-color)",
+                    "&:hover": {
+                      backgroundColor: "var(--primary-hover-color)",
+                    },
+                    color: "white",
+                   }}
+                  
                 >
                   Clear Route
                 </Button>
@@ -297,7 +351,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="LPO number"
+                  label="LPO/Description"
                   name="t_type"
                   type="text"
                   value={trip.t_type}
@@ -309,7 +363,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="start_date"
+                  label="Start Date"
                   name="t_start_date"
                   type="date"
                   value={trip.t_start_date}
@@ -319,7 +373,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_end_date"
+                  label="End Date"
                   name="t_end_date"
                   type="date"
                   value={trip.t_end_date}
@@ -331,7 +385,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="t_distance"
+                  label="Distance"
                   name="t_distance"
                   value={distance}
                   onChange={handleChange}
@@ -350,72 +404,54 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
                   value={trip.t_operator_id}
                   onChange={handleChange}
                 >
-                  {operatorOptions.map((operator) => (
+                {operatorOptions && operatorOptions.length > 0 ? (
+                  operatorOptions.map((operator) => (
                     <MenuItem key={operator.id} value={operator.id}>
                       {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
                     </MenuItem>
-                  ))}
+                  ))
+                ) : ( loading &&
+                  <MenuItem disabled>
+                    Loading operators...
+                  </MenuItem>
+                )}
                 </Select>
               </Grid>
 
 
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                  disabled // Disable the select box to prevent manual changes
-                >
-                  {selectedOperator ? (
-                    <MenuItem value={selectedOperator.o_assigned_asset}>
-                      {selectedOperator.o_a_license_plate}
-                    </MenuItem>
-                  ) : (
-                    assetOptions.map((asset) => (
-                      <MenuItem key={asset.id} value={asset.id}>
-                        {asset.a_license_plate}: {asset.a_make} - {asset.a_model}
-                      </MenuItem>
-                    ))
-                  )}
-                </Select>
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="trip-label">Assign Vehicle</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="trip-label"
-                  label="t_asset_id"
-                  name="t_asset_id"
-                  value={trip.t_asset_id}
-                  onChange={handleChange}
-                >
-                  {assetOptions.map((trip) => (
-                    <MenuItem key={trip.id} value={trip.id}>
-                      {trip.a_license_plate}: {trip.a_make}-{trip.a_model}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </Grid>
             </Grid>
             <DialogActions>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained"
+              sx={{
+
+                backgroundColor: "var(--secondary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--secondary-hover-color)",
+                },
+                color: "white",
+              }
+              } >
                 Submit
               </Button>
-              <Button variant="contained" color="primary" onClick={onCancel}>
+              <Button variant="contained"
+              sx={{
+
+                backgroundColor: "var(--primary-color)",
+                "&:hover": {
+                  backgroundColor: "var(--primary-hover-color)",
+                },
+                color: "white",
+              }
+              } 
+              
+              onClick={onCancel}>
                 Cancel
               </Button>
             </DialogActions>
          
           </form>
-        </Paper>
-      </DialogContent>
-    </Dialog>
+</Box>
+</Modal>
   );
 };
 export default AddTripMapForm;

@@ -1,85 +1,83 @@
-/* eslint-disable react/prop-types */
-import React, {useState} from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
-} from '@mui/material'
+import React, { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, TablePagination, Button } from '@mui/material';
+import { IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
+const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) => {
+	const [isDropdownOpen, setIsDropdownOpen] = useState([]);
+	const [currentPage, setCurrentPage] = useState(0);
+	const rowsPerPage = 7;
 
-const OperatorTable = ({ operators, onViewUnitsClick }) => {
+	useEffect(() => {
+		setIsDropdownOpen(Array(operators.length).fill(false));
+	}, [operators]);
 
-  const [isDropdownOpen, setIsDropdownOpen] = useState(Array(operators.length).fill(false));
-  const handleCellClick = (rowIndex) => {
-    setIsDropdownOpen((prevState) => {
-      const newDropdowns = [...prevState];
-      newDropdowns[rowIndex] = !newDropdowns[rowIndex];
-      return newDropdowns;
-    });
-    onViewUnitsClick(rowIndex);
-  };
+	const handleCellClick = rowIndex => {
+		setIsDropdownOpen(prevState => {
+			const newDropdowns = [...prevState];
+			newDropdowns[rowIndex] = !newDropdowns[rowIndex];
+			return newDropdowns;
+		});
+		onViewUnitsClick(rowIndex);
+	};
 
+	const handleChangePage = (event, newPage) => {
+		setCurrentPage(newPage);
+	};
 
+	const [selected, setSelected] = useState([]);
+	const handleSelectRow = id => {
+		const newSelected = selected.includes(id) ? selected.filter(item => item !== id) : [...selected, id];
+		setSelected(newSelected);
+	};
 
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
+	const paginatedOperators = Array.isArray(operators) ? operators.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage) : [];
 
-          <TableRow>
-            <TableCell>Action</TableCell>
-            <TableCell>Image</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Position </TableCell>
-            <TableCell>Contact</TableCell>
-            <TableCell>Miles</TableCell>
-            <TableCell>License Expiry </TableCell>
-            
-           
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* Render a TableRowItem for each operator in the operators array */}
-          {operators.map((operator) => (
-            <TableRow key={operator.id}>
-              <TableCell onClick={() => handleCellClick(operator.id)}>
-                {!isDropdownOpen[[operator.id]] && <Button> Details </Button>}
+	return (
+		<>
+			<TableContainer>
+				<Table stickyHeader aria-label='sticky table'>
+					<TableHead>
+						<TableRow style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
+							<TableCell padding='checkbox'> </TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Image</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Full Name</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Email address</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Position</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Contact</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Actions</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{paginatedOperators.map((operator, index) => (
+							<TableRow key={operator.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
+								<TableCell padding='checkbox'>
+									<Checkbox checked={selected.includes(operator.id)} onChange={() => handleSelectRow(operator.id)} />
+								</TableCell>
+								<TableCell>{operator.o_image ? <img src={operator.o_image} alt={operator.o_name} style={{ width: '100px', height: 'auto' }} /> : 'No Image'}</TableCell>
+								<TableCell>{operator.o_name}</TableCell>
+								<TableCell>{operator.o_email}</TableCell>
+								<TableCell>{operator.o_role}</TableCell>
+								<TableCell>{operator.o_phone}</TableCell>
+								<TableCell>{operator.o_status}</TableCell>
+								<TableCell>
+									<Button onClick={() => handleCellClick(operator.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
+								</TableCell>
+								<TableCell>
+									<IconButton onClick={() => onEditClick(operator.id)} style={{ marginLeft: '10px' }}>
+										<EditIcon />
+									</IconButton>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
 
-                {isDropdownOpen[operator.id] && <Button>Back </Button>}
-              </TableCell>
-              <TableCell>
-                {operator.a_image ? (
-                  <img
-                    src={operator.o_image}
-                    alt={operator.o_name}
-                    style={{ width: "100px", height: "auto" }}
-                  />
-                ) : (
-                  "No Image"
-                )}
-              </TableCell>
-      <TableCell>{operator.o_name}</TableCell>
-      <TableCell>{operator.o_email}</TableCell> 
-      <TableCell>{operator.o_status}</TableCell>
-      <TableCell>{operator.o_role}</TableCell>
-      <TableCell>{operator.o_phone}</TableCell>
-      <TableCell>{operator.o_cum_mileage}</TableCell>
-      <TableCell>{operator.o_lincense_expiry}</TableCell>
-     
-    
-    </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+			<TablePagination rowsPerPageOptions={[]} component='div' count={operators.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
+		</>
+	);
+});
 
-export default OperatorTable;
+export default React.memo(OperatorTable);
