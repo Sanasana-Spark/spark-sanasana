@@ -17,9 +17,6 @@ import Settings from './pages/settings'
 import Helpcenter from './pages/helpcenter'
 import Logout from './pages/logout'
 
-// import SignInold from './components/onboarding/signIn/SignIn';
-// import Step1 from './components/onboarding/signUp/Step1';
-// import Step2 from './components/onboarding/signUp/Step2';
 import './App.css';
  
 
