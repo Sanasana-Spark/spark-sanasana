@@ -330,8 +330,8 @@ const Operators = () => {
 	}, []);
 
 	console.log(currentView, selectedTicket);
-
-	return <>{assets.length > 0 ? <>{renderView()}</> : <p> Add Operators </p>}</>;
+ 
+	return 	 <> {renderView()} </>;
 };
 
 export default Operators;
