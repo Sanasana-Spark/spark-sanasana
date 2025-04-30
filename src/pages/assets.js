@@ -462,7 +462,9 @@ const Assets = () => {
 	};
 	console.log(currentView, selectedTicket);
 
-	return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
+	return 	 <> {renderView()} </>;
+
+	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };
 
 export default Assets;
