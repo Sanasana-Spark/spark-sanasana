@@ -24,7 +24,7 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { useAuthContext } from "../onboarding/authProvider";
-const libraries = ["places"];
+const libraries = ["places", "marker"];
 const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
