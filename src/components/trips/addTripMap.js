@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useTheme, useMediaQuery } from "@mui/material";
 import {
   Modal,
   Box,
@@ -14,8 +15,6 @@ import {
   Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
-
 import {
   useJsApiLoader,
   GoogleMap,
@@ -28,6 +27,8 @@ const libraries = ["places", "marker"];
 const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const baseURL = process.env.REACT_APP_BASE_URL;
   const { user_id } = useAuthContext();
   const { org_id } = useAuthContext();
@@ -223,235 +224,286 @@ console.log(directionsResponse)
     );
   }
 
+
+
+
+  const renderForm = () => (
+    <form onSubmit={handleSubmit}>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={6}>
+        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+          <TextField
+            fullWidth
+            type="text"
+            label="Origin"
+            inputRef={originRef}
+            autoComplete="on"
+            margin="normal"
+          />
+        </Autocomplete>
+        <Autocomplete>
+          <TextField
+            fullWidth
+            type="text"
+            label="Destination"
+            inputRef={destiantionRef}
+            autoComplete="off"
+            margin="normal"
+          />
+        </Autocomplete>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={calculateRoute}
+          sx={{ marginTop: '16px', marginRight: '8px',
+            backgroundColor: "var(--secondary-color)",
+            "&:hover": {
+              backgroundColor: "var(--secondary-hover-color)",
+            },
+            color: "white",
+           }}
+        >
+          Calculate Route
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={clearRoute}
+          sx={{
+             marginTop: '16px',
+            backgroundColor: "var(--primary-color)",
+            "&:hover": {
+              backgroundColor: "var(--primary-hover-color)",
+            },
+            color: "white",
+           }}
+          
+        >
+          Clear Route
+        </Button>
+        <Typography style={{ marginTop: '16px' }}>Distance: {distance} </Typography>
+        <Typography>Duration: {duration} </Typography>
+      </Grid>
+
+
+      <Grid item xs={12} sm={6}>
+        <GoogleMap
+          center={center}
+          zoom={15}
+          mapContainerStyle={{ width: "400px", height: "300px" }}
+          options={options}
+          onLoad={onLoad}
+        >
+          <Marker position={center} />
+          {directionsResponse && (
+            <DirectionsRenderer directions={directionsResponse} />
+          )}
+        </GoogleMap>
+        </Grid>
+
+
+
+      <Divider></Divider>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Load(Tonnes)"
+          name="t_load"
+          type="number"
+          value={trip.t_load}
+          onChange={handleChange}
+        />
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="LPO/Description"
+          name="t_type"
+          type="text"
+          value={trip.t_type}
+          onChange={handleChange}
+        />
+      </Grid>
+
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Start Date"
+          name="t_start_date"
+          type="date"
+          value={trip.t_start_date}
+          onChange={handleChange}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="End Date"
+          name="t_end_date"
+          type="date"
+          value={trip.t_end_date}
+          onChange={handleChange}
+        />
+      </Grid>
+
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Distance"
+          name="t_distance"
+          value={distance}
+          onChange={handleChange}
+        />
+      </Grid>
+
+
+
+      <Grid item xs={12} sm={6}>
+        <InputLabel id="operator-label">Assign Driver</InputLabel>
+        <Select
+          fullWidth
+          labelId="operator-label"
+          label="Operator"
+          name="t_operator_id"
+          value={trip.t_operator_id}
+          onChange={handleChange}
+        >
+        {operatorOptions && operatorOptions.length > 0 ? (
+          operatorOptions.map((operator) => (
+            <MenuItem key={operator.id} value={operator.id}>
+              {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
+            </MenuItem>
+          ))
+        ) : ( loading &&
+          <MenuItem disabled>
+            Loading operators...
+          </MenuItem>
+        )}
+        </Select>
+      </Grid>
+
+
+    </Grid>
+    <DialogActions>
+      <Button type="submit" variant="contained"
+      sx={{
+
+        backgroundColor: "var(--secondary-color)",
+        "&:hover": {
+          backgroundColor: "var(--secondary-hover-color)",
+        },
+        color: "white",
+      }
+      } >
+        Submit
+      </Button>
+      <Button variant="contained"
+      sx={{
+
+        backgroundColor: "var(--primary-color)",
+        "&:hover": {
+          backgroundColor: "var(--primary-hover-color)",
+        },
+        color: "white",
+      }
+      } 
+      
+      onClick={onCancel}>
+        Cancel
+      </Button>
+    </DialogActions>
+ 
+  </form>
+  );
+
+
   return (
-    <Modal open={open} onClose={onCancel} sx={{ zIndex: 100}} >
-            <Box
+    <>
+    {isMobile ? (
+  // 🔹 MOBILE MODAL
+  <Modal open={open} onClose={onCancel} sx={{ zIndex: 1300 }}>
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        height: "95vh",
+        bgcolor: "background.paper",
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        p: 2,
+        overflowY: "auto",
+      }}
+    >
+      <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 700,
-          maxHeight: "80vh",
-          overflowY: "auto",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
           bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
+          zIndex: 10,
+          pb: 1,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            position: "sticky",
-            top: 0,
-            bgcolor: "background.paper",
-            zIndex: 10,
-            pb: 1,
-          }}
-        >
-          <Typography variant="h6">Add Trip</Typography>
-          <IconButton onClick={onCancel}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
+        <Typography variant="h6">Add Trip</Typography>
+        <IconButton onClick={onCancel}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
+      {renderForm()}
+    </Box>
+  </Modal>
+) : (
+  // 🔹 DESKTOP MODAL
+  <Modal open={open} onClose={onCancel} sx={{ zIndex: 100 }}>
+    <Box
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 700,
+        maxHeight: "80vh",
+        overflowY: "auto",
+        bgcolor: "background.paper",
+        boxShadow: 24,
+        p: 4,
+        borderRadius: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
+          bgcolor: "background.paper",
+          zIndex: 10,
+          pb: 1,
+        }}
+      >
+        <Typography variant="h6">Add Trip</Typography>
+        <IconButton onClick={onCancel}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
+      {renderForm()}
+    </Box>
+  </Modal>
+)}
 
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                  <TextField
-                    fullWidth
-                    type="text"
-                    label="Origin"
-                    inputRef={originRef}
-                    autoComplete="on"
-                    margin="normal"
-                  />
-                </Autocomplete>
-                <Autocomplete>
-                  <TextField
-                    fullWidth
-                    type="text"
-                    label="Destination"
-                    inputRef={destiantionRef}
-                    autoComplete="off"
-                    margin="normal"
-                  />
-                </Autocomplete>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={calculateRoute}
-                  sx={{ marginTop: '16px', marginRight: '8px',
-                    backgroundColor: "var(--secondary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--secondary-hover-color)",
-                    },
-                    color: "white",
-                   }}
-                >
-                  Calculate Route
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={clearRoute}
-                  sx={{
-                     marginTop: '16px',
-                    backgroundColor: "var(--primary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--primary-hover-color)",
-                    },
-                    color: "white",
-                   }}
-                  
-                >
-                  Clear Route
-                </Button>
-                <Typography style={{ marginTop: '16px' }}>Distance: {distance} </Typography>
-                <Typography>Duration: {duration} </Typography>
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <GoogleMap
-                  center={center}
-                  zoom={15}
-                  mapContainerStyle={{ width: "400px", height: "300px" }}
-                  options={options}
-                  onLoad={onLoad}
-                >
-                  <Marker position={center} />
-                  {directionsResponse && (
-                    <DirectionsRenderer directions={directionsResponse} />
-                  )}
-                </GoogleMap>
-                </Grid>
-
-     
-
-              <Divider></Divider>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Load(Tonnes)"
-                  name="t_load"
-                  type="number"
-                  value={trip.t_load}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="LPO/Description"
-                  name="t_type"
-                  type="text"
-                  value={trip.t_type}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Start Date"
-                  name="t_start_date"
-                  type="date"
-                  value={trip.t_start_date}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="End Date"
-                  name="t_end_date"
-                  type="date"
-                  value={trip.t_end_date}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Distance"
-                  name="t_distance"
-                  value={distance}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="operator-label">Assign Driver</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="operator-label"
-                  label="Operator"
-                  name="t_operator_id"
-                  value={trip.t_operator_id}
-                  onChange={handleChange}
-                >
-                {operatorOptions && operatorOptions.length > 0 ? (
-                  operatorOptions.map((operator) => (
-                    <MenuItem key={operator.id} value={operator.id}>
-                      {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
-                    </MenuItem>
-                  ))
-                ) : ( loading &&
-                  <MenuItem disabled>
-                    Loading operators...
-                  </MenuItem>
-                )}
-                </Select>
-              </Grid>
-
-
-            </Grid>
-            <DialogActions>
-              <Button type="submit" variant="contained"
-              sx={{
-
-                backgroundColor: "var(--secondary-color)",
-                "&:hover": {
-                  backgroundColor: "var(--secondary-hover-color)",
-                },
-                color: "white",
-              }
-              } >
-                Submit
-              </Button>
-              <Button variant="contained"
-              sx={{
-
-                backgroundColor: "var(--primary-color)",
-                "&:hover": {
-                  backgroundColor: "var(--primary-hover-color)",
-                },
-                color: "white",
-              }
-              } 
-              
-              onClick={onCancel}>
-                Cancel
-              </Button>
-            </DialogActions>
-         
-          </form>
-</Box>
-</Modal>
+    </>
+    
   );
 };
 export default AddTripMapForm;
