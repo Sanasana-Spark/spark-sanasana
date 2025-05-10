@@ -2,7 +2,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-const ClientTable = ({ clients, onEditClick, onClientClick }) => {
+const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick }) => {
 	return (
 		<TableContainer component={Paper}>
 			<Table>
@@ -69,6 +69,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick }) => {
 									}}
 									onClick={e => {
 										e.stopPropagation();
+										onNewInvoiceClick(client);
 									}}
 								>
 									New Invoice
