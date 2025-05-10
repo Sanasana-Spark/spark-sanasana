@@ -1,171 +1,227 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
-import "leaflet/dist/leaflet.css";
-import {
-  Grid,
-  Typography,
-  Box,
-  Container,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Card, CardContent, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import Loader from "../loader";
 import Map from "../maps/singleTripMap";
+import { useAuthContext } from '../onboarding/authProvider';
 
 const PropCard = ({ selectedAsset }) => {
-  // const startLat = parseFloat(asset.t_start_lat) || 5.6037;
-  // const startLong = parseFloat(asset.t_start_long) || -0.1870;
-  // const endLat = parseFloat(asset.t_end_lat) || 5.6037;
-  // const endLong = parseFloat(asset.t_end_long) || -0.1870;
-  const startLat = 5.6037;
-  const startLong = -0.187;
-  const endLat = 5.9037;
-  const endLong = -0.117;
-
-  const start = { lat: startLat, lng: startLong };
-  const end = { lat: endLat, lng: endLong };
-
-  // const pathCoordinates = [
-  //   [startLat, startLong],
-  //   [endLat, endLong]
-  // ];
-
+  const baseURL = process.env.REACT_APP_BASE_URL
+  const {org_id, user_id , org_currency } = useAuthContext();
+  const [tripIncome, setTripIncome] = useState([]);
+  const [tripExpense, setTripExpense] = useState([]);
+  const [tripSummary, setTripSummary] = useState([]);
   const [loading, setLoading] = useState(true);
+  const asset_id = selectedAsset[0]?.id;
+
   useEffect(() => {
-    if (selectedAsset) {
-      setLoading(false);
-    } else {
-      setLoading(true);
+      if (org_id && user_id && asset_id) {
+      fetch(`${baseURL}/assets/income/${org_id}/${user_id}/${asset_id}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTripIncome(data.invoices);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }},[baseURL,org_id, user_id, asset_id] );
+
+    useEffect(() => {
+      if (org_id && user_id && asset_id) {
+      fetch(`${baseURL}/assets/expense/${org_id}/${user_id}/${asset_id}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setTripExpense(data.expenses);
+
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        });
+    }},[baseURL,org_id, user_id, asset_id] );
+
+
+  useEffect(() => {
+    if (org_id && user_id && asset_id) {
+      setTripSummary((prevSummary) => ({
+        ...prevSummary,
+        income_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0),
+        expense_summary: tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
+        profit_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0) - tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
+      }));
     }
-  }, [selectedAsset]);
+  }, [org_id, user_id, asset_id, tripIncome, tripExpense]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
-    <Container sx={{ maxHeight: 'inherit' }}>
-      {!loading && (
-        <Box>
-          {selectedAsset.map((asset) => (
-            <>
-              <Box>
-                <Grid item xs={12} sm={12} sx={{ padding: 2, textAlign: "center" }}>
-                 
-                   
-                    Most Recent Trip
-                </Grid>
-              </Box>
-              <Box sx={{ maxHeight: '20vh', overflow: "hidden" }} >
+    <div>
+      {selectedAsset.map((asset) => {
+        const startLat = parseFloat(asset.t_start_lat);
+        const startLong = parseFloat(asset.t_start_long);
+        const start = { lat: startLat, lng: startLong };
+        const origin = asset.t_origin_place_query;
+        const destination = asset.t_destination_place_query;
 
-                <Map
-                  origin={start}
-                  destination={end}
-                  key={asset.id}
-                  center={start}
-                  style={{ width: "100%", height: "100%" }}
-                />
-                
-              </Box>
-
-              <Box>
-                <Grid container spacing={2} paddingBottom={3} paddingTop={3} >
-                  <Grid item xs={12} sm={4}  >
-                  
-                      {asset.a_license_plate}{" "}
-                   
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    
-                      set current Driver
-                  </Grid>
-                  <Grid item xs={12} sm={4}>
-                    
-                      {asset.a_status}
-                    
-                  </Grid>
-                </Grid>
-              </Box>
-
-              <Box
-      sx={{
-        p: 3,
-        borderRadius: 2,
-        width: "320px",
-       
-        backgroundColor: "inherit",
-      }}
-    >
-      <Typography variant="body1" sx={{ mb: 2, fontWeight: "bold", color: "#333" }}>
-        Mileage covered vs fuel expense in last:
-      </Typography>
-
-      {/* Styled Vertical List */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        {/* Daily Mileage */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            p: 1,
-            borderRadius: 1,
-            // backgroundColor: "white",
-            // boxShadow: 1,
-            // border: "1px solid #ddd",
+        return (
+          <Box key={asset.id}
+          sx={{ 
+            backgroundColor: "#F9FAFB", // Light gray background
+            boxShadow: 2, // Adds a slight shadow
+            borderRadius: 2, // Rounded corners
+            padding: 2, // Adds spacing inside
+            marginBottom: 2 // Adds spacing between sections
           }}
-        >
-          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
-            24 Hours:
-          </Typography>
-          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {asset?.daily_mileage ?? "N/A"} KM - {asset?.daily_cost ?? "N/A Ksh"}
-          </Typography>
-        </Box>
+          >
+            <Typography variant="h6" fontWeight="bold">
+                      {asset.a_license_plate} ({asset.a_make} - {asset.a_model})
+                    </Typography>
 
-        {/* Weekly Mileage */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            p: 1,
-            borderRadius: 1,
-          }}
-        >
-          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
-            Week:
-          </Typography>
-          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {asset?.weekly_mileage ?? "N/A"} KM - {asset?.weekly_cost ?? "N/A Ksh"}
-          </Typography>
-        </Box>
+            {/* Minimized Map */}
+            <Box sx={{  marginBottom: 2 }}>
+              <Map origin={origin} destination={destination} center={start} />
+            </Box>
 
-        {/* Monthly Mileage */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            p: 1,
-            borderRadius: 1,
-          }}
-        >
-          <Typography variant="body1" sx={{ fontWeight: "bold", color: "#555" }}>
-            Month:
-          </Typography>
-          <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {asset?.monthly_mileage ?? "N/A"} KM - {asset?.monthly_cost ?? "N/A Ksh"}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+            <Grid container spacing={2}>
+             
+              {/* Income Listing */}
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">Income</Typography>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                          <TableCell>Type</TableCell>
+                            <TableCell>Description</TableCell>
+                            <TableCell>Amount ({org_currency})</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {tripIncome && tripIncome.length > 0 ? (
+                            tripIncome.map((income) => (
+                              <TableRow key={income.id}>
+                                <TableCell>{income.ti_type}</TableCell>
+                                <TableCell>{income.ti_description}</TableCell>
+                                <TableCell>{income.ti_amount}</TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={2} align="center">No income records</TableCell>
+                              
+                            </TableRow>
+                          )}
 
 
-  
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Expense Listing */}
+              <Grid item xs={12} md={6}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">Expenses</Typography>
+                    <TableContainer component={Paper}>
+                      <Table size="small">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Description</TableCell>
+                            <TableCell>Amount ({org_currency})</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {tripExpense && tripExpense.length > 0 ? (
+                            tripExpense.map((expense) => (
+                              <TableRow key={expense.id}>
+                                <TableCell>{expense.te_type}</TableCell>
+                                <TableCell>{expense.te_description}</TableCell>
+                                <TableCell>{expense.te_amount}</TableCell>
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell colSpan={3} align="center">No expense records</TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </CardContent>
+                </Card>
+              </Grid>
 
 
-            </>
-          ))}
-        </Box>
-      )}
 
-      {loading && <Loader />}
-    </Container>
+              {/* Income & Expense Summary Cards */}
+              <Grid item xs={12} md={3}>
+                <Card sx={{ backgroundColor: "#ECFDF5", textAlign: "center" }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">
+                      Income
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="green">
+                      {org_currency} {tripSummary.income_summary || "0.00"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <Card sx={{ backgroundColor: "#FEE2E2", textAlign: "center" }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">
+                      Expenses
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="red">
+                      {org_currency} {tripSummary.expense_summary || "0.00"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+
+              <Grid item xs={12} md={3}>
+                <Card sx={{ backgroundColor: "#ECFDF5", textAlign: "center" }}>
+                  <CardContent>
+                    <Typography variant="h6" fontWeight="bold">
+                      Gross Profit
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="green">
+                      {org_currency} {tripSummary.profit_summary|| "0.00"}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+
+
+            </Grid>
+          </Box>
+        );
+      })}
+    </div>
   );
 };
 

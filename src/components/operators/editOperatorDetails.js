@@ -3,22 +3,19 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, B
 
 const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
-		o_name: '',
-		o_email: '',
-		o_phone: '',
-		o_role: '',
-		o_status: '',
+		id:selectedOperator.id
 	});
 	const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
 	useEffect(() => {
 		if (selectedOperator) {
 			setFormData({
-				o_name: selectedOperator.o_name || '',
-				o_email: selectedOperator.o_email || '',
-				o_role: selectedOperator.o_role || '',
-				o_phone: selectedOperator.o_phone || '',
-				o_status: selectedOperator.o_status || '',
+				id:selectedOperator.id,
+				o_name: selectedOperator.o_name,
+				o_email: selectedOperator.o_email,
+				o_role: selectedOperator.o_role ,
+				o_phone: selectedOperator.o_phone,
+				o_status: selectedOperator.o_status,
 			});
 		}
 	}, [selectedOperator]);
