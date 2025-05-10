@@ -11,7 +11,6 @@ import { useAuthContext } from '../onboarding/authProvider';
 import {
   Container,
   Box,
-  Grid,
   Typography,
   IconButton,
   TextField,
@@ -116,25 +115,39 @@ const Trips = () => {
 
   const AssetView = () => (
 
-<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
-<Box  >
+// <Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Container maxWidth="xl" disableGutters sx={{ 
+height: "100%",
+width: "100%",
+display: "flex",
+flexDirection: "column",
+overflow: "scroll",
+flex: 1,
+ }}>
 
 
-    <Grid item xs={12}  >
 
       <Box
         sx={{
 
           display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between", // Pushes elements apart
-    padding: "15px 25px",
-    gap: 2, // Adds spacing between elements
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "flex-start", sm: "center" },
+          justifyContent: "space-between",
+          paddingBottom: { xs: 1, sm: 2 },
+          gap: 2
 
         }}
       >
       
-      <Box sx={{ display: "flex", alignItems: "center" }}>
+      <Box sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: "center",
+        gap: 1,
+        width: "100%"
+
+      }}>
         {/* Search Box */}
        
         <TextField
@@ -145,6 +158,7 @@ const Trips = () => {
             "& .MuiOutlinedInput-notchedOutline": {
               borderTopRightRadius: 0,
               borderBottomRightRadius: 0,
+              border: "1px solid var(--primary-color) ",
             },
           }}
         />
@@ -205,18 +219,14 @@ const Trips = () => {
 
       </Box>
 
-    <Box>
+   
       <AssetsTable
         trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
-      </Box>
+    
 
 
-    </Grid>
-
-
-</Box>
 
 <AddAssetForm
   open={showAddPropertyForm}
@@ -231,51 +241,10 @@ const Trips = () => {
   );
 
   const DetailView = ({ selectedAsset, isOpen }) => (
-    <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
+    // <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
+    <Container maxWidth="xl" disableGutters sx={{ padding: { xs: 1, sm: 2 } }}>
 
-      <Box>
-        <Grid item xs={12} marginBottom={5}></Grid>
-          <Box display="flex" justifyContent="space-between"></Box>
-            <Typography variant="h6">Trips</Typography>
-            <Box
-              display="flex"
-              justifyContent="flex-end"
-              gap={2}
-              color="var(--primary-text-color)"
-            >
-              {/* Add button */}
-              <IconButton
-                onClick={handleAddPropertyClick}
-                sx={{
-                  border: "1px solid #047A9A",
-                  borderRadius: "4px",
-                  padding: "4.5px",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 30,
-                    height: 32,
-                    backgroundColor: "#047A9A",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <AddIcon sx={{ fontSize: 20, color: "white" }} />
-                </Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    paddingLeft: "3px",
-                    color: "var(--primary-text-color)",
-                  }}
-                >
-                  Add Trip
-                </Typography>
-              </IconButton>
-            </Box>
-          </Box>
+    
      
           <Box
             sx={{
@@ -315,6 +284,8 @@ const Trips = () => {
               ))}
             </Box>
           </Box>
+
+
 
           <Box>
             <AssetsTable

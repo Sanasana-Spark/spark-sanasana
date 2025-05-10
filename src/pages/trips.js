@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, Tabs, Tab, Typography, Paper } from "@mui/material";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from "@mui/material";
 import New from "../components/trips/trips_main";
 import Requested from "../components/trips/trips_cashflow";
 import History from "../components/trips/trips_history";
@@ -11,12 +18,31 @@ const Trips = () => {
     setActiveTab(newValue);
   };
 
-  return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>Trips</Typography>
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-      {/* Tabs Container */}
-      <Paper sx={{ width: "100%", borderRadius: 2, overflow: "hidden" }}>
+  return (
+    <Box sx={{ 
+      // p: isMobile ? 1 : 3,
+      margin : isMobile ? 0 : 0,
+      padding: isMobile ? 0 : 2,
+      display: "flex",
+      flexDirection: "column",
+      width: "100%",
+      minWidth: 0,  
+      height: "100%",
+      overflow: "scroll",
+      boxShadow: isMobile ? 1 : 3, }}>
+    
+
+<Typography
+        variant={isMobile ? "subtitle1" : "h6"}
+        sx={{ mb: 2, fontWeight: "bold" }}
+      >
+        Trips
+      </Typography>
+
+
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -24,19 +50,24 @@ const Trips = () => {
           scrollButtons="auto"
           textColor="primary"
           indicatorColor="primary"
+          sx={{
+            ".MuiTab-root": {
+              fontSize: isMobile ? "0.75rem" : "1rem",
+              minWidth: 100,
+            }
+          }}
         >
           <Tab label="New/In-Progress" value="New" />
           <Tab label="Income/Expenses" value="Fuel_Requests" />
           <Tab label="History" value="History" />
         </Tabs>
 
-        {/* Content Display */}
-        <Box sx={{ p: 3, minHeight: "70vh" }}>
+    
           {activeTab === "New" && <New />}
           {activeTab === "Fuel_Requests" && <Requested />}
-          {activeTab === "History" && <History/> }
-        </Box>
-      </Paper>
+          {activeTab === "History" && <History />}
+       
+     
     </Box>
   );
 };
