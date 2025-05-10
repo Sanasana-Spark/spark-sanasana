@@ -4,7 +4,7 @@ import {
   GoogleMap,
   DirectionsRenderer,
 } from "@react-google-maps/api";
-const libraries = ["places"];
+const libraries = ["places", "marker"];
 
 const DirectionsMap = ({ origin, destination, center }) => {
   const [directionsResponse, setDirectionsResponse] = useState(null);
