@@ -31,7 +31,8 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
 
 
   return (
-    <TableContainer >
+    <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
+     }} >
        <Table stickyHeader aria-label="sticky table" >
              <TableHead >
                <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >

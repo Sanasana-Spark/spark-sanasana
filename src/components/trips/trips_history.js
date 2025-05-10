@@ -116,11 +116,17 @@ const Trips = () => {
 
   const AssetView = () => (
 
-<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Container maxWidth="xl" disableGutters sx={{ 
+height: "100%",
+width: "100%",
+display: "flex",
+flexDirection: "column",
+overflow: "scroll",
+flex: 1,
+ }}>
 <Box  >
 
 
-    <Grid item xs={12}  >
 
       <Box
         sx={{
@@ -173,15 +179,15 @@ const Trips = () => {
 
       </Box>
 
-    <Box>
+  
       <AssetsTable
         trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
-      </Box>
+    
 
 
-    </Grid>
+  
 
 
 </Box>
@@ -260,6 +266,7 @@ const Trips = () => {
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderTopRightRadius: 0,
                   borderBottomRightRadius: 0,
+                  border: "1px solid var(--primary-color) ",
                 },
               }}
             />

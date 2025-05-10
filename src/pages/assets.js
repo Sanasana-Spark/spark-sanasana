@@ -117,7 +117,9 @@ const Assets = () => {
 		setIsSliderOpen(false);
 	};
 
+
 	const handleSaveEdit = updatedAsset => {
+		console.log(updatedAsset);
 		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}`;
 		const options = {
 			method: 'PUT',
@@ -460,7 +462,9 @@ const Assets = () => {
 	};
 	console.log(currentView, selectedTicket);
 
-	return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
+	return 	 <> {renderView()} </>;
+
+	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };
 
 export default Assets;
