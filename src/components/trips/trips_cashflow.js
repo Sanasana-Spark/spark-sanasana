@@ -118,20 +118,28 @@ const Trips = () => {
 
   const AssetView = () => (
 
-<Container width="100%" sx={{ fontFamily: "var(--font-family)", padding:1 }}>
+<Container maxWidth="xl" disableGutters sx={{ 
+height: "100%",
+width: "100%",
+display: "flex",
+flexDirection: "column",
+overflow: "scroll",
+flex: 1,
+ }}>
+
 <Box  >
 
 
-    <Grid item xs={12}  >
+   
 
       <Box
         sx={{
 
-          display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between", // Pushes elements apart
-    padding: "15px 25px",
-    gap: 2, // Adds spacing between elements
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "flex-start", sm: "center" },
+          justifyContent: "space-between",
+          paddingBottom: { xs: 1, sm: 2 },
+          gap: 2
 
         }}
       >
@@ -176,16 +184,15 @@ const Trips = () => {
 
       </Box>
 
-    <Box>
+
       <AssetsTable
         assets={assets}
         onViewUnitsClick={handleViewDetailsClick}
       />
-      </Box>
 
 
-    </Grid>
 
+   
 
 </Box>
 
@@ -263,6 +270,7 @@ const Trips = () => {
                 "& .MuiOutlinedInput-notchedOutline": {
                   borderTopRightRadius: 0,
                   borderBottomRightRadius: 0,
+                  border: "1px solid var(--primary-color) ",
                 },
               }}
             />

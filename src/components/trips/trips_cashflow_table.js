@@ -183,7 +183,9 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   );
 
   return (
-    <TableContainer>
+    <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
+          backgroundColor: 'var(--main-bg-color)',
+        }} >
       <Table stickyHeader aria-label="sticky table">
         <TableHead>
           <TableRow

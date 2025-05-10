@@ -26,7 +26,7 @@ const Settings = () => {
 
 
   return (
-    <div>
+    <div style={{ width: "100%"}} >
      
       <div style={{ display: "flex",fontWeight: "bold",fontSize: "1em",  }} >
         Settings
