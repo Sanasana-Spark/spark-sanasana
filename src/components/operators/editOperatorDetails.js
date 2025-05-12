@@ -3,19 +3,21 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, B
 
 const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
-		id:selectedOperator.id
+		id: '',
+		o_name: '',
+		o_email: '',
+		o_role: '',
+		o_phone: '',
+		o_status: '',
 	});
+
+	console.log('formData>>', formData);
 	const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
 	useEffect(() => {
 		if (selectedOperator) {
 			setFormData({
-				id:selectedOperator.id,
-				o_name: selectedOperator.o_name,
-				o_email: selectedOperator.o_email,
-				o_role: selectedOperator.o_role ,
-				o_phone: selectedOperator.o_phone,
-				o_status: selectedOperator.o_status,
+				id:selectedOperator.id
 			});
 		}
 	}, [selectedOperator]);
@@ -33,13 +35,17 @@ const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	};
 
 	const handleConfirmSave = () => {
-		onSave(formData);
 		setIsConfirmationOpen(false);
+		onSave(formData);
 	};
 
 	const handleCancelSave = () => {
 		setIsConfirmationOpen(false);
 	};
+
+	// Helper to get field value (edited or original)
+	const getValue = (key) => (formData[key] !== undefined ? formData[key] : selectedOperator[key] || '');
+
 
 	return (
 		<>
@@ -47,11 +53,11 @@ const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 				<DialogTitle>Edit Operator</DialogTitle>
 				<DialogContent>
 					<Box sx={{ padding: 2 }}>
-						<TextField label='Full Name' name='o_name' value={formData.o_name} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
-						<TextField label='Email' name='o_email' value={formData.o_email} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
-						<TextField label='Position' name='o_role' value={formData.o_role} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Contact' name='o_phone' value={formData.o_phone} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Status' name='o_status' value={formData.o_status} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Full Name' name='o_name'  value={getValue('o_name')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Email' name='o_email' value={getValue('o_email')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
+						<TextField label='Position' name='o_role' value={getValue('o_role')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Contact' name='o_phone' value={getValue('o_phone')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Status' name='o_status' value={getValue('o_status')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
 					</Box>
 				</DialogContent>
 				<DialogActions>
