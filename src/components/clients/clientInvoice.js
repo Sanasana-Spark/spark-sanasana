@@ -3,9 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import EditIcon from '@mui/icons-material/Edit';
 
 const ClientInvoice = ({ invoices, selectedClient }) => {
-	if (!selectedClient || invoices.length === 0) {
-		return null;
-	}
+	if (!selectedClient || invoices.length === 0) return null;
 
 	return (
 		<Box mt={4}>
@@ -13,7 +11,6 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 				<Typography variant='subtitle1' gutterBottom>
 					Clients - {selectedClient.c_name} Invoices
 				</Typography>
-
 				<Button
 					size='small'
 					variant='contained'
@@ -38,6 +35,7 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 					Preview/Email Invoice
 				</Button>
 			</Box>
+
 			<TableContainer
 				component={Paper}
 				sx={{
@@ -47,10 +45,11 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 					borderRadius: 2,
 				}}
 			>
+
 				<Table size='small'>
 					<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
 						<TableRow>
-							{['Invoice No', 'Amt', 'Balance', 'Status', 'Date', 'Edit'].map(header => (
+							{['Invoice No', 'Amount', 'Balance', 'Status', 'Date', 'Edit'].map(header => (
 								<TableCell
 									key={header}
 									sx={{
@@ -67,14 +66,10 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 					</TableHead>
 					<TableBody>
 						{invoices.map((invoice, index) => (
-							<TableRow
-								key={index}
-								sx={{
-									backgroundColor: '#f5f5f5',
-									'&:last-child td': { borderBottom: 0 },
-								}}
-							>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.id || '-'}</TableCell>
+
+							<TableRow key={index} sx={{ backgroundColor: '#f5f5f5', '&:last-child td': { borderBottom: 0 } }}>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.invoice_no || '-'}</TableCell>
+
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_balance || invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_status}</TableCell>
