@@ -3,7 +3,12 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, B
 
 const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
-		id:selectedOperator.id
+		id: '',
+		o_name: '',
+		o_email: '',
+		o_role: '',
+		o_phone: '',
+		o_status: '',
 	});
 
 	console.log('formData>>', formData);
