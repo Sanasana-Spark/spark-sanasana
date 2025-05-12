@@ -18,9 +18,9 @@ import UploadIcon from '@mui/icons-material/Upload';
 const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
-	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
-	const [selectedTicket, setSelectedTicket] = useState([]);
-	const [assets, setAssets] = useState([]);
+	const [currentView, setCurrentView] = useState('TableView');
+	const [selectedTicket, setSelectedTicket] = useState(null);
+	const [operators, setOperators] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
@@ -41,7 +41,7 @@ const Operators = () => {
 					return response.json();
 				})
 				.then(data => {
-					setAssets(data);
+					setOperators(data);
 					setLoading(false);
 				})
 				.catch(error => {
@@ -52,7 +52,6 @@ const Operators = () => {
 	}, [baseURL, org_id, user_id, showAddPropertyForm]);
 
 	const handleSubmit = operatorData => {
-		// Define the URL for the POST request
 		const url = `${baseURL}/operators/${org_id}/${user_id}/`;
 		const data = {
 			o_name: operatorData.o_name,
@@ -71,11 +70,11 @@ const Operators = () => {
 			o_assigned_asset: operatorData.o_assigned_asset,
 		};
 		const options = {
-			method: 'POST', // Specify the HTTP method
+			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json', // Specify the content type of the request body
+				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data), // Convert data to JSON string for the request body
+			body: JSON.stringify(data),
 		};
 		fetch(url, options)
 			.then(response => {
@@ -89,7 +88,9 @@ const Operators = () => {
 				console.error('Error adding Operator:', error);
 			});
 	};
-	const selectedOperator = assets.find(operator => operator['id'] === selectedTicket);
+	const selectedOperator = selectedTicket ? operators.find(operator => operator['id'] === selectedTicket) : null;
+
+	console.log('selectedOperator', selectedOperator);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -106,7 +107,7 @@ const Operators = () => {
 
 	//handling edit
 	const handleEditClick = operatorId => {
-		const operator = assets.find(o => o.id === operatorId);
+		const operator = operators.find(o => o.id === operatorId);
 		setEditOperator(operator);
 		setIsSliderOpen(true);
 	};
@@ -116,19 +117,35 @@ const Operators = () => {
 		setIsSliderOpen(false);
 	};
 
-	const handleSaveEdit = updatedOperator => {
-		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}`;
+	const handleSaveEdit = updatedFields => {
+		if (!selectedOperator || !selectedOperator.id) {
+			return;
+		}
+		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedFields.id}`;
+		// Creating object with only the modified fields
+		const modifiedFields = {};
+		Object.keys(updatedFields).forEach(key => {
+			if (updatedFields[key] !== selectedOperator[key]) {
+				modifiedFields[key] = updatedFields[key];
+			}
+		});
 		const options = {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(updatedOperator),
+			body: JSON.stringify(modifiedFields),
 		};
+
 		fetch(url, options)
-			.then(response => response.json())
-			.then(() => {
-				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedOperator.id ? updatedOperator : asset)));
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Failed to update operator');
+				}
+				return response.json();
+			})
+			.then(data => {
+				setOperators(prevOperators => prevOperators.map(operator => (operator.id === updatedFields.id ? { ...operator, ...data } : operator)));
 				setEditOperator(null);
 				setIsSliderOpen(false);
 			})
@@ -138,7 +155,7 @@ const Operators = () => {
 	};
 
 	//handling search by driver name or contact
-	const filteredAssets = assets.filter(operator => {
+	const filteredOperators = operators.filter(operator => {
 		if (!search) return true;
 
 		const searchQuery = search.toLowerCase();
@@ -256,8 +273,8 @@ const Operators = () => {
 					</Box>
 
 					<Box>
-						{filteredAssets.length > 0 ? (
-							<OperatorTable operators={filteredAssets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+						{filteredOperators.length > 0 ? (
+							<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -280,7 +297,7 @@ const Operators = () => {
 		<div className='fluidGrid'>
 			<ActionNav title='assets' icons={icons} onAddClick={handleAddPropertyClick} icontitle='Add Operator' onSecondClick={handleAddPropertyClick} bulktitle='Bulk Upload' />
 
-			<OperatorTable operators={assets} onViewUnitsClick={handleViewDetailsClick} />
+			<OperatorTable operators={operators} onViewUnitsClick={handleViewDetailsClick} />
 
 			<AddOperatorForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
@@ -323,15 +340,15 @@ const Operators = () => {
 		}
 	};
 
-	const handleViewDetailsClick = useCallback(rowIndex => {
+	const handleViewDetailsClick = useCallback(operatorId => {
 		setCurrentView('RequestDetails');
-		setSelectedTicket(rowIndex);
+		setSelectedTicket(operatorId);
 		setIsSliderOpen(true);
 	}, []);
 
 	console.log(currentView, selectedTicket);
- 
-	return 	 <> {renderView()} </>;
+
+	return <> {renderView()} </>;
 };
 
 export default Operators;
