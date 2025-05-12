@@ -21,13 +21,12 @@ const Operators = () => {
 	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
 	const [selectedTicket, setSelectedTicket] = useState([]);
 	const [assets, setAssets] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [, setLoading] = useState(true);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
 	const [editOperator, setEditOperator] = useState(null);
-	console.log(loading);
 
 	useEffect(() => {
 		if (org_id && user_id) {
@@ -49,7 +48,7 @@ const Operators = () => {
 					setLoading(false);
 				});
 		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm]);
+	}, [baseURL, org_id, user_id, showAddPropertyForm, isSliderOpen]);
 
 	const handleSubmit = operatorData => {
 		// Define the URL for the POST request
@@ -117,7 +116,8 @@ const Operators = () => {
 	};
 
 	const handleSaveEdit = updatedOperator => {
-		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}`;
+		console.log('Updated Operator:', updatedOperator);
+		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
 		const options = {
 			method: 'PUT',
 			headers: {
@@ -128,8 +128,6 @@ const Operators = () => {
 		fetch(url, options)
 			.then(response => response.json())
 			.then(() => {
-				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedOperator.id ? updatedOperator : asset)));
-				setEditOperator(null);
 				setIsSliderOpen(false);
 			})
 			.catch(error => {
@@ -329,7 +327,6 @@ const Operators = () => {
 		setIsSliderOpen(true);
 	}, []);
 
-	console.log(currentView, selectedTicket);
  
 	return 	 <> {renderView()} </>;
 };
