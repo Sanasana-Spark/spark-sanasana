@@ -39,7 +39,7 @@ const Clients = () => {
 			}
 		};
 		fetchClients();
-	}, [baseURL, org_id, user_id, isSliderOpen]);
+	}, [baseURL, org_id, user_id, isSliderOpen, selectedClient]);
 
 	useEffect(() => {
 		if (!selectedClient) return;
@@ -71,7 +71,7 @@ const Clients = () => {
 	};
 
 	const handleSaveEdit = updatedClient => {
-		const url = `${baseURL}/clients/${org_id}/${updatedClient.id}/`;
+		const url = `${baseURL}/clients/${org_id}/${user_id}/${updatedClient.id}/`;
 		const options = {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },
