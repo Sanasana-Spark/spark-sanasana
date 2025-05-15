@@ -17,9 +17,8 @@ import { Search } from '@mui/icons-material';
 
 const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id } = useAuthContext();
-	const { org_id } = useAuthContext();
-	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
+	const { user_id, org_id } = useAuthContext();
+	const [currentView, setCurrentView] = useState('TableView');
 	const [selectedTicket, setSelectedTicket] = useState([]);
 	const [assets, setAssets] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -50,7 +49,7 @@ const Assets = () => {
 					setLoading(false);
 				});
 		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm]);
+	}, [baseURL, org_id, user_id, showAddPropertyForm, isSliderOpen]);
 
 	const handleSubmit = assetData => {
 		// Define the URL for the POST request
@@ -90,7 +89,7 @@ const Assets = () => {
 				console.error('Error adding asset:', error);
 			});
 	};
-	const selectedAsset = assets.filter(asset => asset['id'] === selectedTicket);
+	const selectedAsset = selectedTicket ? assets.find(asset => asset['id'] === selectedTicket) : null;
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -107,7 +106,7 @@ const Assets = () => {
 
 	//handling edit
 	const handleEditClick = assetId => {
-		const asset = assets.find(o => o.id === assetId);
+		const asset = assets.find(asset => asset.id === assetId);
 		setEditAsset(asset);
 		setIsSliderOpen(true);
 	};
@@ -117,9 +116,7 @@ const Assets = () => {
 		setIsSliderOpen(false);
 	};
 
-
 	const handleSaveEdit = updatedAsset => {
-		console.log(updatedAsset);
 		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
 		const options = {
 			method: 'PUT',
@@ -131,7 +128,6 @@ const Assets = () => {
 		fetch(url, options)
 			.then(response => response.json())
 			.then(() => {
-				setAssets(prevAssets => prevAssets.map(asset => (asset.id === updatedAsset.id ? updatedAsset : asset)));
 				setEditAsset(null);
 				setIsSliderOpen(false);
 			})
@@ -462,7 +458,7 @@ const Assets = () => {
 	};
 	console.log(currentView, selectedTicket);
 
-	return 	 <> {renderView()} </>;
+	return <> {renderView()} </>;
 
 	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };
