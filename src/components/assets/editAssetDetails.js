@@ -3,23 +3,21 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, B
 
 const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
-		id: selectedAsset.id 
+		id: selectedAsset.id,
 	});
+
+	console.log('formdata', formData);
 	const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
 
 	useEffect(() => {
 		if (selectedAsset) {
 			setFormData({
-				id: selectedAsset.id ,
-				a_license_plate: selectedAsset.a_license_plate ,
-				a_status: selectedAsset.a_status,
-				a_mileage: selectedAsset.a_mileage,
-				a_make: selectedAsset.a_make ,
-				a_model: selectedAsset.a_model ,
-				a_year: selectedAsset.a_year,
+				id: selectedAsset.id,
 			});
 		}
 	}, [selectedAsset]);
+
+	const getValue = key => (formData[key] !== undefined ? formData[key] : selectedAsset[key] || '');
 
 	const handleChange = e => {
 		const { name, value } = e.target;
@@ -48,11 +46,11 @@ const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 				<DialogTitle>Edit Asset</DialogTitle>
 				<DialogContent>
 					<Box sx={{ padding: 2 }}>
-						<TextField label='Reg No' name='a_license_plate' value={formData.a_license_plate} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Status' name='a_status' value={formData.a_status} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Mileage' name='a_mileage' value={formData.a_mileage} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Manufacturer' name='a_make' value={formData.a_make} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Model' name='a_model' value={formData.a_model} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Reg No' name='a_license_plate' value={getValue('a_license_plate')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Status' name='a_status' value={getValue('a_status')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Mileage' name='a_mileage' value={getValue('a_mileage')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Manufacturer' name='a_make' value={getValue('a_make')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Model' name='a_model' value={getValue('a_model')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
 					</Box>
 				</DialogContent>
 				<DialogActions>
