@@ -33,6 +33,8 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Mileage</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Make</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Model</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Preview</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
