@@ -120,7 +120,7 @@ const Assets = () => {
 
 	const handleSaveEdit = updatedAsset => {
 		console.log(updatedAsset);
-		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}`;
+		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
 		const options = {
 			method: 'PUT',
 			headers: {
