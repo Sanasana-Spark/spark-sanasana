@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Checkbox, TablePagination, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, TablePagination, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
@@ -23,38 +23,26 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 	};
 
 	const paginatedAssets = assets.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
-
-	// Handle checkbox selection (can be enhanced for more complex selection logic)
-	const [selected, setSelected] = useState([]);
-	const handleSelectRow = id => {
-		const newSelected = selected.includes(id) ? selected.filter(item => item !== id) : [...selected, id];
-		setSelected(newSelected);
-	};
-
 	return (
 		<TableContainer>
 			<Table stickyHeader aria-label='sticky table'>
 				<TableHead>
 					<TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
-						<TableCell padding='checkbox'> {/* Replace Action with Checkbox */}</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Reg</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Driver</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Mileage</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Make</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Model</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Preview</TableCell>
+						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{/* Render a TableRowItem for each asset in the assets array */}
 					{paginatedAssets.map((asset, index) => (
 						<TableRow key={asset.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
-							<TableCell padding='checkbox'>
-								<Checkbox checked={selected.includes(asset.id)} onChange={() => handleSelectRow(asset.id)} />
-							</TableCell>
 							<TableCell>{asset.a_license_plate}</TableCell>
 							<TableCell>{asset.a_status}</TableCell>
-							<TableCell>to set </TableCell>
 							<TableCell>{asset.a_mileage}</TableCell>
 							<TableCell>{asset.a_make}</TableCell>
 							<TableCell>
