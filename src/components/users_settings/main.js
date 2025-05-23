@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../App.css';
 import { useAuthContext } from '../onboarding/authProvider';
 import EditIcon from '@mui/icons-material/Edit';
-import { IconButton, Button, Box, MenuItem, TextField, InputLabel, Select, FormControl, Typography, TableCell, TableContainer, TableRow, Table, TableHead, TableBody, Paper } from '@mui/material';
+import { IconButton, Button, Box, MenuItem, TextField, InputLabel, Select, FormControl, Typography, TableCell, TableContainer, TableRow, Table, TableHead, TableBody } from '@mui/material';
 
 const UserSettings = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -117,12 +117,7 @@ const UserSettings = () => {
 	};
 
 	return (
-		<Box style={{ padding: '5px', maxWidth: '1000px', margin: '0 auto' }}>
-			<Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-				<Typography variant='h6' sx={{ padding: 2 }}>
-					Select the permissions for your team members
-				</Typography>
-
+		<Box style={{ padding: '0px',  margin: '0 auto' }}>
 				<Button
 					onClick={() => {
 						setInvitedUser(true);
@@ -138,12 +133,13 @@ const UserSettings = () => {
 				>
 					Invite User
 				</Button>
-			</Box>
+			
 
-			<TableContainer component={Paper} sx={{ maxWidth: '1000px', margin: '0 auto', boxShadow: 3 }}>
-				<Table>
-					<TableHead>
-						<TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+ <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
+	 }} >
+	   <Table stickyHeader aria-label="sticky table" >
+			 <TableHead >
+			   <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
 							<TableCell>
 								<strong>Name</strong>
 							</TableCell>
