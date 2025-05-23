@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../App.css';
 import Generalview from '../components/general_settings/main';
 import Userpermissions from '../components/users_settings/main';
-import { Box, Typography, Tab, Tabs, useMediaQuery, useTheme, Paper } from '@mui/material';
+import { Box, Typography, Tab, Tabs, useMediaQuery, useTheme } from '@mui/material';
 // import { useAuthContext } from '../components/onboarding/authProvider';
 
 const Settings = () => {
@@ -17,23 +17,46 @@ const Settings = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
 	return (
-		<Box width='100%' p={2}>
-			<Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
-				<Typography variant='h5'>Settings</Typography>
-			</Box>
+			<Box sx={{ 
+			  // p: isMobile ? 1 : 3,
+			  margin : isMobile ? 0 : 0,
+			  padding: isMobile ? 0 : 2,
+			  display: "flex",
+			  flexDirection: "column",
+			  width: "100%",
+			  minWidth: 0,  
+			  height: "100%",
+			  overflow: "scroll",
+			  boxShadow: isMobile ? 1 : 3, }}>
 
-			<Paper elevation={3} sx={{ p: 2 }}>
+			
+				<Typography variant='h5'>Settings</Typography>
+			
+
 				<Tabs
 					value={activeTab}
 					onChange={handleTabClick}
 					variant='scrollable'
 					scrollButtons='auto'
-					textColor='primary'
-					indicatorColor='primary'
+					textColor= 'var(--secondary-color)'
+					indicatorColor='var(--secondary-color)'
 					sx={{
 						'.MuiTab-root': {
 							fontSize: isMobile ? '0.75rem' : '1rem',
 							minWidth: 100,
+						},
+						color: 'var(--secondary-text-color)',
+						'& .Mui-selected': {
+							color: 'var(--secondary-color)',
+						},
+						'& .MuiTabs-indicator': {
+							backgroundColor: 'var(--secondary-color)',
+						},
+						'& .MuiTabs-scrollButtons': {
+							color: 'var(--secondary-color)',
+						},
+						'& .MuiTabs-root': {
+							backgroundColor: 'var(--main-bg-color)',
 						},
 					}}
 				>
@@ -51,7 +74,7 @@ const Settings = () => {
 					{activeTab === 'Notification' && <Typography>This is the content of Notification</Typography>}
 					{activeTab === 'Security' && <Typography>This is the content of Security</Typography>}
 				</Box>
-			</Paper>
+			
 		</Box>
 	);
 };
