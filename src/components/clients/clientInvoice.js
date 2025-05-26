@@ -1,9 +1,18 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Typography, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Typography, Button, TablePagination } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 const ClientInvoice = ({ invoices, selectedClient }) => {
+	const [currentPage, setCurrentPage] = useState(0);
 	if (!selectedClient || invoices.length === 0) return null;
+
+	const rowsPerPage = 5;
+	// Handle pagination change
+	const handleChangePage = (event, newPage) => {
+		setCurrentPage(newPage);
+	};
+
+	const paginatedInvoices = invoices.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 
 	return (
 		<Box mt={4}>
@@ -45,7 +54,6 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 					borderRadius: 2,
 				}}
 			>
-
 				<Table size='small'>
 					<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
 						<TableRow>
@@ -65,15 +73,15 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{invoices.map((invoice, index) => (
-
+						{paginatedInvoices.map((invoice, index) => (
 							<TableRow key={index} sx={{ backgroundColor: '#f5f5f5', '&:last-child td': { borderBottom: 0 } }}>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.invoice_no || '-'}</TableCell>
 
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_balance || invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_status}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_created_at || '-'}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_created_at ? new Date(invoice.ti_created_at).toLocaleDateString('en-GB') : '-'}</TableCell>
+
 								<TableCell sx={{ padding: '4px 8px', border: 'none' }}>
 									<IconButton size='small' sx={{ color: '#01947A' }}>
 										<EditIcon fontSize='inherit' />
@@ -83,6 +91,8 @@ const ClientInvoice = ({ invoices, selectedClient }) => {
 						))}
 					</TableBody>
 				</Table>
+				{/* Pagination Component */}
+				<TablePagination rowsPerPageOptions={[]} component='div' count={invoices.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 			</TableContainer>
 		</Box>
 	);
