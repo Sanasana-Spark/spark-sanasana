@@ -1,8 +1,15 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton } from '@mui/material';
+import React, { useState } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, TablePagination } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick }) => {
+	const [currentPage, setCurrentPage] = useState(0);
+	const rowsPerPage = 5;
+	// Handle pagination change
+	const handleChangePage = (event, newPage) => {
+		setCurrentPage(newPage);
+	};
+	const paginatedClients = clients.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 	return (
 		<TableContainer component={Paper}>
 			<Table>
@@ -19,7 +26,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{clients.map((client, index) => (
+					{paginatedClients.map((client, index) => (
 						<TableRow key={index} onClick={() => onClientClick(client)} sx={{ cursor: 'pointer', backgroundColor: '#f5f5f5' }}>
 							<TableCell>
 								<Button
@@ -93,6 +100,8 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 					))}
 				</TableBody>
 			</Table>
+			{/* Pagination Component */}
+			<TablePagination rowsPerPageOptions={[]} component='div' count={clients.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 		</TableContainer>
 	);
 };
