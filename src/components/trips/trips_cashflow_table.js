@@ -21,7 +21,7 @@ import { useAuthContext } from "../onboarding/authProvider";
 
 const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_id, userId } = useAuthContext();
+  const { org_id, userId, org_currency } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [showFuelRequestForm, setShowFuelRequestForm] = useState(false);
   const [addIncomeForm, setAddIncomeForm] = useState(false);
@@ -198,9 +198,9 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             <TableCell>Operator</TableCell>
             <TableCell>Vehicle</TableCell>
             <TableCell>Destination</TableCell>
-            <TableCell>T.Income</TableCell>
-            <TableCell>T.Expense</TableCell>
-            <TableCell>Gross Profit</TableCell>
+            <TableCell>Total.Income ({org_currency}) </TableCell>
+            <TableCell>Total.Expense ({org_currency})</TableCell>
+            <TableCell>Gross Profit ({org_currency})</TableCell>
             <TableCell> Action</TableCell>
             <TableCell> Income</TableCell>
             <TableCell> Expense</TableCell>
@@ -221,18 +221,18 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
               sx={{ border: "none" }}
             >
               <TableCell onClick={() => handleCellClick(asset.id)}>
-                {!isDropdownOpen[asset.id] && <Button> View </Button>}
+                {!isDropdownOpen[asset.id] && <Button sx={{ color:'var(--secondary-color)'}} > View </Button>}
 
-                {isDropdownOpen[asset.id] && <Button>Back </Button>}
+                {isDropdownOpen[asset.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
               </TableCell>
               <TableCell>{asset.t_type}</TableCell>
               <TableCell>{asset.t_status}</TableCell>
               <TableCell>{asset.o_name}</TableCell>
               <TableCell>{asset.a_license_plate}</TableCell>
               <TableCell>{asset.t_destination_place_query}</TableCell>
-              <TableCell>0</TableCell>
-              <TableCell>0</TableCell>
-              <TableCell>0</TableCell>
+              <TableCell>{asset.t_income}</TableCell>
+              <TableCell>{asset.t_expense}</TableCell>
+              <TableCell>{asset.t_income - asset.t_expense}  </TableCell>
               <TableCell onClick={() => handleRequestClick(asset)}>
                 <Button> Approve </Button>
               </TableCell>
