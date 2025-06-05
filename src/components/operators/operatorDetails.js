@@ -6,6 +6,7 @@ import Loader from '../loader';
 import Map from "../maps/singleTripMap";
 
 const PropCard = ({ selectedOperator }) => {
+  console.log("Selected Operator:", selectedOperator.id);
 
   const startLat = 5.6037;
   const startLong = -0.187;
@@ -31,7 +32,6 @@ const PropCard = ({ selectedOperator }) => {
         {!loading && (
           
               <Box>
-                 {selectedOperator.map((Operator) => ( <>
 
                   <Box>
                 <Grid item xs={12} sm={12} sx={{ padding: 2, textAlign: "center" }}>
@@ -45,7 +45,7 @@ const PropCard = ({ selectedOperator }) => {
                 <Map
                   origin={start}
                   destination={end}
-                  key={Operator.id}
+                  key={selectedOperator.id}
                   center={start}
                   style={{ width: "100%", height: "100%" }}
                 />
@@ -84,7 +84,7 @@ const PropCard = ({ selectedOperator }) => {
             24 Hours:
           </Typography>
           <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {Operator?.daily_mileage ?? "N/A"} KM - {Operator?.daily_cost ?? "N/A Ksh"}
+            {selectedOperator?.daily_mileage ?? "N/A"} KM - {selectedOperator?.daily_cost ?? "N/A Ksh"}
           </Typography>
         </Box>
 
@@ -102,7 +102,7 @@ const PropCard = ({ selectedOperator }) => {
             Week:
           </Typography>
           <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {Operator?.weekly_mileage ?? "N/A"} KM - {Operator?.weekly_cost ?? "N/A Ksh"}
+            {selectedOperator?.weekly_mileage ?? "N/A"} KM - {selectedOperator?.weekly_cost ?? "N/A Ksh"}
           </Typography>
         </Box>
 
@@ -120,15 +120,13 @@ const PropCard = ({ selectedOperator }) => {
             Month:
           </Typography>
           <Typography variant="body1" sx={{ color: "#1976D2", fontWeight: "bold" }}>
-            {Operator?.monthly_mileage ?? "N/A"} KM - {Operator?.monthly_cost ?? "N/A Ksh"}
+            {selectedOperator?.monthly_mileage ?? "N/A"} KM - {selectedOperator?.monthly_cost ?? "N/A Ksh"}
           </Typography>
         </Box>
       </Box>
     </Box>
 
-              </>
 
-))}
             </Box>
            
         )}
