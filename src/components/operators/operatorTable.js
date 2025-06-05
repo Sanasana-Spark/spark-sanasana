@@ -12,7 +12,7 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) 
 		setIsDropdownOpen(Array(operators.length).fill(false));
 	}, [operators]);
 
-	const handleCellClick = rowIndex => {
+	const handleCellClick = (rowIndex) => {
 		setIsDropdownOpen(prevState => {
 			const newDropdowns = [...prevState];
 			newDropdowns[rowIndex] = !newDropdowns[rowIndex];
@@ -62,10 +62,12 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) 
 								<TableCell>{operator.o_phone}</TableCell>
 								<TableCell>{operator.o_status}</TableCell>
 								<TableCell>
-									<Button onClick={() => handleCellClick(operator.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
+									<Button onClick={() => handleCellClick(operator.id)} sx={{ color: 'var(--secondary-color)' }} >
+										{isDropdownOpen[index] ? 'Close Details' : 'Details'}
+										</Button>
 								</TableCell>
 								<TableCell>
-									<IconButton onClick={() => onEditClick(operator.id)} style={{ marginLeft: '10px' }}>
+									<IconButton onClick={() => onEditClick(operator.id)} sx={{ color: 'var(--secondary-color)' }}  style={{ marginLeft: '10px' }}>
 										<EditIcon />
 									</IconButton>
 								</TableCell>

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import DragIndicator from '@mui/icons-material/DragIndicator';
 import Reorder from '@mui/icons-material/Reorder';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
@@ -19,7 +19,7 @@ const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
-	const [selectedTicket, setSelectedTicket] = useState([]);
+	const [selectedOperator, setSelectedOperator] = useState([]);
 	const [operators, setOperators] = useState([]);
 	const [, setLoading] = useState(true);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
@@ -27,8 +27,8 @@ const Operators = () => {
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
 	const [editOperator, setEditOperator] = useState(null);
-	const [errorMsg, setErrorMsg] = useState('');
 	const [successMsg, setSuccessMsg] = useState('');
+	const [errorMsg, setErrorMsg] = useState('');
 
 	useEffect(() => {
 		if (org_id && user_id) {
@@ -53,56 +53,44 @@ const Operators = () => {
 	}, [baseURL, org_id, user_id, showAddPropertyForm, isSliderOpen]);
 
 	const handleSubmit = async operatorData => {
-		try {
-			const url = `${baseURL}/operators/${org_id}/${user_id}/`;
-			const data = {
-				o_name: operatorData.o_name,
-				o_email: operatorData.o_email,
-				o_phone: operatorData.o_phone,
-				o_national_id: operatorData.o_national_id,
-				o_lincense_id: operatorData.o_lincense_id,
-				o_lincense_type: operatorData.o_lincense_type,
-				o_lincense_expiry: operatorData.o_lincense_expiry,
-				o_payment_card_id: operatorData.o_payment_card_id,
-				o_Payment_card_no: operatorData.o_Payment_card_no,
-				o_role: operatorData.o_role,
-				o_status: operatorData.o_status,
-				o_cum_mileage: operatorData.o_cum_mileage,
-				o_expirence: operatorData.o_expirence,
-				o_assigned_asset: operatorData.o_assigned_asset,
-			};
-			const options = {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify(data),
-			};
-			const response = await fetch(url, options);
-
+		const url = `${baseURL}/operators/${org_id}/${user_id}/`;
+		const data = {
+			o_name: operatorData.o_name,
+			o_email: operatorData.o_email,
+			o_phone: operatorData.o_phone,
+			o_national_id: operatorData.o_national_id,
+			o_lincense_id: operatorData.o_lincense_id,
+			o_lincense_type: operatorData.o_lincense_type,
+			o_lincense_expiry: operatorData.o_lincense_expiry,
+			o_payment_card_id: operatorData.o_payment_card_id,
+			o_Payment_card_no: operatorData.o_Payment_card_no,
+			o_role: operatorData.o_role,
+			o_status: operatorData.o_status,
+			o_cum_mileage: operatorData.o_cum_mileage,
+			o_expirence: operatorData.o_expirence,
+			o_assigned_asset: operatorData.o_assigned_asset,
+		};
+		const options = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		};
+		fetch(url, options)
+		.then(response => {
 			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.message || 'Failed to update operator');
+				throw new Error('Failed to add Operator - check email and mandatory fields ');
 			}
-
+			console.log('Operator added successfully');
 			setShowAddPropertyForm(false);
-			setErrorMsg('');
 			setSuccessMsg('Operator Added successfully!');
-			setTimeout(() => {
-				setSuccessMsg('');
-			}, 3000);
-		} catch (error) {
-			console.error('Error updating operator:', error);
+		})
+		.catch(error => {
 			setErrorMsg(error.message);
-			setSuccessMsg('');
-			setTimeout(() => {
-				setErrorMsg('');
-			}, 3000);
-		}
+			console.error('Error adding Operator:', error);
+		});
 	};
-	const selectedOperator = selectedTicket ? operators.find(operator => operator['id'] === selectedTicket) : null;
-
-	console.log('selectedOperator', selectedOperator);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -121,6 +109,13 @@ const Operators = () => {
 	const handleEditClick = operatorId => {
 		const operator = operators.find(o => o.id === operatorId);
 		setEditOperator(operator);
+		setIsSliderOpen(true);
+	};
+
+	const handleViewDetailsClick = (operatorId) => {
+		setSelectedOperator(operators.find(operator => operator.id === operatorId));
+		
+		setCurrentView('RequestDetails');
 		setIsSliderOpen(true);
 	};
 
@@ -163,8 +158,8 @@ const Operators = () => {
 	const AssetView = () => (
 		<Stack spacing={2}>
 			{' '}
-			{successMsg && <Alert severity='success'>{successMsg}</Alert>}
-			{errorMsg && <Alert severity='error'>{errorMsg}</Alert>}
+			{errorMsg && <Alert severity='error' onClose={() => setErrorMsg(null)} >{errorMsg}</Alert>}
+			{successMsg && <Alert severity='success' onClose={() => setSuccessMsg(null)} >{successMsg}</Alert>}
 			<Container width='100%' sx={{ fontFamily: 'var(--font-family)', padding: 1 }}>
 				<Box>
 					<Grid item xs={12} marginBottom={5}>
@@ -273,7 +268,7 @@ const Operators = () => {
 
 						<Box>
 							{filteredOperators.length > 0 ? (
-								<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+								<OperatorTable operators={filteredOperators}  onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 							) : (
 								<TableRow>
 									<TableCell align='center' colSpan={7}>
@@ -293,7 +288,7 @@ const Operators = () => {
 		</Stack>
 	);
 
-	const DetailView = ({ selectedOperator, isOpen }) => (
+	const DetailView = ({ isOpen }) => (
 		<div className='fluidGrid'>
 			<ActionNav title='assets' icons={icons} onAddClick={handleAddPropertyClick} icontitle='Add Operator' onSecondClick={handleAddPropertyClick} bulktitle='Bulk Upload' />
 
@@ -340,11 +335,7 @@ const Operators = () => {
 		}
 	};
 
-	const handleViewDetailsClick = useCallback(operatorId => {
-		setCurrentView('RequestDetails');
-		setSelectedTicket(operatorId);
-		setIsSliderOpen(true);
-	}, []);
+
 
 	return <> {renderView()} </>;
 };
