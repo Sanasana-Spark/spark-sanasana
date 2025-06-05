@@ -39,7 +39,7 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setTrips(data.filter((trip) => ["In-Progress", "Pending"].includes(trip.t_status)));
+        setTrips(data.filter((trip) => ["In-Progress", "Pending", "Requested"].includes(trip.t_status)));
 
 
         setLoading(false);
@@ -50,6 +50,7 @@ const Trips = () => {
       });
   }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
+  console.log("Trips data:", trips); // Log the fetched trips data
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request

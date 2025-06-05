@@ -37,14 +37,13 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
              <TableHead >
                <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
             <TableCell>Details</TableCell>
-            <TableCell>LPO</TableCell>
+            <TableCell>LPO/Description</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Operator</TableCell>
             <TableCell>Vehicle</TableCell>  
             <TableCell>Origin</TableCell>           
             <TableCell>Destination</TableCell>
             <TableCell>Distance</TableCell>
-            <TableCell>Fuel cost</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -57,10 +56,10 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
             >
 
 
-              <TableCell onClick={() => handleCellClick(trip.id)}>
-                {!isDropdownOpen[trip.id] && <Button> View </Button>}
+              <TableCell onClick={() => handleCellClick(trip.id)}  >
+                {!isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}> View </Button>}
 
-                {isDropdownOpen[trip.id] && <Button>Back </Button>}
+                {isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
               </TableCell>
               <TableCell>{trip.t_type}</TableCell>
               <TableCell>{trip.t_status}</TableCell>
@@ -69,7 +68,6 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
               <TableCell>{trip.t_origin_place_query}</TableCell>
               <TableCell>{trip.t_destination_place_query}</TableCell>
               <TableCell>{trip.t_distance}</TableCell>
-              <TableCell> {trip.t_actual_cost}</TableCell>
             </TableRow>
           ))}
         </TableBody>
