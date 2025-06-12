@@ -55,6 +55,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 		o_status: 'Active',
 		o_cum_mileage: 0,
 		o_role: 'Driver',
+		o_class: 'Class B',
 	});
 
 	const handleChange = e => {
@@ -69,16 +70,6 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 		e.preventDefault();
 		onSubmit(operator);
 		// Optionally, you can reset the form after submission
-		setOperator({
-			p_name: '',
-			p_num_units: '',
-			p_manager_id: '',
-			p_country: '',
-			p_city: '',
-			p_address: '',
-			p_zipcode: '',
-			p_state: '',
-		});
 	};
 
 	const handleFileChange = e => {

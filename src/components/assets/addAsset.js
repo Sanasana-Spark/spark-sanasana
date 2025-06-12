@@ -1,16 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // import PropTypes from "prop-types";
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  MenuItem,
-  IconButton,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-
+import { Modal, Box, Typography, TextField, Button, MenuItem, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   const baseURL = process.env.REACT_APP_BASE_URL
@@ -198,6 +189,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
       </Box>
     </Modal>
   );
+
 };
 
 export default AddAssetForm;

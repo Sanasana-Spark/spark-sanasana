@@ -48,13 +48,26 @@ const Trips = () => {
           onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
-          textColor="primary"
-          indicatorColor="primary"
+          textColor= "primary"
+          indicatorColor= "primary"
           sx={{
             ".MuiTab-root": {
               fontSize: isMobile ? "0.75rem" : "1rem",
               minWidth: 100,
-            }
+              
+           
+            "&.Mui-selected": {
+              color: "var(--secondary-color)", // selected tab text color
+              fontWeight: "bold",
+            },
+            "&:hover": {
+              color: "var(--primary-color)", // hover tab text color
+            },
+          },
+            ".MuiTabs-indicator": {
+              backgroundColor: "var(--secondary-color)", // underline indicator color
+            },
+            // color: "var(--secondary-color)",
           }}
         >
           <Tab label="New/In-Progress" value="New" />
