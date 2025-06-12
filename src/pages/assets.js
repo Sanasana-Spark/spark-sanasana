@@ -9,6 +9,7 @@ import AddAssetForm from '../components/assets/addAsset';
 import BulkUploadForm from '../components/assets/upload';
 import AssetDetails from '../components/assets/assetDetails';
 import EditAssetDetails from '../components/assets/editAssetDetails';
+import AssetIncome from '../components/assets/assetIncome';
 import { useAuthContext } from '../components/onboarding/authProvider';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -27,7 +28,9 @@ const Assets = () => {
 	const [search, setSearch] = useState('');
 	const [editAsset, setEditAsset] = useState(null);
 	const [filteredAssets, setFilteredAssets] = useState([]);
+	const [incomeData, setIncomeData] = useState([]);
 	console.log(loading);
+	console.log(incomeData);
 
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	useEffect(() => {
@@ -90,6 +93,18 @@ const Assets = () => {
 			});
 	};
 	const selectedAsset = selectedTicket ? assets.find(asset => asset['id'] === selectedTicket) : null;
+	const asset_id = selectedAsset?.id ?? null;
+
+	useEffect(() => {
+		if (!asset_id || !org_id || !user_id) return;
+		fetch(`${baseURL}/trips/asset_income/${org_id}/${user_id}/${asset_id}/`)
+			.then(res => res.json())
+			.then(data => {
+				console.log('Fetched asset income:', data);
+				setIncomeData(data);
+			})
+			.catch(err => console.error('Error loading income:', err));
+	}, [baseURL, asset_id, org_id, user_id]);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -281,6 +296,7 @@ const Assets = () => {
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
+			{selectedAsset && <AssetIncome incomeData={incomeData} selectedClient={selectedAsset} />}
 		</Container>
 	);
 
