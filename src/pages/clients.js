@@ -39,7 +39,7 @@ const Clients = () => {
 			}
 		};
 		fetchClients();
-	}, [baseURL, org_id, user_id, isSliderOpen, selectedClient]);
+	}, [baseURL, org_id, user_id, isSliderOpen]);
 
 	useEffect(() => {
 		if (!selectedClient) return;
@@ -144,7 +144,7 @@ const Clients = () => {
 			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} />
 
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
-			{selectedClient && <ClientInvoice invoices={invoices} selectedClient={selectedClient} />}
+			{selectedClient && <ClientInvoice invoicesss={invoices} selectedClient={selectedClient} />}
 
 			<Dialog open={showInvoiceForm} onClose={() => setShowInvoiceForm(false)} maxWidth='sm' fullWidth>
 				<DialogTitle>New Invoice for {selectedClient?.c_name}</DialogTitle>
