@@ -430,10 +430,9 @@ const Dashboard = () => {
                       <TableHead >
                         <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
                       <TableCell>Vehicle</TableCell>
-                      <TableCell>No of Trips</TableCell>
                       <TableCell>Mileage(KMs)</TableCell>
-                      <TableCell>Fuel(Ltr)</TableCell>
-                      <TableCell>Cost ({org_currency}) </TableCell>
+                      <TableCell>Consumption/100km</TableCell>
+                      <TableCell>Profit ({org_currency}) </TableCell>
                     </TableRow>
                       </TableHead>
 
@@ -451,18 +450,14 @@ const Dashboard = () => {
                           <strong> {asset.a_license_plate}</strong>{" "}
                         </TableCell>
                         <TableCell>
-                         {asset.trip_count}
-                        </TableCell>
-                     
-                        <TableCell>
                         {parseFloat(asset.total_miles) > 0 ? parseFloat(asset.total_miles).toFixed(2) : '0.00'}
                         </TableCell>
                         <TableCell>
-                        {parseFloat(asset.total_fuel) > 0 ? parseFloat(asset.total_fuel).toFixed(2) : '0.00'}
+                        {parseFloat(asset.total_fuel) > 0 ? parseFloat(asset.total_fuel/100*asset.total_miles).toFixed(2) : '0.00'}
                         </TableCell>
 
                         <TableCell>
-                        {parseFloat(asset.total_cost) > 0 ? parseFloat(asset.total_cost).toFixed(2) : '0.00'}
+                        {parseFloat(asset.profit) > 0 ? parseFloat(asset.profit).toFixed(2) : '0.00'}
                         </TableCell>
                      
                       </TableRow>
