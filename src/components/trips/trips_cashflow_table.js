@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ import { useAuthContext } from "../onboarding/authProvider";
 
 const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_id, userId, org_currency } = useAuthContext();
+  const { org_id, userId, org_currency, user_id } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [showFuelRequestForm, setShowFuelRequestForm] = useState(false);
   const [addIncomeForm, setAddIncomeForm] = useState(false);
@@ -30,9 +30,30 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const [ formData, setFormData] = useState({});
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [, setSuccess] = useState(null);
   const [, setError] = useState(null);
+  const [clientOptions, setClientOptions] = useState([]);
+
+  useEffect(() => {
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/clients/${org_id}/${user_id}`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setClientOptions(data.clients || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }}, [ baseURL, org_id, user_id]);
 
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => ({
@@ -109,7 +130,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       ti_trip_id : selectedtrip.id,
       ti_asset_id : selectedtrip.t_asset_id,
       ti_operator_id : selectedtrip.t_operator_id,
-      ti_client_id : null,
+      ti_client_id : formData.ti_client,
       ti_type: formData.ti_type,
       ti_description: formData.ti_description,
       ti_amount: formData.ti_amount,
@@ -193,10 +214,10 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             style={{ backgroundColor: "var(--secondary-bg-color)" }}
           >
             <TableCell>Details</TableCell>
-            <TableCell>LPO</TableCell>
+            <TableCell>Desc</TableCell>
             <TableCell>Status</TableCell>
             <TableCell>Operator</TableCell>
-            <TableCell>Vehicle</TableCell>
+            <TableCell>Asset</TableCell>
             <TableCell>Destination</TableCell>
             <TableCell>Total.Income ({org_currency}) </TableCell>
             <TableCell>Total.Expense ({org_currency})</TableCell>
@@ -371,7 +392,17 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           onChange={(e) => handleChange(e)}
           margin="dense"
         >
-            <MenuItem value={null} >No Client available </MenuItem>
+             {clientOptions && clientOptions.length > 0 ? (
+            clientOptions.map((client) => (
+             
+                <MenuItem key={client.id} value={client.id}>
+                   {client.c_name} - {client.c_status}
+                </MenuItem>
+              
+            ))
+          ) : (
+            loading && <MenuItem disabled>Loading clients...</MenuItem>
+          )}
           </TextField>
 
       </DialogContent>

@@ -26,10 +26,9 @@ const Trips = () => {
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [assets, setAssets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
-  console.log(loading)
   
   useEffect(() => {
     if (org_id && user_id) {
