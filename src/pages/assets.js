@@ -20,17 +20,14 @@ const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView');
-	const [selectedTicket, setSelectedTicket] = useState([]);
 	const [assets, setAssets] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [, setLoading] = useState(true);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
 	const [editAsset, setEditAsset] = useState(null);
 	const [filteredAssets, setFilteredAssets] = useState([]);
-	const [incomeData, setIncomeData] = useState([]);
-	console.log(loading);
-	console.log(incomeData);
+	const [selectedAsset, setSelectedAsset] = useState(null);
 
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	useEffect(() => {
@@ -44,7 +41,7 @@ const Assets = () => {
 					return response.json();
 				})
 				.then(data => {
-					setAssets(data);
+					setAssets(data.assets);
 					setLoading(false);
 				})
 				.catch(error => {
@@ -85,26 +82,18 @@ const Assets = () => {
 				if (!response.ok) {
 					throw new Error('Failed to add asset');
 				}
-				console.log('Property added successfully');
+				console.log('asset added successfully');
 				setShowAddPropertyForm(false);
 			})
 			.catch(error => {
 				console.error('Error adding asset:', error);
 			});
 	};
-	const selectedAsset = selectedTicket ? assets.find(asset => asset['id'] === selectedTicket) : null;
-	const asset_id = selectedAsset?.id ?? null;
 
-	useEffect(() => {
-		if (!asset_id || !org_id || !user_id) return;
-		fetch(`${baseURL}/trips/asset_income/${org_id}/${user_id}/${asset_id}/`)
-			.then(res => res.json())
-			.then(data => {
-				console.log('Fetched asset income:', data);
-				setIncomeData(data);
-			})
-			.catch(err => console.error('Error loading income:', err));
-	}, [baseURL, asset_id, org_id, user_id]);
+	const handleNewAssetClick = asset => {
+		console.log('New Asset Clicked:', asset);
+		setSelectedAsset(asset);
+	};
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -235,7 +224,7 @@ const Assets = () => {
 					</Box>
 				</Grid>
 
-				<Grid item xs={12} component={Paper}>
+				<Grid item xs={12}>
 					<Box
 						sx={{
 							display: 'flex',
@@ -280,7 +269,10 @@ const Assets = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+							<Box>
+							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} />
+							<AssetIncome selectedAsset={selectedAsset} />
+							</Box>
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -288,6 +280,7 @@ const Assets = () => {
 								</TableCell>
 							</TableRow>
 						)}
+						
 					</Box>
 				</Grid>
 			</Box>
@@ -295,8 +288,9 @@ const Assets = () => {
 			<AddAssetForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
+
 			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
-			{selectedAsset && <AssetIncome incomeData={incomeData} selectedClient={selectedAsset} />}
+		
 		</Container>
 	);
 
@@ -469,12 +463,11 @@ const Assets = () => {
 
 	const handleViewDetailsClick = rowIndex => {
 		setCurrentView('RequestDetails');
-		setSelectedTicket(rowIndex);
+		// setSelectedTicket(rowIndex); // Assuming rowIndex is the asset ID or similar identifier
 		setIsSliderOpen(true);
 	};
-	console.log(currentView, selectedTicket);
 
-	return <> {renderView()} </>;
+	return <Box  > {renderView()} </Box>;
 
 	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };

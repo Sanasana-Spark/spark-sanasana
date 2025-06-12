@@ -94,7 +94,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   };
 
   if (loading) {
-    return <>Loading...</>;
+    return <></>;
   }
 
 
