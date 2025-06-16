@@ -9,6 +9,7 @@ import AddAssetForm from '../components/assets/addAsset';
 import BulkUploadForm from '../components/assets/upload';
 import AssetDetails from '../components/assets/assetDetails';
 import EditAssetDetails from '../components/assets/editAssetDetails';
+import AssetIncome from '../components/assets/assetIncome';
 import { useAuthContext } from '../components/onboarding/authProvider';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,15 +20,14 @@ const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView');
-	const [selectedTicket, setSelectedTicket] = useState([]);
 	const [assets, setAssets] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [, setLoading] = useState(true);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
 	const [editAsset, setEditAsset] = useState(null);
 	const [filteredAssets, setFilteredAssets] = useState([]);
-	console.log(loading);
+	const [selectedAsset, setSelectedAsset] = useState(null);
 
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	useEffect(() => {
@@ -41,7 +41,7 @@ const Assets = () => {
 					return response.json();
 				})
 				.then(data => {
-					setAssets(data);
+					setAssets(data.assets);
 					setLoading(false);
 				})
 				.catch(error => {
@@ -82,14 +82,18 @@ const Assets = () => {
 				if (!response.ok) {
 					throw new Error('Failed to add asset');
 				}
-				console.log('Property added successfully');
+				console.log('asset added successfully');
 				setShowAddPropertyForm(false);
 			})
 			.catch(error => {
 				console.error('Error adding asset:', error);
 			});
 	};
-	const selectedAsset = selectedTicket ? assets.find(asset => asset['id'] === selectedTicket) : null;
+
+	const handleNewAssetClick = asset => {
+		console.log('New Asset Clicked:', asset);
+		setSelectedAsset(asset);
+	};
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -220,7 +224,7 @@ const Assets = () => {
 					</Box>
 				</Grid>
 
-				<Grid item xs={12} component={Paper}>
+				<Grid item xs={12}>
 					<Box
 						sx={{
 							display: 'flex',
@@ -265,7 +269,10 @@ const Assets = () => {
 
 					<Box>
 						{filteredAssets.length > 0 ? (
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+							<Box>
+							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} />
+							<AssetIncome selectedAsset={selectedAsset} />
+							</Box>
 						) : (
 							<TableRow>
 								<TableCell align='center' colSpan={7}>
@@ -273,6 +280,7 @@ const Assets = () => {
 								</TableCell>
 							</TableRow>
 						)}
+						
 					</Box>
 				</Grid>
 			</Box>
@@ -280,7 +288,9 @@ const Assets = () => {
 			<AddAssetForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
+
 			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
+		
 		</Container>
 	);
 
@@ -453,12 +463,11 @@ const Assets = () => {
 
 	const handleViewDetailsClick = rowIndex => {
 		setCurrentView('RequestDetails');
-		setSelectedTicket(rowIndex);
+		// setSelectedTicket(rowIndex); // Assuming rowIndex is the asset ID or similar identifier
 		setIsSliderOpen(true);
 	};
-	console.log(currentView, selectedTicket);
 
-	return <> {renderView()} </>;
+	return <Box  > {renderView()} </Box>;
 
 	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };

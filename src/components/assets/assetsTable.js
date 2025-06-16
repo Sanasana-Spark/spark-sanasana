@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, TablePagination, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, TablePagination, IconButton, Paper } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
-const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
+const AssetsTable = ({ assets, onViewUnitsClick, onEditClick, onNewAssetClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(Array(assets.length).fill(false));
 	const [currentPage, setCurrentPage] = useState(0);
-	const rowsPerPage = 7;
+	const rowsPerPage = 5;
 
 	const handleCellClick = rowIndex => {
 		setIsDropdownOpen(prevState => {
@@ -24,7 +24,7 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 
 	const paginatedAssets = assets.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 	return (
-		<TableContainer>
+		<TableContainer component={Paper}>
 			<Table stickyHeader aria-label='sticky table'>
 				<TableHead>
 					<TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
@@ -40,7 +40,15 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick }) => {
 				<TableBody>
 					{/* Render a TableRowItem for each asset in the assets array */}
 					{paginatedAssets.map((asset, index) => (
-						<TableRow key={asset.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
+						<TableRow key={asset.id}
+						 onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')}
+						  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')}
+						   sx={{ border: 'none' }}
+						   onClick={e => {
+							e.stopPropagation();
+							onNewAssetClick(asset);
+						}}
+						   >
 							<TableCell>{asset.a_license_plate}</TableCell>
 							<TableCell>{asset.a_status}</TableCell>
 							<TableCell>{asset.a_mileage}</TableCell>
