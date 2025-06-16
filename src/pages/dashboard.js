@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, Paper, Typography, Box, Button, Table,TableBody,TableHead,
-  TableCell, TableRow } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableHead,
+  TableCell,
+  TableRow,
+} from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import {
@@ -20,8 +31,8 @@ import CarbonEmissionChart from "../components/carbon_emission/main";
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Dashboard = () => {
-  const { org_id, user_id, org_currency} = useAuthContext();
-  console.log('org_currency', org_currency);
+  const { org_id, user_id, org_currency } = useAuthContext();
+  console.log("org_currency", org_currency);
   const [trips, setTrips] = useState([]);
   const [assetPerformance, setAssetPerformance] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,21 +50,23 @@ const Dashboard = () => {
   // Format dates to 'YYYY-MM-DD'
   const formatDate = (date) => {
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits for month
-    const day = date.getDate().toString().padStart(2, '0'); // Ensure two digits for day
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Ensure two digits for month
+    const day = date.getDate().toString().padStart(2, "0"); // Ensure two digits for day
     return `${year}-${month}-${day}`;
   };
-   // Get the date 7 days ago
+  // Get the date 7 days ago
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 7);
-  const [startDate, ] = useState(formatDate(sevenDaysAgo));
-  const [endDate, ] = useState(formatDate(today));
+  const [startDate] = useState(formatDate(sevenDaysAgo));
+  const [endDate] = useState(formatDate(today));
 
   useEffect(
     () => {
       if (!org_id) return; // Prevent unnecessary updates
-      fetch(`${baseURL}/assets/fleet_performance/${org_id}/?start_date=${startDate}&end_date=${endDate}`)
+      fetch(
+        `${baseURL}/assets/fleet_performance/${org_id}/?start_date=${startDate}&end_date=${endDate}`
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -73,7 +86,6 @@ const Dashboard = () => {
     [org_id]
   );
   console.log(assetPerformance);
-
 
   useEffect(() => {
     if (!trips.length) return; // Prevent unnecessary updates
@@ -267,8 +279,7 @@ const Dashboard = () => {
           <CardContent>
             <Typography variant="body2">Fuel Cost</Typography>
             <Typography variant="h6">
-             {dashboardSummary.totalFuelCost} {org_currency}
-            
+              {dashboardSummary.totalFuelCost} {org_currency}
             </Typography>
           </CardContent>
         </Card>
@@ -326,11 +337,14 @@ const Dashboard = () => {
             </Paper>
           </Grid>
 
-          <Grid item xs={3} sx={{ maxHeight: 400, overflowY: "scroll", height: "100%" }}>
+          <Grid
+            item
+            xs={3}
+            sx={{ maxHeight: 400, overflowY: "scroll", height: "100%" }}
+          >
             <Paper sx={{ padding: 2, height: "inherit" }}>
               <Typography variant="h6">CO'2 Emission</Typography>
-              <CarbonEmissionChart/>
-             
+              <CarbonEmissionChart />
             </Paper>
           </Grid>
 
@@ -416,74 +430,80 @@ const Dashboard = () => {
       <Box sx={{ my: 6 }}>
         <Grid container spacing={3}>
           <Grid item xs={7.5}>
-          <Paper sx={{ padding: 2, height: "inherit" }}>
-            
+            <Paper sx={{ padding: 2, height: "inherit" }}>
               <Map trips={trips} style={{ width: "100%", height: "100%" }} />
-           
-          </Paper>
+            </Paper>
           </Grid>
 
           <Grid item xs={4.5} sx={{ maxHeight: 400, overflowY: "scroll" }}>
             <Paper sx={{ padding: 2, height: "inherit" }}>
               <Typography variant="h6">Fleet Performance</Typography>
-              <Table >
-                      <TableHead >
-                        <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
-                      <TableCell>Vehicle</TableCell>
-                      <TableCell>No of Trips</TableCell>
-                      <TableCell>Mileage(KMs)</TableCell>
-                      <TableCell>Fuel(Ltr)</TableCell>
-                      <TableCell>Cost ({org_currency}) </TableCell>
-                    </TableRow>
-                      </TableHead>
+              <Table>
+                <TableHead>
+                  <TableRow
+                    backgroundColor="var(--secondary-bg-color)"
+                    style={{ backgroundColor: "var(--secondary-bg-color)" }}
+                  >
+                    <TableCell>Vehicle</TableCell>
+                    <TableCell>Mileage(KMs)</TableCell>
+                    <TableCell>Consumption/100km</TableCell>
+                    <TableCell>Profit ({org_currency}) </TableCell>
+                  </TableRow>
+                </TableHead>
 
-              {!loading &&  Array.isArray(assetPerformance) && assetPerformance.length > 0 ?(
-                assetPerformance.map((asset) => (
-
-
+                {!loading &&
+                Array.isArray(assetPerformance) &&
+                assetPerformance.length > 0 ? (
+                  assetPerformance.map((asset) => (
                     <TableBody>
-                      <TableRow key={asset.id}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
-                      sx={{ border: 'none' }}
+                      <TableRow
+                        key={asset.id}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "var(--secondary-bg-color)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "var(--main-bg-color)")
+                        }
+                        sx={{ border: "none" }}
                       >
                         <TableCell>
                           <strong> {asset.a_license_plate}</strong>{" "}
                         </TableCell>
                         <TableCell>
-                         {asset.trip_count}
-                        </TableCell>
-                     
-                        <TableCell>
-                        {parseFloat(asset.total_miles) > 0 ? parseFloat(asset.total_miles).toFixed(2) : '0.00'}
+                          {parseFloat(asset.total_miles) > 0
+                            ? parseFloat(asset.total_miles).toFixed(2)
+                            : "0.00"}
                         </TableCell>
                         <TableCell>
-                        {parseFloat(asset.total_fuel) > 0 ? parseFloat(asset.total_fuel).toFixed(2) : '0.00'}
+                          {parseFloat(asset.total_fuel) > 0
+                            ? parseFloat(
+                                (asset.total_fuel / 100) * asset.total_miles
+                              ).toFixed(2)
+                            : "0.00"}
                         </TableCell>
 
                         <TableCell>
-                        {parseFloat(asset.total_cost) > 0 ? parseFloat(asset.total_cost).toFixed(2) : '0.00'}
+                          {parseFloat(asset.profit) > 0
+                            ? parseFloat(asset.profit).toFixed(2)
+                            : "0.00"}
                         </TableCell>
-                     
                       </TableRow>
-
                     </TableBody>
-              
-
-
-                )))
-                : (
+                  ))
+                ) : (
                   <TableBody>
                     <TableRow>
                       <TableCell colSpan={5}>
-                        {loading ? "Loading..." : "No asset performance data available."}
+                        {loading
+                          ? "Loading..."
+                          : "No asset performance data available."}
                       </TableCell>
                     </TableRow>
                   </TableBody>
-                )
-              
-              }
-                  </Table>
+                )}
+              </Table>
 
               <Box
                 sx={{
@@ -509,9 +529,6 @@ const Dashboard = () => {
             </Paper>
           </Grid>
         </Grid>
-
-     
-
       </Box>
     </Container>
   );
