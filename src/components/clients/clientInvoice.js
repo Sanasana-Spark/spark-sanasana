@@ -1,18 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Typography, Button, TablePagination } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { useAuthContext } from "../onboarding/authProvider";
 
-const ClientInvoice = ({ invoices, selectedClient }) => {
+const ClientInvoice = ({ invoicesss, selectedClient }) => {
+	const baseURL = process.env.REACT_APP_BASE_URL;
+	const { user_id, org_id } = useAuthContext();
+
 	const [currentPage, setCurrentPage] = useState(0);
-	if (!selectedClient || invoices.length === 0) return null;
+	const [invoices, setInvoices] = useState([]);
+	const [, setLoading] = useState(true);
+
+	useEffect(() => {
+		if (org_id && user_id && selectedClient && selectedClient.id) {
+		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
+		fetch(apiUrl)
+		  .then((response) => {
+			if (!response.ok) {
+			  throw new Error("Network response was not ok");
+			}
+			return response.json();
+		  })
+		  .then((data) => {
+			setInvoices(data.invoices || []);
+			setLoading(false);
+		  })
+		  .catch((error) => {
+			console.error("Error fetching invoices:", error);
+			setLoading(false);
+		  });
+	  }}, [ baseURL, org_id, user_id, selectedClient]);
+
+	//   if (!selectedClient || invoices.length === 0) return null;
 
 	const rowsPerPage = 5;
-	// Handle pagination change
+	  // Handle pagination change
 	const handleChangePage = (event, newPage) => {
-		setCurrentPage(newPage);
+		  setCurrentPage(newPage);
 	};
 
 	const paginatedInvoices = invoices.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
+
 
 	return (
 		<Box mt={4}>
