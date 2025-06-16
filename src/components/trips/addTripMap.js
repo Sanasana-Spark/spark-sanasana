@@ -34,6 +34,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
+  const [clientOptions, setClientOptions] = useState([]);
   const [, setAutocomplete] = useState(null);
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
@@ -56,8 +57,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_type: "N/A",
     t_start_date: null,
     t_end_date: null,
+    t_client_id: null,
   },[]);
-  console.log(origin_lat)
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -71,6 +72,26 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       })
       .then((data) => {
         setOperatorOptions(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }}, [ baseURL, org_id, user_id, open]);
+
+  useEffect(() => {
+    if (org_id && user_id) {
+    const apiUrl = `${baseURL}/clients/${org_id}/${user_id}`;
+    fetch(apiUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setClientOptions(data.clients || []);
         setLoading(false);
       })
       .catch((error) => {
@@ -120,6 +141,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_start_long:origin_lng,
       t_end_long:destination_lng,
       t_type:trip.t_type,
+      t_client_id:trip.t_client_id
 
     }));
 console.log(directionsResponse)
@@ -136,7 +158,8 @@ console.log(directionsResponse)
     t_end_lat:destination_lat,
     t_start_long:origin_lng,
     t_end_long:destination_lng,
-    t_type:trip.t_type
+    t_type:trip.t_type,
+    t_client_id:trip.t_client_id
   });
     // Optionally, you can reset the form after submission
     setTrip({
@@ -350,13 +373,15 @@ console.log(directionsResponse)
       </Grid>
 
 
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} style={{ display: 'none' }}>
         <TextField
           fullWidth
+          hidden 
+          type="text"
           label="Distance"
           name="t_distance"
           value={distance}
-          onChange={handleChange}
+          onChange={handleChange} 
         />
       </Grid>
 
@@ -375,7 +400,7 @@ console.log(directionsResponse)
         {operatorOptions && operatorOptions.length > 0 ? (
           operatorOptions.map((operator) => (
             <MenuItem key={operator.id} value={operator.id}>
-              {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
+              {operator.o_name} - {operator.a_license_plate} -{operator.o_status}
             </MenuItem>
           ))
         ) : ( loading &&
@@ -383,6 +408,30 @@ console.log(directionsResponse)
             Loading operators...
           </MenuItem>
         )}
+        </Select>
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <InputLabel id="asset-label">Assign client</InputLabel>
+        <Select
+          fullWidth
+          labelId="cliient-label"
+          label="Client"
+          name="t_client_id"
+          value={trip.t_client_id}
+          onChange={handleChange}
+        >
+          {clientOptions && clientOptions.length > 0 ? (
+            clientOptions.map((client) => (
+             
+                <MenuItem key={client.id} value={client.id}>
+                   {client.c_name} - {client.c_status}
+                </MenuItem>
+              
+            ))
+          ) : (
+            loading && <MenuItem disabled>Loading clients...</MenuItem>
+          )}
         </Select>
       </Grid>
 

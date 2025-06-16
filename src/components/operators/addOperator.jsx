@@ -40,7 +40,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 					return response.json();
 				})
 				.then(data => {
-					setAssetOptions(data);
+					setAssetOptions(data.assets || []); // Ensure we set an empty array if assets is undefined
 					setLoading(false);
 				})
 				.catch(error => {

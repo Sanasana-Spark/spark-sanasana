@@ -75,7 +75,8 @@ const Trips = () => {
       t_destination_place_query:assetData.t_destination_place_query,
       t_directionsResponse:assetData.t_directionsResponse,
       t_distance:assetData.t_distance,
-      t_duration:assetData.t_duration
+      t_duration:assetData.t_duration,
+      t_client_id: assetData.t_client_id,
     };
 
     console.log("Payload Data:", data); // Log the payload
