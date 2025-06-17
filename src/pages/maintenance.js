@@ -7,10 +7,10 @@ import {
   useMediaQuery,
   useTheme
 } from "@mui/material";
+
 import Upcoming from "../components/maintenance/upcoming";
 import Summaries from "../components/maintenance/upcoming";
-import History from "../components/maintenance/upcoming";
-
+import History from "../components/maintenance/history";
 const Maintenance = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
 
