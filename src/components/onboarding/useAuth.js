@@ -12,6 +12,7 @@ export const useAuth = () => {
     const user_id = user?.id;
     const userEmail = user?.emailAddresses[0]?.emailAddress; 
     const user_email = user?.emailAddresses[0]?.emailAddress;
+    const user_org = user?.organizationMemberships[0]?.organization?.id;
 
   useEffect(() => {
     const fetchOrganization = async () => {
@@ -39,5 +40,5 @@ export const useAuth = () => {
   const org_name = organization?.org_name;
   const org_currency = organization?.org_currency;
 
-  return { userId,user_id,userEmail,user_email,org_id, org_name, org_currency };
+  return { userId,user_id,userEmail,user_email,org_id, org_name, org_currency, user_org };
 };
