@@ -4,6 +4,7 @@ import {SignIn , SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './components/onboarding/authProvider';
 import ProtectedRoute from './components/onboarding/protectedRoute';
+import CreateOrganizationPage from './components/onboarding/create_organization';
 import Layout from "./components/layout/layout";
 import DashboardPage from './pages/dashboard'
 import Assets from './pages/assets'
@@ -26,8 +27,11 @@ const App = () => {
   return (
     <Router>
       <div className="App">
+
       <AuthProvider>
         <Routes>
+
+        <Route path="/create-organization" element={<SignedIn> <CreateOrganizationPage/> </SignedIn>  } />
 
         <Route path="/signin" element={ <SignIn />  } /> 
         <Route path="*" element={<Navigate to="/signin" />} />
