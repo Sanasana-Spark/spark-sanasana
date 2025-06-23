@@ -31,8 +31,12 @@ import CarbonEmissionChart from "../components/carbon_emission/main";
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Dashboard = () => {
-  const { org_id, user_id, org_currency } = useAuthContext();
-  console.log("org_currency", org_currency);
+  const { org_id, user_id, user_org, org_currency } = useAuthContext();
+
+  if (user_id && !user_org && !org_id ) {
+    window.location.href = "/create-organization";
+  }
+
   const [trips, setTrips] = useState([]);
   const [assetPerformance, setAssetPerformance] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -85,7 +89,6 @@ const Dashboard = () => {
     // eslint-disable-next-line
     [org_id]
   );
-  console.log(assetPerformance);
 
   useEffect(() => {
     if (!trips.length) return; // Prevent unnecessary updates
