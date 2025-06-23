@@ -10,6 +10,7 @@ const ProtectedRoute = ({ children }) => {
       <SignedIn>
         {children}
       </SignedIn>
+      
       <SignedOut>
       <Box
         display="flex"
