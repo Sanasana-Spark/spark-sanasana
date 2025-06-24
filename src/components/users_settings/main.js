@@ -15,6 +15,7 @@ const UserSettings = () => {
 	const [selectedUser, setSelectedUser] = useState(null);
 	const [editedUser, setEditedUser] = useState(null);
 	const [invitedUser, setInvitedUser] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
 
 	useEffect(() => {
 		// Fetch users data
@@ -69,6 +70,7 @@ const UserSettings = () => {
 		setEditedUser(null);
 		setSelectedUser(null);
 		setInvitedUser(false);
+		setIsSaving(false);
 	};
 
 	// invite user
@@ -88,6 +90,7 @@ const UserSettings = () => {
 	};
 
 	const handleInvite = e => {
+		setIsSaving(true);
 		// Define the URL for the POST request
 		const url = `${baseURL}/organizations/users/${org_id}/${user_id}/`;
 		const data = {
@@ -110,6 +113,7 @@ const UserSettings = () => {
 				}
 				console.log('user invited successfully');
 				setInvitedUser(false);
+				setIsSaving(false);
 			})
 			.catch(error => {
 				console.error('Error inviting user:', error);
@@ -297,9 +301,9 @@ const UserSettings = () => {
 							<FormControl fullWidth sx={{ marginBottom: 2 }}>
 								<InputLabel id='role-label'>Role</InputLabel>
 								<Select labelId='role-label' name='role' value={userData.role || ''} label='Role' onChange={handleChange}>
-									<MenuItem value='driver'>Driver</MenuItem>
-									<MenuItem value='manager'>Manager</MenuItem>
-									<MenuItem value='admin'>Admin</MenuItem>
+									<MenuItem value='org:operator'>Driver</MenuItem>
+									<MenuItem value='org:asset_manager'>Manager</MenuItem>
+									<MenuItem value='org:admin'>Admin</MenuItem>
 								</Select>
 							</FormControl>
 							<TextField label='Phone' name='phone' fullWidth onChange={handleChange} variant='outlined' />
@@ -308,14 +312,16 @@ const UserSettings = () => {
 								<Button
 									variant='contained'
 									onClick={handleInvite}
+									disabled={isSaving}
 									sx={{
-										bgcolor: '#047A9A',
+										bgcolor: 'var(--secondary-color)',
 										'&:hover': {
-											backgroundColor: '#047A9A',
+											backgroundColor: 'var(--secondary-hover-color)',
+											color: 'black',
 										},
 									}}
 								>
-									Save
+									 {isSaving ? 'Saving...' : 'Save'}
 								</Button>
 								<Button
 									variant='contained'
