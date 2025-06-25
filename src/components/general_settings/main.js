@@ -64,7 +64,7 @@ const OrganizationForm = () => {
 			org_lang: editedOrganization.org_lang,
 			org_diesel_price: editedOrganization.org_diesel_price,
 			org_petrol_price: editedOrganization.org_petrol_price,
-			org_logo_url: editedOrganization.org_logo_url,
+			org_logo: editedOrganization.org_logo,
 			org_email: editedOrganization.org_email,
 			org_name: editedOrganization.org_name,
 			org_size: editedOrganization.org_size,
@@ -116,7 +116,7 @@ const OrganizationForm = () => {
 						{editingField === 'logo' ? (
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								{/* Preview the uploaded image */}
-								{editedOrganization.org_logo_url && <img src={editedOrganization.org_logo_url} alt='Preview' style={{ width: '60px', height: '60px', borderRadius: '50%' }} />}
+								{editedOrganization.org_logo && <img src={editedOrganization.org_logo} alt='Preview' style={{ width: '60px', height: '60px', borderRadius: '50%' }} />}
 
 								{/* File input */}
 								<input
@@ -127,7 +127,7 @@ const OrganizationForm = () => {
 										if (file) {
 											const reader = new FileReader();
 											reader.onloadend = () => {
-												handleFieldChange('org_logo_url', reader.result); // base64 string
+												handleFieldChange('org_logo', reader.result); // base64 string
 											};
 											reader.readAsDataURL(file);
 										}
@@ -136,7 +136,7 @@ const OrganizationForm = () => {
 
 								<Button
 									type='button'
-									onClick={() => handleSave('org_logo_url')}
+									onClick={() => handleSave('org_logo')}
 									style={{
 										padding: '5px 10px',
 										backgroundColor: 'var(--primary-color)',
@@ -152,7 +152,7 @@ const OrganizationForm = () => {
 									onClick={() => {
 										setEditedOrganization(prev => ({
 											...prev,
-											org_logo_url: organization.org_logo_url,
+											org_logo: organization.org_logo,
 										}));
 										setEditingField(null);
 									}}
@@ -169,9 +169,9 @@ const OrganizationForm = () => {
 							</Box>
 						) : (
 							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-								{organization.org_logo_url ? (
+								{organization.org_logo ? (
 									<img
-										src={organization.org_logo_url}
+										src={organization.org_logo}
 										alt='Logo'
 										style={{
 											width: '100px',
