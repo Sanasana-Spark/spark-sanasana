@@ -16,10 +16,13 @@ const OrganizationForm = () => {
 		language: 'English',
 		country: 'USA',
 		currency: 'USD',
+		petrol_price:0,
+		diesel_price:0
 	});
 
 	const [editingField, setEditingField] = useState(null);
 	const [editedOrganization, setEditedOrganization] = useState({});
+	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
 		const fetchOrganization = async () => {
@@ -44,7 +47,7 @@ const OrganizationForm = () => {
 			}
 		};
 		fetchOrganization();
-	}, [baseURL, org_id, user_id]);
+	}, [baseURL, org_id, user_id ]);
 
 	const handleFieldChange = (field, value) => {
 		const updatedOrg = {
@@ -83,16 +86,17 @@ const OrganizationForm = () => {
 		fetch(url, options)
 			.then(response => {
 				if (!response.ok) {
-					throw new Error('Failed to add trip');
+					throw new Error('Failed to update details');
 				}
-				console.log('trip added successfully');
+				console.log('updated successfully');
 				setEditingField(null);
+				setSaving(false);
 			})
 			.catch(error => {
-				console.error('Error adding trip:', error);
+				console.error('Error saving :', error);
 			});
 
-		setOrganization(editedOrganization);
+		 setOrganization(editedOrganization);
 	};
 
 	return (
@@ -139,7 +143,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_logo')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -183,7 +187,7 @@ const OrganizationForm = () => {
 								) : (
 									<Typography style={{ fontStyle: 'italic' }}>No logo</Typography>
 								)}
-								<IconButton onClick={() => setEditingField('logo')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('logo')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -205,7 +209,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('name')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -234,7 +238,7 @@ const OrganizationForm = () => {
 							// View Mode: Show Field Value and Edit Button
 							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_name}</Typography>
-								<IconButton onClick={() => setEditingField('name')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('name')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -263,7 +267,7 @@ const OrganizationForm = () => {
 								<TextField
 									type='email'
 									value={editedOrganization.org_email}
-									onChange={e => handleFieldChange('email', e.target.value)}
+									onChange={e => handleFieldChange('org_email', e.target.value)}
 									style={{
 										flex: 1,
 										padding: '5px',
@@ -271,10 +275,10 @@ const OrganizationForm = () => {
 								/>
 								<Button
 									type='button'
-									onClick={() => handleSave('email')}
+									onClick={() => handleSave('org_email')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'black',
 										border: 'none',
 										borderRadius: '3px',
@@ -288,7 +292,7 @@ const OrganizationForm = () => {
 										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											email: organization.org_email,
+											org_email: organization.org_email,
 										}));
 										setEditingField(null);
 									}}
@@ -312,7 +316,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_email}</Typography>
-								<IconButton onClick={() => setEditingField('email')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('email')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -352,7 +356,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_phone')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -384,7 +388,7 @@ const OrganizationForm = () => {
 							// View Mode
 							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_phone || 'Not set'}</Typography>
-								<IconButton onClick={() => setEditingField('phone')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('phone')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -404,11 +408,11 @@ const OrganizationForm = () => {
 				>
 					<Box style={{ flex: 1, fontWeight: 'light' }}>Diesel Price</Box>
 					<Box style={{ flex: 2 }}>
-						{editingField === 'org_diesel_price' ? (
+						{editingField === 'diesel_price' ? (
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<TextField
 									type='text'
-									value={editedOrganization.org_phone}
+									value={editedOrganization.org_diesel_price}
 									onChange={e => handleFieldChange('org_diesel_price', e.target.value)}
 									style={{
 										flex: 1,
@@ -417,16 +421,20 @@ const OrganizationForm = () => {
 								/>
 								<Button
 									type='button'
-									onClick={() => handleSave('org_diesel_price')}
+									onClick={() => {
+										setSaving(true);
+										handleSave('org_diesel_price');
+									}}
+									disabled={saving}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
 									}}
 								>
-									Save
+									{saving ? 'Saving...' : 'Save'}
 								</Button>
 								<Button
 									type='button'
@@ -458,7 +466,7 @@ const OrganizationForm = () => {
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_diesel_price}</Typography>
 
-								<IconButton onClick={() => setEditingField('org_diesel_price')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('diesel_price')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -478,11 +486,11 @@ const OrganizationForm = () => {
 				>
 					<Box style={{ flex: 1, fontWeight: 'light' }}>Petrol Price</Box>
 					<Box style={{ flex: 2 }}>
-						{editingField === 'org_petrol_price' ? (
+						{editingField === 'petrol_price' ? (
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<TextField
-									type='text'
-									value={editedOrganization.org_phone}
+									type='number'
+									value={editedOrganization.org_petrol_price}
 									onChange={e => handleFieldChange('org_petrol_price', e.target.value)}
 									style={{
 										flex: 1,
@@ -494,7 +502,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_petrol_price')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -531,7 +539,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_petrol_price}</Typography>
-								<IconButton onClick={() => setEditingField('org_petrol_price')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('petrol_price')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -586,7 +594,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_lang')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -624,7 +632,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_lang}</Typography>
-								<IconButton onClick={() => setEditingField('language')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('language')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -658,7 +666,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_country')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -696,7 +704,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_country}</Typography>
-								<IconButton onClick={() => setEditingField('country')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('country')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -740,7 +748,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_currency')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -778,7 +786,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_currency}</Typography>
-								<IconButton onClick={() => setEditingField('currency')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('currency')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
