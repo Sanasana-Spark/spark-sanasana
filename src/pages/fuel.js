@@ -6,6 +6,7 @@ import {
   Typography,
   Box,
   Table,
+  Button,
   TableBody,
   TableCell,
   TableContainer,
@@ -34,6 +35,7 @@ const Fuel = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(0);
+  const [filteredEntries, setFilteredEntries] = useState([]);
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -59,24 +61,63 @@ const Fuel = () => {
 
   //Implementing  Filter & Search Logic
   useEffect(() => {
-    setTotalPages(Math.ceil(fuelEntries.length / itemsPerPage));
+    let filtered = fuelEntries;
+
+    // search by vehicle or operator
+    if (search) {
+      filtered = filtered.filter(
+        (entry) =>
+          entry.a_license_plate.toLowerCase().includes(search.toLowerCase()) ||
+          entry.o_name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    // Filter by start date
+    if (startDate) {
+      filtered = filtered.filter(
+        (entry) =>
+          entry.f_created_at &&
+          new Date(entry.f_created_at) >= new Date(startDate)
+      );
+    }
+
+    // Filter by end date
+    if (endDate) {
+      filtered = filtered.filter(
+        (entry) =>
+          entry.f_created_at &&
+          new Date(entry.f_created_at) <= new Date(endDate)
+      );
+    }
+
+    // Filter by vehicle number plate
+    if (vehicle) {
+      filtered = filtered.filter((entry) => entry.a_license_plate === vehicle);
+    }
+
+    setFilteredEntries(filtered);
+  }, [search, startDate, endDate, vehicle, fuelEntries]);
+
+  // Implementing Pagination Logic
+  useEffect(() => {
+    setTotalPages(Math.ceil(filteredEntries.length / itemsPerPage));
     setPaginatedEntries(
-      fuelEntries.slice(
+      filteredEntries.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
       )
     );
-  }, [fuelEntries, currentPage, itemsPerPage]);
+  }, [filteredEntries, currentPage, itemsPerPage]);
 
-  const TotalMileage = fuelEntries
+  const TotalMileage = filteredEntries
     .reduce((sum, entry) => sum + parseFloat(entry.f_distance), 0)
     .toFixed(2);
-  const TotalRequests = fuelEntries.length;
+  const TotalRequests = filteredEntries.length;
   const avgCostPerGallon = 0;
-  const totalLitres = fuelEntries
+  const totalLitres = filteredEntries
     .reduce((sum, entry) => sum + entry.f_litres, 0)
     .toFixed(2);
-  const totalFuelCost = fuelEntries.reduce(
+  const totalFuelCost = filteredEntries.reduce(
     (sum, entry) => sum + entry.f_total_cost,
     0
   );
@@ -240,17 +281,17 @@ const Fuel = () => {
               </Paper>
             </Grid>
           </Grid>
-          {/* <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ my: 4, display: 'flex', justifyContent: 'space-between' }}>
 						<Button variant='contained' color='primary'>
 							Add fuel entry
 						</Button>
-						<Box>
+						{/* <Box>
 							<Button variant='outlined' sx={{ mr: 2 }}>
 								Filter by
 							</Button>
-							<Button variant='outlined'>Edit</Button>
-						</Box>
-					</Box> */}
+						</Box> */}
+						<Button variant='outlined'>Edit</Button>
+					</Box>
           <TableContainer component={Paper}>
             <Table>
               <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
