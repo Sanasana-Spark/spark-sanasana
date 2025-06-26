@@ -50,8 +50,6 @@ const CreateOrganizationPage = () => {
     org_created_by: user.id,
     org_country: formData.org_country,
     org_email: formData.org_email,
-    org_diesel_price: formData.org_diesel_price,
-    org_petrol_price: formData.org_petrol_price,
     org_currency: formData.org_currency,
 
     user_id: user.id,
