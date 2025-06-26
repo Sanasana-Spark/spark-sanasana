@@ -1,12 +1,10 @@
-/* eslint-disable no-undef */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   Grid,
   Paper,
   Typography,
   Box,
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -23,7 +21,7 @@ import { useAuthContext } from "../components/onboarding/authProvider";
 
 const Fuel = () => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_id, userId, org_currency, user_id } = useAuthContext();
+  const { org_id, org_currency, user_id } = useAuthContext();
 
   const [loading, setLoading] = useState(true);
   const [fuelEntries, setFuelEntries] = useState([]);
@@ -68,7 +66,6 @@ const Fuel = () => {
         currentPage * itemsPerPage
       )
     );
-    console.log(totalPages, fuelEntries.length, itemsPerPage);
   }, [fuelEntries, currentPage, itemsPerPage]);
 
   const TotalMileage = fuelEntries
