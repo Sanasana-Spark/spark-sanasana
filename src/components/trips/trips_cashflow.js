@@ -29,6 +29,10 @@ const Trips = () => {
   const [, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  const [refesh, setRefesh] = useState(false);
+  console.log("refesh", refesh)
+
+
   
   useEffect(() => {
     if (org_id && user_id) {
@@ -41,16 +45,15 @@ const Trips = () => {
       })
       .then((data) => {
         setAssets(data.filter((trip) => ["Requested", "In-Progress"].includes(trip.t_status) && trip.t_actual_cost === null));
-       
-
-
+  
         setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         setLoading(false);
+        setRefesh(false);
       });
-  }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
+  }},[baseURL,org_id, user_id, showAddPropertyForm, refesh] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
   const handleSubmit = (assetData) => {
@@ -187,6 +190,7 @@ flex: 1,
       <AssetsTable
         assets={assets}
         onViewUnitsClick={handleViewDetailsClick}
+        reloadtrips={handleReload}
       />
 
 
@@ -367,6 +371,10 @@ flex: 1,
     setCurrentView("RequestDetails");
     setSelectedTicket(rowIndex);
     setIsSliderOpen(true);
+  };
+
+  const handleReload = () => {
+    setRefesh(true);
   };
 
   return (
