@@ -19,7 +19,7 @@ import {
 import { useAuthContext } from "../onboarding/authProvider";
 // import actionicon from "../../assets/actionicon.svg"
 
-const AssetsTable = ({ assets, onViewUnitsClick }) => {
+const AssetsTable = ({ assets, onViewUnitsClick, reloadtrips }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
   const { org_id, userId, org_currency, user_id } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
@@ -34,6 +34,9 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const [, setSuccess] = useState(null);
   const [, setError] = useState(null);
   const [clientOptions, setClientOptions] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -69,8 +72,17 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   };
 
   const handleAddIncome = (trip) => {
+    console.log(" Trip:", trip);
     setAddIncomeForm(true);
     setSelectedTrip(trip);
+
+    if (trip.t_client_id) {
+      // If the trip already has a client ID, set it in the form data   
+    setFormData({
+      ti_client: trip.t_client_id
+    });
+  }
+
   };
 
   const handleAddExpense = (trip) => {
@@ -151,6 +163,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       }
       setSuccess("Income entry submitted successfully!");
       setAddIncomeForm(false);
+      reloadtrips();
     } catch (err) {
       setError(err.message);
     } finally {  
@@ -184,6 +197,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       }
       setSuccess("Income entry submitted successfully!");
       setAddExpenseForm(false);
+      reloadtrips();
     } catch (err) {
       setError(err.message);
     } finally {  
@@ -222,7 +236,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             <TableCell>Total.Income ({org_currency}) </TableCell>
             <TableCell>Total.Expense ({org_currency})</TableCell>
             <TableCell>Gross Profit ({org_currency})</TableCell>
-            <TableCell> Action</TableCell>
+            <TableCell> Fuel Request</TableCell>
             <TableCell> Income</TableCell>
             <TableCell> Expense</TableCell>
           </TableRow>

@@ -33,6 +33,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const { user_id } = useAuthContext();
   const { org_id } = useAuthContext();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [operatorOptions, setOperatorOptions] = useState([]);
   const [clientOptions, setClientOptions] = useState([]);
   const [, setAutocomplete] = useState(null);
@@ -439,6 +440,8 @@ console.log(directionsResponse)
     </Grid>
     <DialogActions>
       <Button type="submit" variant="contained"
+      onClick={() => setSaving(true)}
+      disabled={saving}
       sx={{
 
         backgroundColor: "var(--secondary-color)",
@@ -448,7 +451,8 @@ console.log(directionsResponse)
         color: "white",
       }
       } >
-        Submit
+        {saving ? "Submitting..." : "Submit"}
+        
       </Button>
       <Button variant="contained"
       sx={{
