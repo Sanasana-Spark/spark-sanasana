@@ -165,6 +165,20 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 <TextField
                   required
                   label="Estimated Cost"
+                  name="m_estimated_cost"
+                  value={maitenance.m_estimated_cost}
+                  onChange={handleChange}
+                  type="number"
+                  InputProps={{
+                    inputProps: { min: 0 },
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  label="Total Cost"
                   name="m_total_cost"
                   value={maitenance.m_total_cost}
                   onChange={handleChange}
