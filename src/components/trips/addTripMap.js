@@ -145,23 +145,22 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_client_id:trip.t_client_id
 
     }));
-console.log(directionsResponse)
-  onSubmit({
-    ...trip, // this includes previous trip values
-    t_origin_place_id:origin_place_id,
-    t_origin_place_query:origin_place_query,
-    t_destination_place_id:destination_place_id,
-    t_destination_place_query:destination_place_query,
-    t_directionsResponse:directionsResponse,
-    t_distance:distance,
-    t_duration:duration,
-    t_start_lat:origin_lat,
-    t_end_lat:destination_lat,
-    t_start_long:origin_lng,
-    t_end_long:destination_lng,
-    t_type:trip.t_type,
-    t_client_id:trip.t_client_id
-  });
+    onSubmit({
+      ...trip, // this includes previous trip values
+      t_origin_place_id:origin_place_id,
+      t_origin_place_query:origin_place_query,
+      t_destination_place_id:destination_place_id,
+      t_destination_place_query:destination_place_query,
+      t_directionsResponse:directionsResponse,
+      t_distance:distance,
+      t_duration:duration,
+      t_start_lat:origin_lat,
+      t_end_lat:destination_lat,
+      t_start_long:origin_lng,
+      t_end_long:destination_lng,
+      t_type:trip.t_type,
+      t_client_id:trip.t_client_id
+    });
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
@@ -170,6 +169,8 @@ console.log(directionsResponse)
       t_type: "N/A",
     });
   };
+
+
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -184,9 +185,6 @@ console.log(directionsResponse)
     }),
     []
   );
-
-
-
 
 
   const onLoad = (autocomplete) => {
@@ -237,16 +235,6 @@ console.log(directionsResponse)
   }
 
 
-  if (directionsResponse) {
-    console.log(
-     "origin", origin_place_id,origin_place_query,
-     "Dest", destination_place_id,destination_place_query,
-     "distance", distance,
-     "time", duration,
-     "cordi", origin_lat, destination_lat, origin_lng, destination_lng,
-     "directionsResponse",directionsResponse
-    );
-  }
 
 
 
