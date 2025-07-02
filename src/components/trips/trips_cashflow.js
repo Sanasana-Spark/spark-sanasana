@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import AssetsTable from "./trips_cashflow_table";
-import AddAssetForm from "./addTripMap";
+import TripsTable from "./trips_cashflow_table";
+import AddTripForm from "./addTripMap";
 import AssetDetails from "./trip_cashflow_details";
 import { useAuthContext } from '../onboarding/authProvider';
 import {
   Container,
   Box,
-  Grid,
   Typography,
   IconButton,
   TextField,
@@ -25,10 +24,13 @@ const Trips = () => {
   const { user_id, org_id } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
-  const [assets, setAssets] = useState([]);
+  const [trips, setTrips] = useState([]);
   const [, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
+  const [refesh, setRefesh] = useState(false);
+
+
   
   useEffect(() => {
     if (org_id && user_id) {
@@ -40,17 +42,17 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setAssets(data.filter((trip) => ["Requested", "In-Progress"].includes(trip.t_status) && trip.t_actual_cost === null));
-       
-
-
+        setTrips(data.filter((trip) => ["Requested", "In-Progress"].includes(trip.t_status) || trip.t_actual_cost === null));
+  
         setLoading(false);
+        setRefesh(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         setLoading(false);
+        setRefesh(false);
       });
-  }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
+  }},[baseURL,org_id, user_id, showAddPropertyForm, refesh] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
   const handleSubmit = (assetData) => {
@@ -79,8 +81,6 @@ const Trips = () => {
       t_duration:assetData.t_duration
     };
 
-    console.log("Payload Data:", data); // Log the payload
-
     const options = {
       method: "POST", // Specify the HTTP method
       headers: {
@@ -88,7 +88,6 @@ const Trips = () => {
       },
       body: JSON.stringify(data), // Convert data to JSON string for the request body
     };
-    console.log(data)
     fetch(url, options)
       .then((response) => {
         if (!response.ok) {
@@ -101,7 +100,7 @@ const Trips = () => {
         console.error("Error adding trip:", error);
       });
   };
-  const selectedAsset = assets.filter(
+  const selectedAsset = trips.filter(
     (asset) => asset["id"] === selectedTicket
   );
 
@@ -184,9 +183,10 @@ flex: 1,
       </Box>
 
 
-      <AssetsTable
-        assets={assets}
+      <TripsTable
+        trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
+        reloadtrips={handleReload}
       />
 
 
@@ -195,7 +195,7 @@ flex: 1,
 
 </Box>
 
-<AddAssetForm
+<AddTripForm
   open={showAddPropertyForm}
   onSubmit={handleSubmit}
   onCancel={handleCancel}
@@ -211,9 +211,8 @@ flex: 1,
     <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
 
       <Box>
-        <Grid item xs={12} marginBottom={5}></Grid>
-          <Box display="flex" justifyContent="space-between"></Box>
-            <Typography variant="h6">Trips</Typography>
+      
+        
             <Box
               display="flex"
               justifyContent="flex-end"
@@ -255,10 +254,7 @@ flex: 1,
           </Box>
      
           <Box
-            sx={{
-              display: "flex",
-              padding: '15px 25px'
-            }}
+            sx={{ display: "flex", alignItems: "center" }}
           >
             {/* Search Box */}
             <TextField
@@ -295,8 +291,8 @@ flex: 1,
           </Box>
 
           <Box>
-            <AssetsTable
-              assets={assets}
+            <TripsTable
+              trips={trips}
               onViewUnitsClick={handleViewDetailsClick}
             />
           </Box>
@@ -311,7 +307,7 @@ flex: 1,
 
     
 
-      <AddAssetForm
+      <AddTripForm
         open={showAddPropertyForm}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
@@ -369,8 +365,12 @@ flex: 1,
     setIsSliderOpen(true);
   };
 
+  const handleReload = () => {
+    setRefesh(true);
+  };
+
   return (
-    <>{setAssets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>
+    <>{setTrips.length > 0 ? <>{renderView()}</> : <p> No Data Available </p>}</>
   );
 };
 
