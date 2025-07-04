@@ -27,11 +27,12 @@ const carbonEmissionData = {
     { name: "Dec", value: 270 },
   ],
   yearOnYear: [
-    { name: "2020", value: 1800 },
     { name: "2021", value: 1900 },
     { name: "2022", value: 2000 },
     { name: "2023", value: 2100 },
     { name: "2024", value: 2200 },
+    { name: "2025", value: 1800 },
+
   ],
   weekOnWeek: [
     { name: "Monday", value: 100 },
