@@ -60,8 +60,12 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSaving(true);
     onSubmit(maitenance);
     // Optionally, you can reset the form after submission
+    setMaitenance({
+      m_status: "pending"
+    });
   };
 
   const handleFileChange = (e) => {
@@ -230,7 +234,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               </Button>
               <Button type="submit" variant="contained" 
               sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}
-              onClick={() => {handleSubmit();  setSaving(true); }}
+              
                disabled={saving} 
               >
                 {saving ? "submitting..." : "Submit"} 

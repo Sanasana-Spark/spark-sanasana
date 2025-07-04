@@ -23,7 +23,7 @@ const History = () => {
 
   useEffect(() => {
     if (org_id && user_id) {
-    fetch(`${baseURL}/maintenances/${org_id}/${user_id}/`)
+    fetch(`${baseURL}/maintenances/history/${org_id}/${user_id}/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
