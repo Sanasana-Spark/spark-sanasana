@@ -6,23 +6,22 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Button,TablePagination,
+  TableRow,TablePagination,
 } from "@mui/material";
 // import actionicon from "../../trips/actionicon.svg"
 
 const AssetsTable = ({ maintenance, onViewUnitsClick }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState({});
+  // const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
 
-  const handleCellClick = (rowIndex) => {
-    setIsDropdownOpen((prevState) => ({
-      ...prevState,
-      [rowIndex]: !prevState[rowIndex], // Toggle the state for the specific trip id
-    }));
-    onViewUnitsClick(rowIndex);
-  };
+  // const handleCellClick = (rowIndex) => {
+  //   setIsDropdownOpen((prevState) => ({
+  //     ...prevState,
+  //     [rowIndex]: !prevState[rowIndex], // Toggle the state for the specific trip id
+  //   }));
+  //   onViewUnitsClick(rowIndex);
+  // };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -36,18 +35,18 @@ const AssetsTable = ({ maintenance, onViewUnitsClick }) => {
        <Table stickyHeader aria-label="sticky table" >
              <TableHead >
                <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
-            <TableCell>Print out</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>date</TableCell>
-            <TableCell>Vehicle</TableCell>
-            <TableCell>Expected Cost</TableCell>
-            <TableCell>Insurance Coverage</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {/* Render a TableRowItem for each trip in the maintenance array */}
+             {/* <TableCell><b>Print out</b></TableCell>  */}
+                  <TableCell><b>Type</b></TableCell>
+                  <TableCell><b>Description</b></TableCell>
+                  <TableCell><b>Status</b></TableCell>
+                  <TableCell><b>Date</b></TableCell>
+                  <TableCell><b>Vehicle</b></TableCell>
+                  <TableCell><b>Expected Cost</b></TableCell>
+                  <TableCell><b>Insurance Coverage</b></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {/* Render a TableRowItem for each trip in the maintenance array */}
           {paginatedAssets.map((trip) => (
             <TableRow key={trip.id}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
@@ -56,17 +55,17 @@ const AssetsTable = ({ maintenance, onViewUnitsClick }) => {
             >
 
 
-              <TableCell onClick={() => handleCellClick(trip.id)}  >
+              {/* <TableCell onClick={() => handleCellClick(trip.id)}  >
                 {!isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}> Preview </Button>}
 
                 {isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
-              </TableCell>
+              </TableCell> */}
               <TableCell>{trip.m_type}</TableCell>
               <TableCell>{trip.m_description}</TableCell>
               <TableCell>{trip.m_status}</TableCell>
               <TableCell> {trip.m_date ? new Date(trip.m_date).toLocaleDateString('en-GB') : '-'} </TableCell>
-              <TableCell>{trip.m_asset_id}</TableCell>
-              <TableCell>{trip.m_total_cost}</TableCell>
+              <TableCell>{trip.m_asset_license}</TableCell>
+              <TableCell>{trip.m_estimated_cost}</TableCell>
               <TableCell> {trip.m_insurance_coverage}</TableCell>
             </TableRow>
           ))}
