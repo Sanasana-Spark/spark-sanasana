@@ -51,8 +51,11 @@ const Upcoming = () => {
       m_expected_cost: maintenance.m_total_cost,
       m_insurance_coverage: maintenance.m_insurance_coverage,
       m_total_cost: maintenance.m_total_cost,
+      m_estimated_cost: maintenance.m_estimated_cost,
       m_type: maintenance.m_type,
+      m_attachment: maintenance.m_attachment, // Assuming this is a base64 string
     };
+
 
     console.log("Payload Data:", data); // Log the payload
 
