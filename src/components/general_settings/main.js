@@ -14,8 +14,8 @@ const OrganizationForm = () => {
 		email: '',
 		phone: '',
 		language: 'English',
-		country: 'USA',
-		currency: 'USD',
+		country: 'Ghana',
+		currency: 'Cedis',
 		petrol_price:0,
 		diesel_price:0
 	});
@@ -658,6 +658,11 @@ const OrganizationForm = () => {
 								<Select value={editedOrganization.org_country} onChange={e => handleFieldChange('org_country', e.target.value)} style={{ flex: 1, padding: '5px' }}>
 									<MenuItem value='Kenya'>Kenya</MenuItem>
 									<MenuItem value='Ghana'>Ghana</MenuItem>
+									<MenuItem value='Ethiopia'>Ethiopia</MenuItem>
+									<MenuItem value='Nigeria'>Nigeria</MenuItem>
+									<MenuItem value='Uganda'>Uganda</MenuItem>
+									<MenuItem value='Tanzania'>Tanzania</MenuItem>
+									<MenuItem value='USA'>USA</MenuItem>
 									<MenuItem value='Other'>Other</MenuItem>
 								</Select>
 
@@ -740,6 +745,10 @@ const OrganizationForm = () => {
 								>
 									<MenuItem value='KES'>Kes</MenuItem>
 									<MenuItem value='GHS'>Cedis</MenuItem>
+									<MenuItem value='NGN'>Naira</MenuItem>
+									<MenuItem value='UGX'>Ush</MenuItem>
+									<MenuItem value='TZS'>Tsh</MenuItem>
+									<MenuItem value='Birr'>Birr</MenuItem>
 									<MenuItem value='USD'>Usd</MenuItem>
 								</Select>
 
