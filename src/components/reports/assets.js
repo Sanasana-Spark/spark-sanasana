@@ -22,6 +22,7 @@ const Reports = () => {
 	const [endDate, setEndDate] = useState('');
 	const [operator, setOperator] = useState(null);
 	const [previewReport, setPreviewReport] = useState(null);
+	console.log(setPreviewReport);
 
 	useEffect(() => {
 		fetchReports();
