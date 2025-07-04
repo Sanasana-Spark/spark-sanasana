@@ -22,6 +22,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   const { user_id, org_id } = useAuthContext();
   const [assetOptions, setAssetOptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -130,9 +131,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                     <MenuItem value="preventative"> preventative </MenuItem>
                     <MenuItem value="corrective"> corrective</MenuItem>
                     <MenuItem value="servicing"> Genral servicing</MenuItem>
-                    <MenuItem value="other">set this </MenuItem>
-                    <MenuItem value="other">set this </MenuItem>
-                    <MenuItem value="other">set this </MenuItem>
+                    <MenuItem value="other"> Other </MenuItem>
                   </TextField>
                 </FormControl>
               </Grid>
@@ -175,7 +174,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={6}>
+              {/* <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   label="Total Cost"
@@ -187,7 +186,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                     inputProps: { min: 0 },
                   }}
                 />
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} sm={6}>
                 <FormControl
@@ -214,7 +213,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
                 <FormControl fullWidth>
                   <FormLabel>Attachment </FormLabel>
                   <input
-                    accept="application/pdf"
+                    accept="application/pdf, image/*"
                     type="file"
                     onChange={handleFileChange}
                     name="o_attachment1"
@@ -223,12 +222,20 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
               </Grid>
             </Grid>
             <DialogActions>
-              <Button type="submit" variant="contained" color="primary">
-                Submit
-              </Button>
-              <Button variant="contained" color="primary" onClick={onCancel}>
+            <Button variant="contained" color="primary" 
+           onClick={() => { onCancel(); setSaving(false); }}
+
+            >
                 Cancel
               </Button>
+              <Button type="submit" variant="contained" 
+              sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}
+              onClick={() => {handleSubmit();  setSaving(true); }}
+               disabled={saving} 
+              >
+                {saving ? "submitting..." : "Submit"} 
+              </Button>
+              
             </DialogActions>
           </form>
         </Paper>
