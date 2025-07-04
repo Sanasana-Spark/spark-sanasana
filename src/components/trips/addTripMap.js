@@ -126,6 +126,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   };
 
   const handleSubmit = (e) => {
+    setSaving(true);
     e.preventDefault();
 
     setTrip((prevTrip) => ({
@@ -428,7 +429,6 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     </Grid>
     <DialogActions>
       <Button type="submit" variant="contained"
-      onClick={() => setSaving(true)}
       disabled={saving}
       sx={{
 
