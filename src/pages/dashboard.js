@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
-  Paper,
   Typography,
   Box,
   Button,
@@ -22,6 +21,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 import { useAuthContext } from "../components/onboarding/authProvider";
 import "../App.css";
@@ -33,7 +33,7 @@ const baseURL = process.env.REACT_APP_BASE_URL;
 const Dashboard = () => {
   const { org_id, user_id, user_org, org_currency } = useAuthContext();
 
-  if (user_id && !user_org && !org_id ) {
+  if (user_id && !user_org && !org_id) {
     window.location.href = "/create-organization";
   }
 
@@ -232,10 +232,13 @@ const Dashboard = () => {
       <Box
         sx={{
           width: "100%",
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fill, minmax(min(200px, 100%), 1fr))",
+          display: "flex",
+          flexWrap: "wrap",
           gap: 2,
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 2,
+          marginBottom: 2,
         }}
       >
         <Card
@@ -245,6 +248,8 @@ const Dashboard = () => {
             textAlign: "center",
             color: "text.secondary",
             height: "100%",
+            width: "200px",
+            maxWidth: "20%",
           }}
         >
           <CardContent>
@@ -260,12 +265,14 @@ const Dashboard = () => {
             textAlign: "center",
             color: "text.secondary",
             height: "100%",
+            width: "200px",
+            maxWidth: "20%",
           }}
         >
           <CardContent>
-            <Typography variant="body2">Assets Value</Typography>
+            <Typography variant="body2">Operators</Typography>
             <Typography variant="h6">
-              {dashboardSummary.overallAssetsValue} {org_currency}
+              {dashboardSummary.totalOperators}
             </Typography>
           </CardContent>
         </Card>
@@ -277,13 +284,13 @@ const Dashboard = () => {
             textAlign: "center",
             color: "text.secondary",
             height: "100%",
+            width: "200px",
+            maxWidth: "20%",
           }}
         >
           <CardContent>
-            <Typography variant="body2">Fuel Cost</Typography>
-            <Typography variant="h6">
-              {dashboardSummary.totalFuelCost} {org_currency}
-            </Typography>
+            <Typography variant="body2"> Trips </Typography>
+            <Typography variant="h6">{dashboardSummary.totalTrips}</Typography>
           </CardContent>
         </Card>
 
@@ -294,243 +301,275 @@ const Dashboard = () => {
             textAlign: "center",
             color: "text.secondary",
             height: "100%",
+            width: "200px",
+            maxWidth: "20%",
           }}
         >
           <CardContent>
-            <Typography variant="body2">Carbon Emission</Typography>
+            <Typography variant="body2">Fuel Cost</Typography>
             <Typography variant="h6">
-              {dashboardSummary.carbonReduction}
+              {dashboardSummary.totalFuelCost} {org_currency}
             </Typography>
           </CardContent>
         </Card>
       </Box>
 
-      <Box sx={{ my: 6 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Paper sx={{ padding: 2, height: "100%" }}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body2" sx={{ marginRight: 2 }}>
-                  Fuel Used
-                </Typography>
-                {/* <Typography variant="body2" sx={{ marginRight: 2 }}>Operating fuel</Typography>
-                <Box sx={{ width: 12, height: 12, backgroundColor: '#000', borderRadius: '50%', marginRight: 2 }}></Box>
-                <Typography variant="body2" sx={{ marginRight: 2 }}>This year</Typography>
-                <Box sx={{ width: 12, height: 12, backgroundColor: '#82ca9d', borderRadius: '50%' }}></Box>
-                <Typography variant="body2" sx={{ marginRight: 2 }}>Last year</Typography> */}
-              </Box>
+      <Box
+        sx={{
+          my: 6,
+          height: "45vh",
+          display: "grid",
+          marginBottom: 2,
+          gridTemplateColumns: "2fr 1fr 1fr",
+          gap: 2,
+        }}
+      >
+        <Grid
+          item
+          xs={6}
+          sx={{
+            overflow: "scroll",
+            height: "100%",
+            backgroundColor: "var(--main-bg-color)",
+            borderRadius: 3,
+            padding: 2,
+          }}
+        >
+          <Typography variant="body2" sx={{ marginRight: 2 }}>
+            Fuel Used
+          </Typography>
 
-              <LineChart
-                width={600}
-                height={300}
-                data={dashboardData.fuelUsage}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#8884d8"
-                  activeDot={{ r: 8 }}
-                />
-              </LineChart>
-            </Paper>
-          </Grid>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={dashboardData.fuelUsage}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#8884d8"
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </Grid>
 
-          <Grid
-            item
-            xs={3}
-            sx={{ maxHeight: 400, overflowY: "scroll", height: "100%" }}
-          >
-            <Paper sx={{ padding: 2, height: "inherit" }}>
-              <Typography variant="h6">CO'2 Emission</Typography>
-              <CarbonEmissionChart />
-            </Paper>
-          </Grid>
+        <Grid
+          item
+          xs={3}
+          sx={{
+            overflowY: "scroll",
+            height: "inherit",
+            backgroundColor: "var(--main-bg-color)",
+            borderRadius: 3,
+            padding: 2,
+          }}
+        >
+          <Typography variant="h6">CO'2 Emission</Typography>
+          <CarbonEmissionChart />
+        </Grid>
 
-          <Grid item xs={3} sx={{ maxHeight: 400, overflowY: "scroll" }}>
-            <Paper sx={{ padding: 2, height: "inherit" }}>
-              <Typography variant="h6">This Week's Trips</Typography>
+        <Grid
+          item
+          xs={3}
+          sx={{
+            overflowY: "scroll",
+            height: "inherit",
+            backgroundColor: "var(--main-bg-color)",
+            borderRadius: 3,
+            padding: 2,
+          }}
+        >
+          <Typography variant="h6">This Week's Trips</Typography>
 
-              {!loading &&
-                trips.map((trip) => (
-                  <Card
-                    key={trip.id}
-                    sx={{
-                      backgroundColor: getStatusColor(trip.t_status),
-                      padding: 1,
-                      marginBottom: 2,
-                    }}
-                  >
-                    <CardContent>
-                      <Grid container spacing={2}>
-                        {/* Row 1 */}
-                        <Grid item xs={6}>
-                          <Typography variant="body2">
-                            <strong> {trip.o_name}</strong>{" "}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body2">
-                            <strong>{trip.a_license_plate} </strong>
-                          </Typography>
-                        </Grid>
-
-                        {/* Row 2 */}
-                        <Grid item xs={6}>
-                          <Typography variant="body2">
-                            <strong>From:</strong> {trip.t_origin_place_query}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Typography variant="body2">
-                            <strong>To:</strong>{" "}
-                            {trip.t_destination_place_query}
-                          </Typography>
-                        </Grid>
-
-                        {/* Row 3 */}
-                        <Grid item xs={6}>
-                          <Typography variant="body2">
-                            {" "}
-                            {trip.t_status}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </CardContent>
-                  </Card>
-                ))}
-
-              <Box
+          {!loading &&
+            trips.map((trip) => (
+              <Card
+                key={trip.id}
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 2,
+                  backgroundColor: getStatusColor(trip.t_status),
+                  padding: 1,
+                  marginBottom: 2,
                 }}
               >
-                <Button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
+                <CardContent>
+                  <Grid container spacing={2}>
+                    {/* Row 1 */}
+                    <Grid item xs={6}>
+                      <Typography variant="body2">
+                        <strong> {trip.o_name}</strong>{" "}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="body2">
+                        <strong>{trip.a_license_plate} </strong>
+                      </Typography>
+                    </Grid>
 
-                <Button
-                  onClick={handleNextPage}
-                  disabled={indexOfLastTrip >= trips.length}
-                >
-                  Next
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
+                    {/* Row 2 */}
+                    <Grid item xs={6}>
+                      <Typography variant="body2">
+                        <strong>From:</strong> {trip.t_origin_place_query}
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="body2">
+                        <strong>To:</strong> {trip.t_destination_place_query}
+                      </Typography>
+                    </Grid>
+
+                    {/* Row 3 */}
+                    <Grid item xs={6}>
+                      <Typography variant="body2"> {trip.t_status}</Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            ))}
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 2,
+            }}
+          >
+            <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Previous
+            </Button>
+
+            <Button
+              onClick={handleNextPage}
+              disabled={indexOfLastTrip >= trips.length}
+            >
+              Next
+            </Button>
+          </Box>
         </Grid>
       </Box>
 
-      <Box sx={{ my: 6 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={7.5}>
-            <Paper sx={{ padding: 2, height: "inherit" }}>
-              <Map trips={trips} style={{ width: "100%", height: "100%" }} />
-            </Paper>
-          </Grid>
+      <Box
+        sx={{
+          my: 6,
+          display: "grid",
+          marginBottom: 2,
+          gridTemplateColumns: "2fr 1fr",
+          gap: 2,
+        }}
+      >
+        <Grid
+          item
+          xs={7}
+          sx={{
+            overflow: "scroll",
+            height: "100%",
+            backgroundColor: "var(--main-bg-color)",
+            borderRadius: 3,
+            padding: 2,
+          }}
+        >
+          <Map trips={trips} style={{ width: "100%", height: "100%" }} />
+        </Grid>
 
-          <Grid item xs={4.5} sx={{ maxHeight: 400, overflowY: "scroll" }}>
-            <Paper sx={{ padding: 2, height: "inherit" }}>
-              <Typography variant="h6">Fleet Performance</Typography>
-              <Table>
-                <TableHead>
-                  <TableRow
-                    backgroundColor="var(--secondary-bg-color)"
-                    style={{ backgroundColor: "var(--secondary-bg-color)" }}
-                  >
-                    <TableCell>Vehicle</TableCell>
-                    <TableCell>Mileage(KMs)</TableCell>
-                    <TableCell>Consumption/100km</TableCell>
-                    <TableCell>Profit ({org_currency}) </TableCell>
-                  </TableRow>
-                </TableHead>
-
-                {!loading &&
-                Array.isArray(assetPerformance) &&
-                assetPerformance.length > 0 ? (
-                  assetPerformance.map((asset) => (
-                    <TableBody>
-                      <TableRow
-                        key={asset.id}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--secondary-bg-color)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "var(--main-bg-color)")
-                        }
-                        sx={{ border: "none" }}
-                      >
-                        <TableCell>
-                          <strong> {asset.a_license_plate}</strong>{" "}
-                        </TableCell>
-                        <TableCell>
-                          {parseFloat(asset.total_miles) > 0
-                            ? parseFloat(asset.total_miles).toFixed(2)
-                            : "0.00"}
-                        </TableCell>
-                        <TableCell>
-                          {parseFloat(asset.total_fuel) > 0
-                            ? parseFloat(
-                                (asset.total_fuel / 100) * asset.total_miles
-                              ).toFixed(2)
-                            : "0.00"}
-                        </TableCell>
-
-                        <TableCell>
-                          {parseFloat(asset.profit) > 0
-                            ? parseFloat(asset.profit).toFixed(2)
-                            : "0.00"}
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  ))
-                ) : (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell colSpan={5}>
-                        {loading
-                          ? "Loading..."
-                          : "No asset performance data available."}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 2,
-                }}
+        <Grid
+          item
+          xs={5}
+          sx={{
+            overflow: "scroll",
+            height: "100%",
+            backgroundColor: "var(--main-bg-color)",
+            borderRadius: 3,
+            padding: 2,
+          }}
+        >
+          <Typography variant="h6">Fleet Performance</Typography>
+          <Table>
+            <TableHead>
+              <TableRow
+                backgroundColor="var(--secondary-bg-color)"
+                style={{ backgroundColor: "var(--secondary-bg-color)" }}
               >
-                <Button
-                  onClick={handlePreviousPage}
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </Button>
+                <TableCell>Vehicle</TableCell>
+                <TableCell>Mileage(KMs)</TableCell>
+                <TableCell>Consumption/100km</TableCell>
+                <TableCell>Profit ({org_currency}) </TableCell>
+              </TableRow>
+            </TableHead>
 
-                <Button
-                  onClick={handleNextPage}
-                  disabled={indexOfLastTrip >= trips.length}
-                >
-                  Next
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
+            {!loading &&
+            Array.isArray(assetPerformance) &&
+            assetPerformance.length > 0 ? (
+              assetPerformance.map((asset) => (
+                <TableBody>
+                  <TableRow
+                    key={asset.id}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--secondary-bg-color)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--main-bg-color)")
+                    }
+                    sx={{ border: "none" }}
+                  >
+                    <TableCell>
+                      <strong> {asset.a_license_plate}</strong>{" "}
+                    </TableCell>
+                    <TableCell>
+                      {parseFloat(asset.total_miles) > 0
+                        ? parseFloat(asset.total_miles).toFixed(2)
+                        : "0.00"}
+                    </TableCell>
+                    <TableCell>
+                      {parseFloat(asset.total_fuel) > 0
+                        ? parseFloat(
+                            (asset.total_fuel / 100) * asset.total_miles
+                          ).toFixed(2)
+                        : "0.00"}
+                    </TableCell>
+
+                    <TableCell>
+                      {parseFloat(asset.profit) > 0
+                        ? parseFloat(asset.profit).toFixed(2)
+                        : "0.00"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ))
+            ) : (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={5}>
+                    {loading
+                      ? "Loading..."
+                      : "No asset performance data available."}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 2,
+            }}
+          >
+            <Button onClick={handlePreviousPage} disabled={currentPage === 1}>
+              Previous
+            </Button>
+
+            <Button
+              onClick={handleNextPage}
+              disabled={indexOfLastTrip >= trips.length}
+            >
+              Next
+            </Button>
+          </Box>
         </Grid>
       </Box>
     </Container>
