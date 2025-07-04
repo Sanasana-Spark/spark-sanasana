@@ -1,153 +1,161 @@
 /* eslint-disable */
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { CSVLink } from "react-csv";
-// import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { useAuthContext } from "../onboarding/authProvider";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
-import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { CSVLink } from 'react-csv';
+import { useAuthContext } from '../onboarding/authProvider';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Box, Button, Typography, TextField, Stack, Divider } from '@mui/material';
 
 const Reports = () => {
-    const baseURL = process.env.REACT_APP_BASE_URL;
-    const { org_id } = useAuthContext();
-    const [reports, setReports] = useState({ 
-        trips_listing: [], 
-        assets_listing: [],
-        operators_listing: [], 
-         tripsByOperator: [] 
-        });
-    console.log(reports)
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
-    // eslint-disable-next-line
-    const [previewReport, setPreviewReport] = useState(null);
+	const baseURL = process.env.REACT_APP_BASE_URL;
+	const { org_id } = useAuthContext();
 
-    useEffect(() => {
-        fetchReports();
-    },
-    // eslint-disable-next-line 
-     []);
+	const [reports, setReports] = useState({
+		trips_listing: [],
+		assets_listing: [],
+		operators_listing: [],
+		tripsByOperator: [],
+	});
 
-    const fetchReports = async () => {
-        if (!org_id) {
-            console.error("Organization ID is not available");
-            return;
-        }
+	const [startDate, setStartDate] = useState('');
+	const [endDate, setEndDate] = useState('');
+	const [previewReport, setPreviewReport] = useState(null);
 
-        try {
-            const tripsResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
-                params: { organization_id: org_id, start_date: startDate, end_date: endDate }
-            });
-            const assetsResponse = await axios.get(`${baseURL}/assets/reports/${org_id}`, {
-                params: { organization_id: org_id, start_date: startDate, end_date: endDate }
-            });
-            const operatorsResponse = await axios.get(`${baseURL}/operators/reports/${org_id}`, {
-                params: { organization_id: org_id, start_date: startDate, end_date: endDate }
-            });
-            const tripsByOperatorResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
-                params: { organization_id: org_id, start_date: startDate, end_date: endDate }
-            });
+	useEffect(() => {
+		fetchReports();
+		// eslint-disable-next-line
+	}, []);
 
-            setReports({
-                trips_listing: tripsResponse.data,
-                assets_listing: assetsResponse.data,
-                operators_listing: operatorsResponse.data,
-                tripsByOperator: tripsByOperatorResponse.data
-            });
-        } catch (error) {
-            console.error("Error fetching reports:", error);
-        }
-    };
+	const fetchReports = async () => {
+		if (!org_id) {
+			console.error('Organization ID is not available');
+			return;
+		}
 
+		try {
+			const tripsResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
+				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
+			});
+			const assetsResponse = await axios.get(`${baseURL}/assets/reports/${org_id}`, {
+				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
+			});
+			const operatorsResponse = await axios.get(`${baseURL}/operators/reports/${org_id}`, {
+				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
+			});
+			const tripsByOperatorResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
+				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
+			});
 
-    const generatePDF = (reportData, reportName) => {
-        const doc = new jsPDF();
-        doc.setFontSize(16);
-        doc.text(`${reportName} Report`, 14, 15);
+			setReports({
+				trips_listing: tripsResponse.data,
+				assets_listing: assetsResponse.data,
+				operators_listing: operatorsResponse.data,
+				tripsByOperator: tripsByOperatorResponse.data,
+			});
+		} catch (error) {
+			console.error('Error fetching reports:', error);
+		}
+	};
 
-        if (reportData.length > 0) {
-            const columns = Object.keys(reportData[0]).map(col => col.replace(/_/g, ' ').toUpperCase());
-            const rows = reportData.map(item => Object.values(item));
-            
-            autoTable(doc, {
-                head: [columns],
-                body: rows,
-                startY: 25,
-                styles: { fontSize: 10, cellPadding: 3 },
-                headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold' }
-            });
-        } else {
-            doc.text("No data available", 14, 25);
-        }
+	const generatePDF = (reportData, reportName) => {
+		const doc = new jsPDF();
+		doc.setFontSize(16);
+		doc.text(`${reportName} Report`, 14, 15);
 
-        doc.save(`${reportName}_report.pdf`);
-    };
+		if (reportData.length > 0) {
+			const columns = Object.keys(reportData[0]).map(col => col.replace(/_/g, ' ').toUpperCase());
+			const rows = reportData.map(item => Object.values(item));
 
+			autoTable(doc, {
+				head: [columns],
+				body: rows,
+				startY: 25,
+				styles: { fontSize: 10, cellPadding: 3 },
+				headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold' },
+			});
+		} else {
+			doc.text('No data available', 14, 25);
+		}
 
-    const ReportPDF = ({ report }) => (
-        <Document>
-            <Page size="A4" style={styles.page}>
-                <View style={styles.section}>
-                    <Text>Report ID: {report.id}</Text>
-                    <Text>Details: {JSON.stringify(report, null, 2)}</Text>
-                </View>
-            </Page>
-        </Document>
-    );
+		doc.save(`${reportName}_report.pdf`);
+	};
 
-    return (
-        <div className="p-4">
-            <div className="mb-4">
-                <span> Start date: </span>
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-                <span> End date: </span>
-                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-                <span></span>
-                <button onClick={fetchReports} className="bg-blue-500 text-white px-4 py-2">Refresh Reports</button>
-            </div>
-            <br/>
-            
+	const ReportPDF = ({ report }) => (
+		<Document>
+			<Page size='A4' style={styles.page}>
+				<View style={styles.section}>
+					<Text>Report ID: {report.id}</Text>
+					<Text>Details: {JSON.stringify(report, null, 2)}</Text>
+				</View>
+			</Page>
+		</Document>
+	);
 
-{Object.entries(reports).map(([key, data]) => (
-                <div key={key} className="mb-6 p-4 border rounded-lg shadow-md">
-                
-                    <h4 className="text-lg font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1')}</h4>
-                 
+	return (
+		<Box sx={{ p: 4 }}>
+			<Stack direction='row' spacing={2} alignItems='center' mb={4}>
+				<Typography>Start Date:</Typography>
+				<TextField type='date' size='small' value={startDate} onChange={e => setStartDate(e.target.value)} />
+				<Typography>End Date:</Typography>
+				<TextField type='date' size='small' value={endDate} onChange={e => setEndDate(e.target.value)} />
+				<Button variant='contained' onClick={fetchReports}>
+					Refresh Reports
+				</Button>
+			</Stack>
 
-                    <button  className="bg-red-500 text-white px-4 py-2 ml-2 rounded">
-                    <CSVLink data={data} filename={`${key}_report.csv`} className="bg-green-500 text-white px-4 py-2 rounded">
-                        Download CSV
-                    </CSVLink>
+			{Object.entries(reports).map(([key, data]) => (
+				<Box
+					key={key}
+					sx={{
+						mb: 4,
+						p: 2,
+						border: '1px solid #ddd',
+						borderRadius: 2,
+					}}
+				>
+					<Typography variant='h6' fontWeight='bold' gutterBottom>
+						{key.replace(/([A-Z])/g, ' $1')}
+					</Typography>
 
-                    </button>
+					<Button variant='outlined' color='success' size='small' sx={{ mt: 1 }}>
+						<CSVLink data={data} filename={`${key}_report.csv`} style={{ textDecoration: 'none', color: 'inherit' }}>
+							Download CSV
+						</CSVLink>
+					</Button>
 
-                    {/* <button onClick={() => generatePDF(data, key)} className="bg-red-500 text-white px-4 py-2 ml-2 rounded">
-                    Download PDF
-                    </button> */}
-                </div>
-            ))}
+					{/* Uncomment this button to enable PDF download again
+					<Button
+						variant="outlined"
+						color="error"
+						size="small"
+						onClick={() => generatePDF(data, key)}
+						sx={{ ml: 2 }}
+					>
+						Download PDF
+					</Button>
+					*/}
+				</Box>
+			))}
 
-
-
-
-
-            {previewReport && (
-                <div className="p-4 border mt-6">
-                    <h3 className="text-lg font-bold">PDF Preview for Report ID: {previewReport.id}</h3>
-                    <PDFDownloadLink document={<ReportPDF report={previewReport} />} fileName={`report_${previewReport.id}.pdf`}>
-                        {({ loading }) => (loading ? "Loading preview..." : "Download PDF Preview")}
-                    </PDFDownloadLink>
-                </div>
-            )}
-        </div>
-    );
+			{previewReport && (
+				<Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+					<Typography variant='h6' fontWeight='bold' gutterBottom>
+						PDF Preview for Report ID: {previewReport.id}
+					</Typography>
+					<PDFDownloadLink document={<ReportPDF report={previewReport} />} fileName={`report_${previewReport.id}.pdf`}>
+						{({ loading }) => (loading ? 'Loading preview...' : 'Download PDF Preview')}
+					</PDFDownloadLink>
+				</Box>
+			)}
+		</Box>
+	);
 };
 
 const styles = StyleSheet.create({
-    page: { padding: 20 },
-    section: { marginBottom: 10 }
+	page: { padding: 20 },
+	section: { marginBottom: 10 },
 });
 
 export default Reports;
