@@ -86,9 +86,9 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   return (
     <Dialog open={open} onClose={onCancel} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Add Vehicle</DialogTitle>
-      <DialogContent>
+      <DialogContent >
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} paddingTop={1} >
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
