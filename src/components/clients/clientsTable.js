@@ -20,7 +20,6 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Email</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Phone</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Last Inv Date</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Action</TableCell>
 						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
 					</TableRow>
@@ -51,7 +50,6 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 							<TableCell sx={{ border: 'none' }}>{client.c_email}</TableCell>
 							<TableCell sx={{ border: 'none' }}>{client.c_phone}</TableCell>
 							<TableCell sx={{ border: 'none' }}>{client.c_status}</TableCell>
-							<TableCell sx={{ border: 'none' }}>{client.c_last_invoice_date || '-'}</TableCell>
 							<TableCell>
 								<Button
 									size='small'
