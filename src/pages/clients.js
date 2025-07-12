@@ -16,9 +16,8 @@ const Clients = () => {
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [selectedClient, setSelectedClient] = useState(null);
-	const [invoices, setInvoices] = useState([]);
 	const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-	const [ti_ext_inv, setTiExtInv] = useState('');
+	const [ti_ext_inv, setTiExtInv] = useState(null);
 	const [ti_amount, setTiAmount] = useState('');
 	const [ti_balance, setTiBalance] = useState('');
 	const [ti_status, setTiStatus] = useState('Pending');
@@ -40,21 +39,6 @@ const Clients = () => {
 		};
 		fetchClients();
 	}, [baseURL, org_id, user_id, isSliderOpen]);
-
-	useEffect(() => {
-		if (!selectedClient) return;
-		const fetchInvoices = async () => {
-			try {
-				const invoiceUrl = `${baseURL}/clients/invoices/${org_id}/${selectedClient.id}/`;
-				const response = await fetch(invoiceUrl);
-				const data = await response.json();
-				setInvoices(data.invoices || []);
-			} catch (err) {
-				console.error('Failed to fetch invoices:', err);
-			}
-		};
-		fetchInvoices();
-	}, [selectedClient, baseURL, org_id, user_id]);
 
 	const handleCancel = () => setShowAddPropertyForm(false);
 	const handleAddPropertyClick = () => setShowAddPropertyForm(true);
@@ -108,7 +92,7 @@ const Clients = () => {
 
 	//handling add and saving new invoice
 	const handleInvoiceSubmit = async e => {
-		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${selectedClient.id}/`;
+		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
 		e.preventDefault();
 		const invoiceData = {
 			ti_ext_inv,
@@ -116,8 +100,8 @@ const Clients = () => {
 			ti_balance: parseFloat(ti_balance),
 			ti_status,
 			date,
-			client_id: selectedClient.id,
-			org_id,
+			ti_type: 'Service',
+			ti_description: 'Invoice',
 		};
 
 		try {
@@ -144,13 +128,13 @@ const Clients = () => {
 			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} />
 
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
-			{selectedClient && <ClientInvoice invoicesss={invoices} selectedClient={selectedClient} />}
+			{selectedClient && <ClientInvoice selectedClient={selectedClient} />}
 
 			<Dialog open={showInvoiceForm} onClose={() => setShowInvoiceForm(false)} maxWidth='sm' fullWidth>
 				<DialogTitle>New Invoice for {selectedClient?.c_name}</DialogTitle>
 				<form onSubmit={handleInvoiceSubmit}>
 					<DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						<TextField label='Invoice No' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)} required fullWidth />
+						<TextField label='Ref No' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
 						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Unpaid') setTiBalance(e.target.value);}} required fullWidth />
 						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Paid') setTiBalance(0); else if (value === 'Unpaid') setTiBalance(ti_amount); }} required fullWidth>
 							<MenuItem value='Paid'>Paid</MenuItem>
