@@ -67,20 +67,4 @@ body, html {
     width: 20px; /* Adjust the size as needed */
     height: 20px; /* Adjust the size as needed */
   }
-
-  /* Active sidebar item styling */
-  .dashboardLink .active {
-    background-color: var(--faded-primary-color) !important;
-    border-left: 4px solid var(--primary-color) !important;
-    color: var(--primary-color) !important;
-  }
-
-  .dashboardLink .active .dashIcon {
-    color: var(--primary-color) !important;
-  }
-
-  .dashboardLink .active .dashLabel {
-    color: var(--primary-color) !important;
-    font-weight: 600 !important;
-  }
   
