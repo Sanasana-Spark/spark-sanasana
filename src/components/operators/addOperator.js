@@ -144,14 +144,14 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 							</FormControl>
 						</Grid>
 
-						<Grid item xs={12} sm={6}>
+						{/* <Grid item xs={12} sm={6}>
 							<FormControl required fullWidth>
 								<TextField select label='Role' name='o_role' value={operator.o_role} onChange={handleChange} disabled>
 									<MenuItem value='Driver'>Driver</MenuItem>
 									<MenuItem value='Others'>Others</MenuItem>
 								</TextField>
 							</FormControl>
-						</Grid>
+						</Grid> */}
 
 						<Grid item xs={12} sm={6}>
 							<TextField fullWidth required label='License Expiry' name='o_lincense_expiry' type='date' value={operator.o_lincense_expiry || ''} onChange={handleChange} InputLabelProps={{ shrink: true }} />
@@ -172,7 +172,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 							</FormControl>
 						</Grid>
 
-						<Grid item xs={12} sm={6}>
+						{/* <Grid item xs={12} sm={6}>
 							<FormControl required fullWidth>
 								<InputLabel id='status-label'>Status</InputLabel>
 								<Select labelId='status-label' name='o_status' value={operator.o_status} onChange={handleChange} label='Status'>
@@ -185,7 +185,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 										: loading && <MenuItem disabled>Loading status...</MenuItem>}
 								</Select>
 							</FormControl>
-						</Grid>
+						</Grid> */}
 
 						<Grid item xs={12}>
 							<FormControl fullWidth>
