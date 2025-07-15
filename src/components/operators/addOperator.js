@@ -116,19 +116,19 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 						</Grid>
 
 						<Grid item xs={12} sm={6}>
-							<TextField required label='Operators Name' name='o_name' value={operator.o_name} onChange={handleChange} />
+							<TextField fullWidth required label='Operators Name' name='o_name' value={operator.o_name} onChange={handleChange} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField required label='Email' name='o_email' type='email' value={operator.o_email} onChange={handleChange} error={!!errors.o_email} helperText={errors.o_email} />
+							<TextField fullWidth required label='Email' name='o_email' type='email' value={operator.o_email} onChange={handleChange} error={!!errors.o_email} helperText={errors.o_email} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField required label='Phone' name='o_phone' value={operator.o_phone} onChange={handleChange} error={!!errors.o_phone} helperText={errors.o_phone} />
+							<TextField fullWidth required label='Phone' name='o_phone' value={operator.o_phone} onChange={handleChange} error={!!errors.o_phone} helperText={errors.o_phone} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField label='National ID' name='o_national_id' value={operator.o_national_id } onChange={handleChange} />
+							<TextField fullWidth label='National ID' name='o_national_id' value={operator.o_national_id} onChange={handleChange} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField label='License ID' name='o_lincense_id' value={operator.o_lincense_id} onChange={handleChange} />
+							<TextField fullWidth label='License ID' name='o_lincense_id' value={operator.o_lincense_id} onChange={handleChange} />
 						</Grid>
 
 						<Grid item xs={12} sm={6}>
