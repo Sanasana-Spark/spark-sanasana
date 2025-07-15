@@ -21,10 +21,17 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
 }));
 
 
-const ListItemWithLink = ({ label, icon, to }) => {
+const ListItemWithLink = ({ label, icon, to, active }) => {
   return (
     <StyledListItem className='dashboardLink'>
-      <StyledListItemButton component={NavLink} to={to}>
+      <StyledListItemButton component={NavLink} to={to} 
+     sx={{
+          backgroundColor: active ? '#BFE7DE' : 'transparent',
+          '&:hover': {
+            backgroundColor: active ? '#E0F3EF' : '#E0F3EF',
+          }
+        }}
+      >
         <ListItemIcon className='dashIcon'>{icon}</ListItemIcon>
         <ListItemText className='dashLabel' primary={label} />
       </StyledListItemButton>
