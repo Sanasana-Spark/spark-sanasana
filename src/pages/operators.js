@@ -229,7 +229,7 @@ const Operators = () => {
 											color: 'var(--primary-text-color)',
 										}}
 									>
-										Add Operator
+										Add Driver
 									</Typography>
 								</IconButton>
 							</Box>
