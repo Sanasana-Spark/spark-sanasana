@@ -1,5 +1,5 @@
 import { useUser, useOrganizationList } from '@clerk/clerk-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   TextField,
   Button,
@@ -23,6 +23,7 @@ const CreateOrganizationPage = () => {
     org_email: '',
     org_currency: '',
   });
+  const [issaving, setIssaving] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,6 +35,7 @@ const CreateOrganizationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIssaving(true);
     if (!user) return;
     let organizationId = user?.organizationMemberships[0]?.organization?.id;
 
@@ -85,9 +87,11 @@ const CreateOrganizationPage = () => {
 		});
 	};
  
-  if (user && user_org) {
-    window.location.href = "/";
-  }
+  useEffect(() => {
+    if (user && user_org && !issaving) {
+      window.location.href = "/";
+    }
+  }, [user, user_org, issaving]);
 
 
 
