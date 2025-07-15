@@ -104,16 +104,18 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
 	return (
 		<Dialog open={open} onClose={onCancel} aria-labelledby='form-dialog-title'>
-			<DialogTitle id='form-dialog-title'>Add Operator</DialogTitle>
+			<DialogTitle id='form-dialog-title'>Add Driver</DialogTitle>
 			<DialogContent>
 				<form onSubmit={handleSubmit}>
 					<Grid container spacing={2}>
-						<Grid item xs={12}>
+					
+						{/* fix if you want to add an image upload feature */}
+						{/* <Grid item xs={12}>
 							<FormControl fullWidth>
 								<FormLabel>Profile</FormLabel>
 								<input accept='image/*' type='file' onChange={handleFileChange} name='o_image' />
 							</FormControl>
-						</Grid>
+						</Grid> */}
 
 						<Grid item xs={12} sm={6}>
 							<TextField fullWidth required label='Operators Name' name='o_name' value={operator.o_name} onChange={handleChange} />
@@ -187,12 +189,12 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 							</FormControl>
 						</Grid> */}
 
-						<Grid item xs={12}>
+						{/* <Grid item xs={12}>
 							<FormControl fullWidth>
 								<FormLabel>Attachment</FormLabel>
 								<input accept='application/pdf' type='file' onChange={handleFileChange} name='o_attachment1' />
 							</FormControl>
-						</Grid>
+						</Grid> */}
 					</Grid>
 
 					<DialogActions>
