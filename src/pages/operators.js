@@ -165,7 +165,7 @@ const Operators = () => {
 					<Grid item xs={12} marginBottom={5}>
 						<Box display='flex' justifyContent='space-between'>
 							<Typography variant='h6' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }}>
-								Operators
+								Drivers
 							</Typography>
 
 							<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
