@@ -116,7 +116,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 						</Grid>
 
 						<Grid item xs={12} sm={6}>
-							<TextField required label='Operators Name' name='o_name' value={operator.o_name || ''} onChange={handleChange} />
+							<TextField required label='Operators Name' name='o_name' value={operator.o_name} onChange={handleChange} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField required label='Email' name='o_email' type='email' value={operator.o_email} onChange={handleChange} error={!!errors.o_email} helperText={errors.o_email} />
@@ -125,10 +125,10 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 							<TextField required label='Phone' name='o_phone' value={operator.o_phone} onChange={handleChange} error={!!errors.o_phone} helperText={errors.o_phone} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField label='National ID' name='o_national_id' value={operator.o_national_id || ''} onChange={handleChange} />
+							<TextField label='National ID' name='o_national_id' value={operator.o_national_id } onChange={handleChange} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
-							<TextField label='License ID' name='o_lincense_id' value={operator.o_lincense_id || ''} onChange={handleChange} />
+							<TextField label='License ID' name='o_lincense_id' value={operator.o_lincense_id} onChange={handleChange} />
 						</Grid>
 
 						<Grid item xs={12} sm={6}>
@@ -160,7 +160,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 						<Grid item xs={12} sm={6}>
 							<FormControl required fullWidth>
 								<InputLabel id='asset-label'>Assigned Vehicle</InputLabel>
-								<Select labelId='asset-label' name='o_assigned_asset' value={operator.o_assigned_asset || ''} onChange={handleChange} label='Assigned Vehicle'>
+								<Select labelId='asset-label' name='o_assigned_asset' value={operator.o_assigned_asset} onChange={handleChange} label='Assigned Vehicle'>
 									{assetOptions.length > 0
 										? assetOptions.map(asset => (
 												<MenuItem key={asset.id} value={asset.id}>
