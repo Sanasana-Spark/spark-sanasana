@@ -105,7 +105,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 						</Grid> */}
 
 						<Grid item xs={12} sm={6}>
-							<TextField fullWidth required label='Operators Name' name='o_name' value={operator.o_name} onChange={handleChange} />
+							<TextField fullWidth required label='Driver Name' name='o_name' value={operator.o_name} onChange={handleChange} />
 						</Grid>
 						<Grid item xs={12} sm={6}>
 							<TextField fullWidth required label='Email' name='o_email' type='email' value={operator.o_email} onChange={handleChange} error={!!errors.o_email} helperText={errors.o_email} />
