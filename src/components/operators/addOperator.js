@@ -16,6 +16,8 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 		o_class: 'Class B',
 		o_email: null,
 		o_phone: null,
+		o_lincense_id: null,
+		o_national_id: null,
 	});
 
 	const [errors, setErrors] = useState({
@@ -25,8 +27,10 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
 
 	useEffect(() => {
+		if (!open) return; // Only fetch when dialog is open
 		if (org_id && user_id) {
 			const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
+			setLoading(true);
 			fetch(apiUrl)
 				.then(response => {
 					if (!response.ok) throw new Error('Network response was not ok');
@@ -43,7 +47,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 		}
 	},
 	// eslint-disable-next-line
-	 [org_id, user_id]);
+	 [org_id, user_id, open]);
 
 	const handleChange = e => {
 		const { name, value } = e.target;
