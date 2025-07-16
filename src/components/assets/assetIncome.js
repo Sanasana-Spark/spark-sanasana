@@ -23,7 +23,7 @@ const AssetIncome = ({  selectedAsset }) => {
 		<Box mt={4}>
 			<Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
 				<Typography variant='h6'>
-				{incomeData && selectedAsset ? `Income record for  ${selectedAsset.a_license_plate} ` : 'click on an asset to preview income'}</Typography>
+				{incomeData && selectedAsset ? `Income record for  ${selectedAsset.a_license_plate} ` : 'click on a Vehicle to preview income'}</Typography>
 				
 				<Typography variant='subtitle1' color='textSecondary'>
 					
@@ -57,7 +57,7 @@ const AssetIncome = ({  selectedAsset }) => {
 
 					) : (
 						<TableRow>
-							<TableCell colSpan={4} align='center'>No income data available for this asset</TableCell>
+							<TableCell colSpan={4} align='center'>No income data available for this vehicle</TableCell>
 						</TableRow>
 					)}
 					</TableBody>
