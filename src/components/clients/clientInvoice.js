@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Typography, Button, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Typography, Button, TablePagination, Checkbox } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useAuthContext } from "../onboarding/authProvider";
+import InvoicesPreview from './invoices_preview';
 
-const ClientInvoice = ({ invoicesss, selectedClient }) => {
+const ClientInvoice = ({selectedClient }) => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
-
 	const [currentPage, setCurrentPage] = useState(0);
 	const [invoices, setInvoices] = useState([]);
 	const [, setLoading] = useState(true);
+	const [selectedInvoices, setSelectedInvoices] = useState([]);
+	const [previewOpen, setPreviewOpen] = useState(false);
 
 	useEffect(() => {
 		if (org_id && user_id && selectedClient && selectedClient.id) {
@@ -22,6 +24,7 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 			return response.json();
 		  })
 		  .then((data) => {
+			setSelectedInvoices([]);
 			setInvoices(data.invoices || []);
 			setLoading(false);
 		  })
@@ -30,9 +33,7 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 			setLoading(false);
 		  });
 	  }}, [ baseURL, org_id, user_id, selectedClient]);
-
-	//   if (!selectedClient || invoices.length === 0) return null;
-
+	  	
 	const rowsPerPage = 5;
 	  // Handle pagination change
 	const handleChangePage = (event, newPage) => {
@@ -42,6 +43,27 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 	const paginatedInvoices = invoices.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 
 
+
+	const handleSelectInvoice = (invoice) => {
+		const isSelected = selectedInvoices.some(selected => selected.id === invoice.id);
+		setSelectedInvoices(prev =>
+			isSelected
+				? prev.filter(selected => selected.id !== invoice.id)
+				: [...prev, invoice]
+		);
+	};
+
+	const handleClosePreview = () => {
+		setPreviewOpen(false);
+	};
+	const handleOpenPreview = () => {
+		if (selectedInvoices.length > 0) {
+			setPreviewOpen(true);
+		} else {
+			alert("Please select at least one invoice to preview.");
+		}
+	};
+
 	return (
 		<Box mt={4}>
 			<Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
@@ -49,6 +71,8 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 					Clients - {selectedClient.c_name} Invoices
 				</Typography>
 				<Button
+				disabled={selectedInvoices.length === 0}
+				onClick={handleOpenPreview}
 					size='small'
 					variant='contained'
 					sx={{
@@ -69,7 +93,7 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 						},
 					}}
 				>
-					Preview/Email Invoice
+					Preview/Download Invoice
 				</Button>
 			</Box>
 
@@ -85,25 +109,28 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 				<Table size='small'>
 					<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
 						<TableRow>
-							{['Invoice No', 'Amount', 'Balance', 'Status', 'Date', 'Edit'].map(header => (
-								<TableCell
-									key={header}
-									sx={{
-										fontWeight: 600,
-										fontSize: '0.75rem',
-										padding: '4px 8px',
-										whiteSpace: 'nowrap',
-									}}
-								>
-									{header}
-								</TableCell>
-							))}
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}> Select </TableCell>
+
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Invoice No</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Amount</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Balance</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Date</TableCell>
+							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
+
+							
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{paginatedInvoices.map((invoice, index) => (
 							<TableRow key={index} sx={{ backgroundColor: '#f5f5f5', '&:last-child td': { borderBottom: 0 } }}>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.invoice_no || '-'}</TableCell>
+								<TableCell padding='checkbox'>
+	<Checkbox
+		checked={selectedInvoices.includes(invoice)}
+		onChange={() => handleSelectInvoice(invoice)}
+	/>
+</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.id || '-'}</TableCell>
 
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_balance || invoice.ti_amount}</TableCell>
@@ -122,6 +149,14 @@ const ClientInvoice = ({ invoicesss, selectedClient }) => {
 				{/* Pagination Component */}
 				<TablePagination rowsPerPageOptions={[]} component='div' count={invoices.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 			</TableContainer>
+
+			{previewOpen && (
+				<InvoicesPreview
+					selectedInvoices={selectedInvoices}
+					onClose={handleClosePreview}
+					open={previewOpen}
+				/>
+			)}
 		</Box>
 	);
 };
