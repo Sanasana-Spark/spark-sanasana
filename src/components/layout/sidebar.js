@@ -48,8 +48,8 @@ export default function VerticalSidebar({ children }) {
 
       <List>
         <ListItemWithLink label="Dashboard" icon={<img src={Dashboard_icon} className="icon" alt="dashboard" />} to="/"  active={location.pathname === '/'} />
-        <ListItemWithLink label="Assets" icon={<img src={Asset_icon} className="icon" alt="" />} to="/assets"  active={location.pathname === '/assets'} />
-        <ListItemWithLink label="Operators" icon={<img src={Operator_icon} className="icon" alt="" />} to="/operators"  active={location.pathname === '/operators'} />
+        <ListItemWithLink label="Vehicles" icon={<img src={Asset_icon} className="icon" alt="" />} to="/assets"  active={location.pathname === '/assets'} />
+        <ListItemWithLink label="Drivers" icon={<img src={Operator_icon} className="icon" alt="" />} to="/operators"  active={location.pathname === '/operators'} />
         <ListItemWithLink label="Clients" icon={<img src={Operator_icon} className="icon" alt="" />} to="/clients"  active={location.pathname === '/clients'} />
         <ListItemWithLink label="Trips" icon={<img src={Routes_icon} className="icon" alt="" />} to="/trips"  active={location.pathname === '/trips'} />
         <ListItemWithLink label="Fuel" icon={<img src={Fuel_icon} className="icon" alt="" />} to="/fuel"  active={location.pathname === '/fuel'} />
