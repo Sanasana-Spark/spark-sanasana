@@ -154,7 +154,7 @@ const Assets = () => {
 			<Box>
 				<Grid item xs={12} marginBottom={5}>
 					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Assets</Typography>
+						<Typography variant='h6'>Vehicles</Typography>
 
 						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
 							{/* Bulk Button */}
@@ -217,7 +217,7 @@ const Assets = () => {
 										color: 'var(--primary-text-color)',
 									}}
 								>
-									Add Asset
+									Add Vehicle
 								</Typography>
 							</IconButton>
 						</Box>
@@ -299,7 +299,7 @@ const Assets = () => {
 			<Box>
 				<Grid item xs={12} marginBottom={5}>
 					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Assets</Typography>
+						<Typography variant='h6'>Vehicles</Typography>
 
 						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
 							{/* Bulk Button */}
