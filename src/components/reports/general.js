@@ -10,13 +10,14 @@ import { Box, Button, Typography, TextField, Stack, Divider } from '@mui/materia
 
 const Reports = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { org_id } = useAuthContext();
+	const { org_id, user_id } = useAuthContext();
 
 	const [reports, setReports] = useState({
 		trips_listing: [],
 		assets_listing: [],
 		operators_listing: [],
 		tripsByOperator: [],
+		FuelExpenseReport: [],
 	});
 
 	const today = new Date();
@@ -55,11 +56,16 @@ const Reports = () => {
 				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
 			});
 
+			const fuel_expenseReport = await axios.get(`${baseURL}/fuel/${org_id}/${user_id}/report/`, {
+				params: { start_date: startDate, end_date: endDate },
+			});
+
 			setReports({
 				trips_listing: tripsResponse.data,
 				assets_listing: assetsResponse.data,
 				operators_listing: operatorsResponse.data,
 				tripsByOperator: tripsByOperatorResponse.data,
+				FuelExpenseReport: fuel_expenseReport.data,
 			});
 		} catch (error) {
 			console.error('Error fetching reports:', error);
