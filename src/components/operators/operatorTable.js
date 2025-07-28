@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button } from '@mui/material';
 import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { DeleteForever } from '@mui/icons-material';
 
-const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) => {
+const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick, onDeleteClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -61,6 +62,9 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) 
 								<TableCell>
 									<IconButton onClick={() => onEditClick(operator.id)} sx={{ color: 'var(--secondary-color)' }}  style={{ marginLeft: '10px' }}>
 										<EditIcon />
+									</IconButton>
+									<IconButton onClick={() => onDeleteClick(operator.id)} sx={{ color: 'var(--secondary-color)' }}  style={{ marginLeft: '10px' }}>
+										<DeleteForever sx={{ color: 'red' }} />
 									</IconButton>
 								</TableCell>
 							</TableRow>
