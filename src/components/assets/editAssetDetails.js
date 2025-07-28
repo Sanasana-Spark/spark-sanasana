@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Box, Snackbar, Alert } from '@mui/material';
 
 const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 	const [formData, setFormData] = useState({
 		id: selectedAsset.id,
 	});
 
-	console.log('formdata', formData);
 	const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+	const [showSuccess, setShowSuccess] = useState(false);
 
 	useEffect(() => {
 		if (selectedAsset) {
@@ -34,6 +34,7 @@ const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 	const handleConfirmSave = () => {
 		onSave(formData);
 		setIsConfirmationOpen(false);
+		setShowSuccess(true);
 	};
 
 	const handleCancelSave = () => {
@@ -46,11 +47,11 @@ const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 				<DialogTitle>Edit Asset</DialogTitle>
 				<DialogContent>
 					<Box sx={{ padding: 2 }}>
-						<TextField label='Reg No' name='a_license_plate' value={getValue('a_license_plate')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Reg No' name='a_license_plate' value={getValue('a_license_plate')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
 						<TextField label='Status' name='a_status' value={getValue('a_status')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
 						<TextField label='Mileage' name='a_mileage' value={getValue('a_mileage')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Manufacturer' name='a_make' value={getValue('a_make')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
-						<TextField label='Model' name='a_model' value={getValue('a_model')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} />
+						<TextField label='Manufacturer' name='a_make' value={getValue('a_make')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
+						<TextField label='Model' name='a_model' value={getValue('a_model')} onChange={handleChange} fullWidth sx={{ marginBottom: 2 }} disabled />
 					</Box>
 				</DialogContent>
 				<DialogActions>
@@ -61,7 +62,7 @@ const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 				</DialogActions>
 			</Dialog>
 
-			{/* Confirmation module */}
+			{/* Confirmation Dialog */}
 			<Dialog open={isConfirmationOpen} onClose={handleCancelSave}>
 				<DialogTitle>Confirm Changes</DialogTitle>
 				<DialogContent>
@@ -76,6 +77,12 @@ const EditAssetDetails = ({ selectedAsset, onCancel, open, onSave }) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+			<Snackbar open={showSuccess} autoHideDuration={3000} onClose={() => setShowSuccess(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+				<Alert onClose={() => setShowSuccess(false)} severity='success' sx={{ width: '100%' }}>
+					Details modified successfully
+				</Alert>
+			</Snackbar>
 		</>
 	);
 };
