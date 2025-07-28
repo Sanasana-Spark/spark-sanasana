@@ -662,6 +662,13 @@ const OrganizationForm = () => {
 									<MenuItem value='Nigeria'>Nigeria</MenuItem>
 									<MenuItem value='Uganda'>Uganda</MenuItem>
 									<MenuItem value='Tanzania'>Tanzania</MenuItem>
+									<MenuItem value='South Africa'>South Africa</MenuItem>
+									<MenuItem value='Rwanda'>Rwanda</MenuItem>
+									<MenuItem value='Burundi'>Burundi</MenuItem>
+									<MenuItem value='Zambia'>Zambia</MenuItem>
+									<MenuItem value='Zimbabwe'>Zimbabwe</MenuItem>
+									<MenuItem value='Malawi'>Malawi</MenuItem>
+									<MenuItem value='South Sudan'>South Sudan</MenuItem>
 									<MenuItem value='USA'>USA</MenuItem>
 									<MenuItem value='Other'>Other</MenuItem>
 								</Select>
@@ -749,7 +756,15 @@ const OrganizationForm = () => {
 									<MenuItem value='UGX'>Ush</MenuItem>
 									<MenuItem value='TZS'>Tsh</MenuItem>
 									<MenuItem value='Birr'>Birr</MenuItem>
-									<MenuItem value='USD'>Usd</MenuItem>
+									<MenuItem value='ZAR'>Rand</MenuItem>
+									<MenuItem value='RWF'>Rwf</MenuItem>
+									<MenuItem value='BIF'>Bif</MenuItem>
+									<MenuItem value='ZMW'>Zambian Kwacha</MenuItem>
+									<MenuItem value='ZWL'>ZWL</MenuItem>
+									<MenuItem value='MWK'>Malawian Kwacha</MenuItem>
+									<MenuItem value='SSP'>SSP</MenuItem>
+									<MenuItem value='EUR'>EUR</MenuItem>
+									<MenuItem value='USD'>USD</MenuItem>
 								</Select>
 
 								<Button
