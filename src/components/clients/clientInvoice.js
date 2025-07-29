@@ -4,7 +4,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useAuthContext } from "../onboarding/authProvider";
 import InvoicesPreview from './invoices_preview';
 
-const ClientInvoice = ({selectedClient }) => {
+const ClientInvoice = ({ selectedClient }) => {
+	console.log("Client in invoice:", selectedClient);
+
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { user_id, org_id } = useAuthContext();
 	const [currentPage, setCurrentPage] = useState(0);
@@ -15,29 +17,32 @@ const ClientInvoice = ({selectedClient }) => {
 
 	useEffect(() => {
 		if (org_id && user_id && selectedClient && selectedClient.id) {
-		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
-		fetch(apiUrl)
-		  .then((response) => {
-			if (!response.ok) {
-			  throw new Error("Network response was not ok");
-			}
-			return response.json();
-		  })
-		  .then((data) => {
-			setSelectedInvoices([]);
-			setInvoices(data.invoices || []);
-			setLoading(false);
-		  })
-		  .catch((error) => {
-			console.error("Error fetching invoices:", error);
-			setLoading(false);
-		  });
-	  }}, [ baseURL, org_id, user_id, selectedClient]);
-	  	
+			console.log('Selected client data:', selectedClient);
+
+			const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
+			fetch(apiUrl)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+					return response.json();
+				})
+				.then((data) => {
+					setSelectedInvoices([]);
+					setInvoices(data.invoices || []);
+					setLoading(false);
+				})
+				.catch((error) => {
+					console.error("Error fetching invoices:", error);
+					setLoading(false);
+				});
+		}
+	}, [baseURL, org_id, user_id, selectedClient]);
+
 	const rowsPerPage = 5;
-	  // Handle pagination change
+	// Handle pagination change
 	const handleChangePage = (event, newPage) => {
-		  setCurrentPage(newPage);
+		setCurrentPage(newPage);
 	};
 
 	const paginatedInvoices = invoices.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
@@ -71,8 +76,8 @@ const ClientInvoice = ({selectedClient }) => {
 					Clients - {selectedClient.c_name} Invoices
 				</Typography>
 				<Button
-				disabled={selectedInvoices.length === 0}
-				onClick={handleOpenPreview}
+					disabled={selectedInvoices.length === 0}
+					onClick={handleOpenPreview}
 					size='small'
 					variant='contained'
 					sx={{
@@ -118,18 +123,18 @@ const ClientInvoice = ({selectedClient }) => {
 							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Date</TableCell>
 							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
 
-							
+
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{paginatedInvoices.map((invoice, index) => (
 							<TableRow key={index} sx={{ backgroundColor: '#f5f5f5', '&:last-child td': { borderBottom: 0 } }}>
 								<TableCell padding='checkbox'>
-	<Checkbox
-		checked={selectedInvoices.includes(invoice)}
-		onChange={() => handleSelectInvoice(invoice)}
-	/>
-</TableCell>
+									<Checkbox
+										checked={selectedInvoices.includes(invoice)}
+										onChange={() => handleSelectInvoice(invoice)}
+									/>
+								</TableCell>
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.id || '-'}</TableCell>
 
 								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
@@ -151,8 +156,10 @@ const ClientInvoice = ({selectedClient }) => {
 			</TableContainer>
 
 			{previewOpen && (
+				console.log("Selected invoices in preview:", selectedInvoices),
 				<InvoicesPreview
 					selectedInvoices={selectedInvoices}
+					selectedClient={selectedClient}
 					onClose={handleClosePreview}
 					open={previewOpen}
 				/>
