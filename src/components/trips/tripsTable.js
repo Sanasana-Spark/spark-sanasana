@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -13,6 +13,7 @@ import {
 
 const AssetsTable = ({ trips, onViewUnitsClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
 
@@ -28,6 +29,13 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
     setPage(newPage);
   };
   const paginatedAssets = trips.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  useEffect(() => {
+    if (trips && trips.length > 0) {
+      setLoading(false);
+    }
+  }, [trips]);
+
 
 
   return (
@@ -47,7 +55,24 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* Render a TableRowItem for each trip in the trips array */}
+          {
+            loading && (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  Fetching trips...
+                </TableCell>
+              </TableRow>
+            )}
+
+          {!loading && paginatedAssets.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={8} align="center">
+                No trips available.
+              </TableCell>
+            </TableRow>
+          )}
+
+          {/* Map through the paginated assets */}
           {paginatedAssets.map((trip) => (
             <TableRow key={trip.id}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
