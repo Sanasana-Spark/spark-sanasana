@@ -29,7 +29,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const [ formData, setFormData] = useState({});
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [, setSuccess] = useState(null);
   const [, setError] = useState(null);
   const [clientOptions, setClientOptions] = useState([]);
@@ -215,6 +215,12 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
     page * rowsPerPage + rowsPerPage
   );
 
+  useEffect(() => {
+    if (trips && trips.length > 0) {
+      setLoading(false);
+    }
+  }, [trips]);
+
   return (
     <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
           backgroundColor: 'var(--main-bg-color)',
@@ -241,6 +247,20 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
         </TableHead>
         <TableBody>
           {/* Render a TableRowItem for each asset in the trips array */}
+          {loading && (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                Fetching trips...
+              </TableCell>
+            </TableRow>
+          )}
+          {!loading && paginatedTrips.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                No trips available.
+              </TableCell>
+            </TableRow>
+          )}
           {paginatedTrips.map((trip) => (
             <TableRow
               key={trip.id}
