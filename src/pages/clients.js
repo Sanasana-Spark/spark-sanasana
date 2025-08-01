@@ -12,6 +12,7 @@ const Clients = () => {
 	const { user_id, org_id } = useAuthContext();
 
 	const [clients, setClients] = useState([]);
+	const [saving, setSaving] = useState(false);
 	const [editClient, setEditClient] = useState(null);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
@@ -110,6 +111,8 @@ const Clients = () => {
 	
 	//handling add and saving new invoice
 	const handleInvoiceSubmit = async e => {
+		setSaving(true);
+		e.preventDefault();
 		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
 		e.preventDefault();
 		const invoiceData = {
@@ -129,6 +132,10 @@ const Clients = () => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(invoiceData),
 			});
+			setSaving(false);
+			if (!res.ok) {
+				throw new Error('Failed to save invoice');
+			}
 			console.log(res);
 		} catch (err) {
 			console.error('Failed to save invoice:', err);
@@ -154,7 +161,7 @@ const Clients = () => {
 				<form onSubmit={handleInvoiceSubmit}  >
 					<DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 						<TextField label='Ref No(external if applicable)' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
-						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Paid') setTiPaidAmount(e.target.value);}} required fullWidth />
+						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Unpaid') setTiPaidAmount(0);}} required fullWidth />
 						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Unpaid') setTiPaidAmount(0); if (value === 'Partially Paid') setTiPaidAmount(0); else if (value === 'Paid') setTiPaidAmount(ti_amount); }} required fullWidth>
 							<MenuItem value='Paid'>Paid</MenuItem>
 							<MenuItem value='Partially Paid'>Partially</MenuItem>
@@ -167,7 +174,7 @@ const Clients = () => {
 					<DialogActions>
 						<Button onClick={() => setShowInvoiceForm(false)} sx={{ color:'#035f77' }} >Cancel</Button>
 						<Button type='submit' variant='contained' sx={{ backgroundColor:'#019678', '&:hover': { backgroundColor: '#008F8F' } }}> 
-							Save Invoice
+						{saving ? 'Saving...' : 'Save Invoice'}
 						</Button>
 					</DialogActions>
 				</form>
