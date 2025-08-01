@@ -19,9 +19,10 @@ const Clients = () => {
 	const [showInvoiceForm, setShowInvoiceForm] = useState(false);
 	const [ti_ext_inv, setTiExtInv] = useState(null);
 	const [ti_amount, setTiAmount] = useState('');
-	const [ti_balance, setTiBalance] = useState('');
-	const [ti_status, setTiStatus] = useState('Pending');
+	const [ti_paid_amount, setTiPaidAmount] = useState('');
+	const [ti_status, setTiStatus] = useState('Unpaid');
 	const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
 
 	useEffect(() => {
 		const apiUrl = `${baseURL}/clients/${org_id}/${user_id}/`;
@@ -38,9 +39,13 @@ const Clients = () => {
 			}
 		};
 		fetchClients();
-	}, [baseURL, org_id, user_id, isSliderOpen]);
+	}, [baseURL, org_id, user_id, isSliderOpen, showAddPropertyForm]);
 
-	const handleCancel = () => setShowAddPropertyForm(false);
+	const handleCancel = () => {
+		setShowAddPropertyForm(false);
+	};
+
+
 	const handleAddPropertyClick = () => setShowAddPropertyForm(true);
 
 	const handleEditClick = clientId => {
@@ -79,7 +84,12 @@ const Clients = () => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(newClient),
 			});
-			console.log(response);
+			if (response.ok) {
+				setShowAddPropertyForm(false);
+				console.log('Client saved successfully');
+			} else {
+				console.error('Failed to save client:', response.statusText);
+			}
 		} catch (error) {
 			console.error('Failed to save client:', error);
 		}
@@ -90,6 +100,14 @@ const Clients = () => {
 		setShowInvoiceForm(true);
 	};
 
+	const handleInvoiceCancel = () => {
+		setShowInvoiceForm(false);
+		setTiAmount('');
+		setTiPaidAmount('');
+		setTiExtInv(null);
+		setTiStatus('Pending');
+	};
+	
 	//handling add and saving new invoice
 	const handleInvoiceSubmit = async e => {
 		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
@@ -97,7 +115,8 @@ const Clients = () => {
 		const invoiceData = {
 			ti_ext_inv,
 			ti_amount: parseFloat(ti_amount),
-			ti_balance: parseFloat(ti_balance),
+			ti_paid_amount: parseFloat(ti_paid_amount),
+			ti_balance: parseFloat(ti_amount) - parseFloat(ti_paid_amount),
 			ti_status,
 			date,
 			ti_type: 'Service',
@@ -130,18 +149,18 @@ const Clients = () => {
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
 			{selectedClient && <ClientInvoice selectedClient={selectedClient} />}
 
-			<Dialog open={showInvoiceForm} onClose={() => setShowInvoiceForm(false)} maxWidth='sm' fullWidth>
+			<Dialog open={showInvoiceForm} onClose={handleInvoiceCancel} maxWidth='sm' fullWidth>
 				<DialogTitle>New Invoice for {selectedClient?.c_name}</DialogTitle>
-				<form onSubmit={handleInvoiceSubmit}>
+				<form onSubmit={handleInvoiceSubmit}  >
 					<DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						<TextField label='Ref No' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
-						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Unpaid') setTiBalance(e.target.value);}} required fullWidth />
-						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Paid') setTiBalance(0); else if (value === 'Unpaid') setTiBalance(ti_amount); }} required fullWidth>
+						<TextField label='Ref No(external if applicable)' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
+						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Paid') setTiPaidAmount(e.target.value);}} required fullWidth />
+						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Unpaid') setTiPaidAmount(0); if (value === 'Partially Paid') setTiPaidAmount(0); else if (value === 'Paid') setTiPaidAmount(ti_amount); }} required fullWidth>
 							<MenuItem value='Paid'>Paid</MenuItem>
 							<MenuItem value='Partially Paid'>Partially</MenuItem>
 							<MenuItem value='Unpaid'>Unpaid</MenuItem>
 						</TextField>
-						<TextField label='Balance' type='number' value={ti_balance} onChange={e => setTiBalance(e.target.value)} required fullWidth />
+						<TextField label='Paid Amount' type='number' value={ti_paid_amount} onChange={e => setTiPaidAmount(e.target.value)} required fullWidth />
 						<TextField label='Date' type='date' value={date} onChange={e => setDate(e.target.value)} required fullWidth InputLabelProps={{ shrink: true }} />
 					</DialogContent>
 

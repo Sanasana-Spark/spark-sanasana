@@ -38,6 +38,10 @@ export const useAuth = () => {
   const org_id = organization?.id;
   const org_name = organization?.org_name;
   const org_currency = organization?.org_currency;
+  const org_logo = organization?.org_logo;
+  const org_country = organization?.org_country;
+  const org_phone = organization?.org_phone;
+  const org_email = organization?.org_email;
 
-  return { userId,user_id,userEmail,user_email,org_id, org_name, org_currency };
+  return { userId,user_id,userEmail,user_email,org_id, org_name, org_currency, org_logo, org_country, org_phone, org_email };
 };

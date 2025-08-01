@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, IconButton, TablePagination } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination } from '@mui/material';
 
 const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick }) => {
 	const [currentPage, setCurrentPage] = useState(0);
@@ -15,37 +14,47 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 			<Table>
 				<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
 					<TableRow>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Summary</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Name</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Email</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Phone</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Action</TableCell>
-						<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>
-					{paginatedClients.map((client, index) => (
-						<TableRow key={index} onClick={() => onClientClick(client)} sx={{ cursor: 'pointer', backgroundColor: '#f5f5f5' }}>
-							<TableCell>
-								<Button
-									size='small'
-									variant='contained'
-									sx={{
-										backgroundColor: '#01947A',
-										borderRadius: '20px',
-										textTransform: 'none',
-										fontSize: '0.8rem',
-										px: 2,
-										py: 0.5,
-										'&:hover': {
-											backgroundColor: '#008F8F',
-										},
-									}}
-								>
-									View
-								</Button>
-							</TableCell>
+						{/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Summary</TableCell> */}
+						<TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
+						<TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+						<TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
+						<TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+						<TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
+						 {/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>  */}
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											{paginatedClients.map((client, index) => (
+												<TableRow
+													key={index}
+													onClick={() => onClientClick(client)}
+													sx={{
+														cursor: 'pointer',
+														backgroundColor: client.isActive ? 'var(--secondary-color)' : '#f5f5f5', // Set active row color
+														'&:hover': {
+															backgroundColor: client.isActive ? 'var(--secondary-color-hover)' : '#e0e0e0',
+														},
+													}}
+												>
+													{/* <TableCell>
+														<Button
+															size='small'
+															variant='contained'
+															sx={{
+																backgroundColor: '#01947A',
+																borderRadius: '20px',
+																textTransform: 'none',
+																fontSize: '0.8rem',
+																px: 2,
+																py: 0.5,
+																'&:hover': {
+																	backgroundColor: '#008F8F',
+																},
+															}}
+														>
+															View
+														</Button>
+													</TableCell> */}
 							<TableCell sx={{ border: 'none' }}>{client.c_name}</TableCell>
 							<TableCell sx={{ border: 'none' }}>{client.c_email}</TableCell>
 							<TableCell sx={{ border: 'none' }}>{client.c_phone}</TableCell>
@@ -81,7 +90,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 								</Button>
 							</TableCell>
 
-							<TableCell>
+							{/* <TableCell>
 								<IconButton
 									sx={{ color: '#01947A' }}
 									size='small'
@@ -93,7 +102,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 								>
 									<EditIcon />
 								</IconButton>
-							</TableCell>
+							</TableCell> */}
 						</TableRow>
 					))}
 				</TableBody>
