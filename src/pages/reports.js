@@ -1,76 +1,66 @@
-import React, { useState } from "react";
-import  "../App.css";
-import General from "../components/reports/general";
-import Operators from "../components/reports/operators";
-import Assets from "../components/reports/assets";
+import React, { useState } from 'react';
+import { Box, Tabs, Tab, Typography } from '@mui/material';
+import General from '../components/reports/general';
+import Operators from '../components/reports/operators';
+import Assets from '../components/reports/assets';
 
 const Reports = () => {
-  const [activeTab, setActiveTab] = useState("General");
+	const [activeTab, setActiveTab] = useState(0);
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
+	const handleChange = (event, newValue) => {
+		setActiveTab(newValue);
+	};
 
-  const tabButtonStyle = (isActive) => ({
-    padding: "10px 20px",
-    margin: "10px 20px",
-    fontWeight: "bold",
-    fontSize: "0.75em",
-    cursor: "pointer",
-    borderRadius: "20px",
-    background: isActive ? "var( --faded-primary-color)" : "transparent",
-    border: "none",
-    borderBottom: isActive ? "var(--primary-color)" : "none",
-  });
+	const renderTabContent = () => {
+		switch (activeTab) {
+			case 0:
+				return <General />;
+			case 1:
+				return <Operators />;
+			case 2:
+				return <Assets />;
+			default:
+				return null;
+		}
+	};
 
+	return (
+		<Box sx={{ m: 4 }}>
+			<Typography variant='h5' fontWeight='bold' mb={2}>
+				Reports
+			</Typography>
 
-  return (
-    <div>
-     
-      <div style={{ display: "flex",fontWeight: "bold",fontSize: "1em",  }} >
-        Reports
-      </div>
-      <div style={{ display: "grid", border: "1px solid gray", margin:"2em", overflow: "scroll" }} >
+			<Tabs
+				value={activeTab}
+				onChange={handleChange}
+				variant='fullWidth'
+				TabIndicatorProps={{
+					style: {
+						backgroundColor: 'var(--secondary-color)',
+					},
+				}}
+				sx={{
+					borderBottom: 1,
+					borderColor: 'divider',
+					borderTopLeftRadius: 8,
+					borderTopRightRadius: 8,
+					'& .MuiTab-root': {
+						color: 'var(--secondary-color)',
+						fontWeight: 'bold',
+					},
+					'& .Mui-selected': {
+						color: 'var(--secondary-color)',
+					},
+				}}
+			>
+				<Tab label='General' />
+				<Tab label='By-Operators' />
+				<Tab label='By-Asset' />
+			</Tabs>
 
-    
-
-      <div style={{ display: "flex"}}>
-
-        <button
-          onClick={() => handleTabClick("General")}
-          style={tabButtonStyle(activeTab === "General")}
-        >
-         General
-        </button>
-        <button
-          onClick={() => handleTabClick("Operators")}
-          style={tabButtonStyle(activeTab === "Operators")}
-        >
-          By-Operators
-        </button>
-        <button
-          onClick={() => handleTabClick("Assets")}
-          style={tabButtonStyle(activeTab === "Assets")}
-        >
-          By-Asset
-        </button>
-       
-        
-
-    
-
-      </div>
-
-      <div style={{ padding: "20px", height:"70vh" }}>
-        {activeTab === "General" &&  <General/>}
-        {activeTab === "Operators" && <Operators/>}
-        {activeTab === "Assets" && <Assets/> }
-      </div>
-
-      </div>
-
-    </div>
-  );
+			<Box sx={{ p: 3, height: '70vh', overflowY: 'auto' }}>{renderTabContent()}</Box>
+		</Box>
+	);
 };
 
 export default Reports;

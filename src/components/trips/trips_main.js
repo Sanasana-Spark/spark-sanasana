@@ -25,13 +25,12 @@ const Trips = () => {
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [trips, setTrips] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
-  console.log(loading)
   useEffect(() => {
     if (org_id && user_id) {
-    fetch(`${baseURL}/trips/${org_id}/${user_id}/`)
+    fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=new`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -39,9 +38,7 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setTrips(data.filter((trip) => ["In-Progress", "Pending", "Requested"].includes(trip.t_status)));
-
-
+        setTrips(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -50,7 +47,6 @@ const Trips = () => {
       });
   }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
-  console.log("Trips data:", trips); // Log the fetched trips data
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
@@ -222,10 +218,11 @@ flex: 1,
       </Box>
 
    
-      <AssetsTable
+  <AssetsTable
         trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
+    
     
 
 

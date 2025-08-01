@@ -20,7 +20,6 @@ import Maintenance_icon from '../../assets/maintenance_icon.png';
 import Helpcenter_icon from '../../assets/helpcenter_icon.png';
 import Reports_icon from '../../assets/reports_icon.png';
 import Settings_icon from '../../assets/settings_icon.png';
-import Logout_icon from '../../assets/logout_icon.png';
 import Operator_icon from '../../assets/operator_icon.png';
 import Fuel_icon from '../../assets/fuel_icon.png';
 import Routes_icon from '../../assets/routes_icon.png';
@@ -36,6 +35,8 @@ export default function VerticalSidebar({ children }) {
     setMobileOpen(!mobileOpen);
   };
 
+  const location = window.location; // Get the current location
+
   const drawerContent = (
     <div>
 
@@ -46,20 +47,20 @@ export default function VerticalSidebar({ children }) {
     )}
 
       <List>
-        <ListItemWithLink label="Dashboard" icon={<img src={Dashboard_icon} className="icon" alt="dashboard" />} to="/" />
-        <ListItemWithLink label="Assets" icon={<img src={Asset_icon} className="icon" alt="" />} to="/assets" />
-        <ListItemWithLink label="Operators" icon={<img src={Operator_icon} className="icon" alt="" />} to="/operators" />
-        <ListItemWithLink label="Clients" icon={<img src={Operator_icon} className="icon" alt="" />} to="/clients" />
-        <ListItemWithLink label="Trips" icon={<img src={Routes_icon} className="icon" alt="" />} to="/trips" />
-        <ListItemWithLink label="Fuel" icon={<img src={Fuel_icon} className="icon" alt="" />} to="/fuel" />
-        <ListItemWithLink label="Maintenance" icon={<img src={Maintenance_icon} className="icon" alt="" />} to="/maintenance" />
-        <ListItemWithLink label="Reports" icon={<img src={Reports_icon} className="icon" alt="" />} to="/reports" />
+        <ListItemWithLink label="Dashboard" icon={<img src={Dashboard_icon} className="icon" alt="dashboard" />} to="/"  active={location.pathname === '/'} />
+        <ListItemWithLink label="Vehicles" icon={<img src={Asset_icon} className="icon" alt="" />} to="/assets"  active={location.pathname === '/assets'} />
+        <ListItemWithLink label="Drivers" icon={<img src={Operator_icon} className="icon" alt="" />} to="/operators"  active={location.pathname === '/operators'} />
+        <ListItemWithLink label="Clients" icon={<img src={Operator_icon} className="icon" alt="" />} to="/clients"  active={location.pathname === '/clients'} />
+        <ListItemWithLink label="Trips" icon={<img src={Routes_icon} className="icon" alt="" />} to="/trips"  active={location.pathname === '/trips'} />
+        <ListItemWithLink label="Fuel" icon={<img src={Fuel_icon} className="icon" alt="" />} to="/fuel"  active={location.pathname === '/fuel'} />
+        <ListItemWithLink label="Maintenance" icon={<img src={Maintenance_icon} className="icon" alt="" />} to="/maintenance"  active={location.pathname === '/maintenance'} />
+        <ListItemWithLink label="Reports" icon={<img src={Reports_icon} className="icon" alt="" />} to="/reports"  active={location.pathname === '/reports'} />
       </List>
       <Divider />
       <List>
         <ListItemWithLink label="Settings" icon={<img src={Settings_icon} className="icon" alt="" />} to="/settings" />
         <ListItemWithLink label="Help Center" icon={<img src={Helpcenter_icon} className="icon"  alt=""/>} to="/helpcenter" />
-        <ListItemWithLink label="Logout" icon={<img src={Logout_icon} className="icon" alt="" />} to="/logout" />
+        {/* <ListItemWithLink label="Logout" icon={<img src={Logout_icon} className="icon" alt="" />} to="/logout" /> */}
       </List>
     </div>
   );

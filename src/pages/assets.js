@@ -15,6 +15,7 @@ import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRo
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import { Search } from '@mui/icons-material';
+import DeleteAsset from '../components/assets/deleteAsset';
 
 const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -30,6 +31,7 @@ const Assets = () => {
 	const [selectedAsset, setSelectedAsset] = useState(null);
 
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
+	const [isDeleteSliderOpen, setIsDeleteSliderOpen] = useState(false);
 	useEffect(() => {
 		if (org_id && user_id) {
 			const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
@@ -120,6 +122,18 @@ const Assets = () => {
 		setIsSliderOpen(false);
 	};
 
+	//handling Delete
+	const handleDeleteClick = assetId => {
+		const asset = assets.find(asset => asset.id === assetId);
+		setEditAsset(asset);
+		setIsDeleteSliderOpen(true);
+	};
+
+	const handleDeleteCancel = () => {
+		setEditAsset(null);
+		setIsDeleteSliderOpen(false);
+	};
+
 	const handleSaveEdit = updatedAsset => {
 		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
 		const options = {
@@ -140,6 +154,26 @@ const Assets = () => {
 			});
 	};
 
+	const handleSaveDelete = updatedAsset => {
+		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
+		const options = {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		};
+		fetch(url, options)
+			.then(response => response.json())
+			.then(() => {
+				setEditAsset(null);
+				setIsDeleteSliderOpen(false);
+				setAssets(prevAssets => prevAssets.filter(asset => asset.id !== updatedAsset.id));
+			})
+			.catch(error => {
+				console.error('Error deleting asset:', error);
+			});
+	};
+
 	//handling search by vehicle registration and driver/asset
 	useEffect(() => {
 		let filtered = assets;
@@ -154,7 +188,7 @@ const Assets = () => {
 			<Box>
 				<Grid item xs={12} marginBottom={5}>
 					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Assets</Typography>
+						<Typography variant='h6'>Vehicles</Typography>
 
 						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
 							{/* Bulk Button */}
@@ -217,7 +251,7 @@ const Assets = () => {
 										color: 'var(--primary-text-color)',
 									}}
 								>
-									Add Asset
+									Add Vehicle
 								</Typography>
 							</IconButton>
 						</Box>
@@ -270,7 +304,7 @@ const Assets = () => {
 					<Box>
 						{filteredAssets.length > 0 ? (
 							<Box>
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} />
+								<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} onDeleteClick={handleDeleteClick} />
 							<AssetIncome selectedAsset={selectedAsset} />
 							</Box>
 						) : (
@@ -290,7 +324,8 @@ const Assets = () => {
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
-		
+			{editAsset && isDeleteSliderOpen && <DeleteAsset selectedAsset={editAsset} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
+
 		</Container>
 	);
 
@@ -299,7 +334,7 @@ const Assets = () => {
 			<Box>
 				<Grid item xs={12} marginBottom={5}>
 					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Assets</Typography>
+						<Typography variant='h6'>Vehicles</Typography>
 
 						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
 							{/* Bulk Button */}

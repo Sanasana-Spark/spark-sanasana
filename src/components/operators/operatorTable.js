@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, TablePagination, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Button } from '@mui/material';
 import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import { DeleteForever } from '@mui/icons-material';
 
-const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) => {
+const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick, onDeleteClick }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState([]);
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 7;
@@ -25,12 +26,6 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) 
 		setCurrentPage(newPage);
 	};
 
-	const [selected, setSelected] = useState([]);
-	const handleSelectRow = id => {
-		const newSelected = selected.includes(id) ? selected.filter(item => item !== id) : [...selected, id];
-		setSelected(newSelected);
-	};
-
 	const paginatedOperators = Array.isArray(operators) ? operators.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage) : [];
 
 	return (
@@ -39,36 +34,37 @@ const OperatorTable = React.memo(({ operators, onViewUnitsClick, onEditClick }) 
 				<Table stickyHeader aria-label='sticky table'>
 					<TableHead>
 						<TableRow style={{ backgroundColor: 'var(--secondary-bg-color)' }}>
-							<TableCell padding='checkbox'> </TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Image</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Full Name</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Email address</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Position</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Contact</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Actions</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Full Name</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Email address</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Position</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Contact</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Edit</TableCell>
+
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{paginatedOperators.map((operator, index) => (
 							<TableRow key={operator.id} onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')} onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')} sx={{ border: 'none' }}>
-								<TableCell padding='checkbox'>
-									<Checkbox checked={selected.includes(operator.id)} onChange={() => handleSelectRow(operator.id)} />
-								</TableCell>
-								<TableCell>{operator.o_image ? <img src={operator.o_image} alt={operator.o_name} style={{ width: '100px', height: 'auto' }} /> : 'No Image'}</TableCell>
-								<TableCell>{operator.o_name}</TableCell>
-								<TableCell>{operator.o_email}</TableCell>
-								<TableCell>{operator.o_role}</TableCell>
-								<TableCell>{operator.o_phone}</TableCell>
-								<TableCell>{operator.o_status}</TableCell>
+								
 								<TableCell>
 									<Button onClick={() => handleCellClick(operator.id)} sx={{ color: 'var(--secondary-color)' }} >
 										{isDropdownOpen[index] ? 'Close Details' : 'Details'}
 										</Button>
 								</TableCell>
+								<TableCell>{operator.o_name}</TableCell>
+								<TableCell>{operator.o_email}</TableCell>
+								<TableCell>{operator.o_role}</TableCell>
+								<TableCell>{operator.o_phone}</TableCell>
+								<TableCell>{operator.o_status}</TableCell>
+								
 								<TableCell>
 									<IconButton onClick={() => onEditClick(operator.id)} sx={{ color: 'var(--secondary-color)' }}  style={{ marginLeft: '10px' }}>
 										<EditIcon />
+									</IconButton>
+									<IconButton onClick={() => onDeleteClick(operator.id)} sx={{ color: 'var(--secondary-color)' }}  style={{ marginLeft: '10px' }}>
+										<DeleteForever sx={{ color: 'red' }} />
 									</IconButton>
 								</TableCell>
 							</TableRow>
