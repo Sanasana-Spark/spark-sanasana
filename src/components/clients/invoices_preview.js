@@ -1,38 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, TableHead, TableBody, TableRow, TableCell, Divider, Table } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions,
+     Button, Typography, Box, TableHead, TableBody, TableRow, TableCell, Divider, Table } from '@mui/material';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useAuthContext } from '../onboarding/authProvider';
 
 
-
 const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) => {
-    console.log("selectedClient in InvoicesPreview:", selectedClient);
-
-    const { user_id, user_email, org_currency } = useAuthContext();
-    const [orgDetails, setOrgDetails] = useState(null);
-    const logoURL = orgDetails?.org_logo ? `https://spark-backend-1-2fdc.onrender.com/media/${orgDetails.org_logo}` : null;
-
-    console.log("orgDetails state:", orgDetails);
-
-    useEffect(() => {
-        const fetchOrgDetails = async () => {
-            try {
-                const response = await fetch(`https://spark-backend-1-2fdc.onrender.com/organizations/user_org/?user_id=${user_id}&user_email=${user_email}`);
-                const data = await response.json();
-                console.log("Fetched organization data:", data);
-
-                setOrgDetails(data);
-            } catch (error) {
-                console.error("Failed to fetch organization details:", error);
-            }
-        };
-
-        if (user_id && user_email) {
-            fetchOrgDetails();
-        }
-    }, [user_id, user_email]);
-
+    const {org_currency, org_logo, org_country, org_phone, org_name, org_email } = useAuthContext();
     const generatePDF = async () => {
         const element = document.getElementById('invoice-preview');
         if (!element) return;
@@ -66,9 +40,9 @@ const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) =>
             <DialogTitle>Invoice Preview</DialogTitle>
             <DialogContent>
                 <Box id="invoice-preview" sx={{ p: 3, border: '1px solid #e0e0e0', borderRadius: 2, background: '#fafafa', mb: 4 }}>
-                    {logoURL && (
+                    {org_logo && (
                         <Box mb={2} display="flex" justifyContent="flex-end">
-                            <img src={logoURL} alt="Company Logo" style={{ height: 60 }} />
+                            <img src={org_logo} alt="Company Logo" style={{ height: 60 }} />
                         </Box>
                     )}
 
@@ -83,10 +57,10 @@ const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) =>
 
                         {/* Organization Address */}
                         <Box textAlign="right">
-                            <Typography variant="h6">{orgDetails?.org_name}</Typography>
-                            <Typography variant="body2">{orgDetails?.org_country || '[Country]'}</Typography>
-                            <Typography variant="body2">{orgDetails?.org_email || '[Email]'}</Typography>
-                            <Typography variant="body2">{orgDetails?.org_phone || '[Phone]'}</Typography>
+                            <Typography variant="h6">{org_name}</Typography>
+                            <Typography variant="body2">{org_country || '[Country]'}</Typography>
+                            <Typography variant="body2">{org_email || '[Email]'}</Typography>
+                            <Typography variant="body2">{org_phone || '[Phone]'}</Typography>
                         </Box>
                     </Box>
 
@@ -99,7 +73,7 @@ const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) =>
                             <Typography variant="body2"><strong>Bill To:</strong> {selectedClient.c_name}</Typography>
                         </Box>
                         <Box>
-                            <Typography variant="body2"><strong>Please Make Payable To :</strong> {orgDetails?.org_name}</Typography>
+                            <Typography variant="body2"><strong>Please Make Payable To :</strong> {org_name}</Typography>
                         </Box>
                     </Box>
 
@@ -124,16 +98,14 @@ const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) =>
                                     <TableCell>{invoice.ti_description}</TableCell>
                                      <TableCell>{invoice.ti_status}</TableCell>
                                     <TableCell>
-                                        {org_currency} {}
-                                        {parseFloat(invoice.ti_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    {invoice.ti_amount ? Number(invoice.ti_amount).toLocaleString(org_currency, { style: 'currency', currency: org_currency }) : '-'}
+                                    </TableCell>
+                                    <TableCell>
+                                        {parseFloat( invoice.ti_balance || 0).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}
                                     </TableCell>
                                     <TableCell>
                                         {org_currency} {}
-                                        {parseFloat( invoice.ti_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </TableCell>
-                                    <TableCell>
-                                        {org_currency} {}
-                                        {parseFloat(invoice.ti_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        {parseFloat(invoice.ti_balance || 0).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}
                                     </TableCell>
                                    
                                 </TableRow>
@@ -144,8 +116,8 @@ const InvoicesPreview = ({ selectedInvoices, selectedClient, onClose, open }) =>
                     {/* Totals */}
                     <Box display="flex" justifyContent="flex-end" mt={2}>
                         <Box textAlign="right">
-                            <Typography>Subtotal: {org_currency} {subtotal.toFixed(2)}</Typography>
-                            <Typography variant="h6">Amount Due: {org_currency} {totalBalance.toFixed(2)}</Typography>
+                            <Typography>Subtotal: {(subtotal).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}</Typography>
+                            <Typography variant="h6">Amount Due: {(totalBalance).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}</Typography>
                         </Box>
                     </Box>
 
