@@ -17,9 +17,8 @@ import {
   MenuItem
 } from "@mui/material";
 import { useAuthContext } from "../onboarding/authProvider";
-// import actionicon from "../../assets/actionicon.svg"
 
-const AssetsTable = ({ assets, onViewUnitsClick }) => {
+const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
   const { org_id, userId, org_currency, user_id } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
@@ -30,10 +29,13 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   const [ formData, setFormData] = useState({});
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [, setSuccess] = useState(null);
   const [, setError] = useState(null);
   const [clientOptions, setClientOptions] = useState([]);
+  const [saving, setSaving] = useState(false);
+
+
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -68,9 +70,17 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
     setSelectedTrip(trip);
   };
 
-  const handleAddIncome = (trip) => {
+  const handleAddIncome = (trip) => {;
     setAddIncomeForm(true);
     setSelectedTrip(trip);
+
+    if (trip.t_client_id) {
+      // If the trip already has a client ID, set it in the form data   
+    setFormData({
+      ti_client: trip.t_client_id
+    });
+  }
+
   };
 
   const handleAddExpense = (trip) => {
@@ -91,7 +101,6 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   };
 
   const handleSubmit = async () => {
-  console.log(formData);
     const payload = {
       t_id : selectedtrip.id,
       a_fuel_type: selectedtrip.a_fuel_type,
@@ -112,11 +121,13 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit odometer reading");
+        throw new Error("Failed approve request");
       }
 
-      setSuccess("Odometer reading submitted successfully!");
+      setSuccess("Approval submitted successfully!");
       setShowFuelRequestForm(false);
+      reloadtrips();
+      setSaving(false);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -151,6 +162,8 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       }
       setSuccess("Income entry submitted successfully!");
       setAddIncomeForm(false);
+      reloadtrips();
+      setSaving(false);
     } catch (err) {
       setError(err.message);
     } finally {  
@@ -184,6 +197,8 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       }
       setSuccess("Income entry submitted successfully!");
       setAddExpenseForm(false);
+      reloadtrips();
+      setSaving(false);
     } catch (err) {
       setError(err.message);
     } finally {  
@@ -192,16 +207,19 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
   }; 
 
 
-
-
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const paginatedAssets = assets.slice(
+  const paginatedTrips = trips.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+
+  useEffect(() => {
+    if (trips && trips.length > 0) {
+      setLoading(false);
+    }
+  }, [trips]);
 
   return (
     <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
@@ -222,16 +240,30 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
             <TableCell>Total.Income ({org_currency}) </TableCell>
             <TableCell>Total.Expense ({org_currency})</TableCell>
             <TableCell>Gross Profit ({org_currency})</TableCell>
-            <TableCell> Action</TableCell>
+            <TableCell> Fuel Request</TableCell>
             <TableCell> Income</TableCell>
             <TableCell> Expense</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* Render a TableRowItem for each asset in the assets array */}
-          {paginatedAssets.map((asset) => (
+          {/* Render a TableRowItem for each asset in the trips array */}
+          {loading && (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                Fetching trips...
+              </TableCell>
+            </TableRow>
+          )}
+          {!loading && paginatedTrips.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={12} align="center">
+                No trips available.
+              </TableCell>
+            </TableRow>
+          )}
+          {paginatedTrips.map((trip) => (
             <TableRow
-              key={asset.id}
+              key={trip.id}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.backgroundColor =
                   "var(--secondary-bg-color)")
@@ -241,24 +273,34 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
               }
               sx={{ border: "none" }}
             >
-              <TableCell onClick={() => handleCellClick(asset.id)}>
-                {!isDropdownOpen[asset.id] && <Button sx={{ color:'var(--secondary-color)'}} > View </Button>}
+              <TableCell onClick={() => handleCellClick(trip.id)}>
+                {!isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}} > View </Button>}
 
-                {isDropdownOpen[asset.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
+                {isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
               </TableCell>
-              <TableCell>{asset.t_type}</TableCell>
-              <TableCell>{asset.t_status}</TableCell>
-              <TableCell>{asset.o_name}</TableCell>
-              <TableCell>{asset.a_license_plate}</TableCell>
-              <TableCell>{asset.t_destination_place_query}</TableCell>
-              <TableCell>{asset.t_income}</TableCell>
-              <TableCell>{asset.t_expense}</TableCell>
-              <TableCell>{asset.t_income - asset.t_expense}  </TableCell>
-              <TableCell onClick={() => handleRequestClick(asset)}>
-                <Button> Approve </Button>
+              <TableCell>{trip.t_type}</TableCell>
+              <TableCell>{trip.t_status}</TableCell>
+              <TableCell>{trip.o_name}</TableCell>
+              <TableCell>{trip.a_license_plate}</TableCell>
+              <TableCell>{trip.t_destination_place_query}</TableCell>
+              <TableCell>{trip.t_income}</TableCell>
+              <TableCell>{trip.t_expense}</TableCell>
+              <TableCell>{trip.t_income - trip.t_expense}  </TableCell>
+              <TableCell onClick={() => handleRequestClick(trip)}>
+              <Button
+                sx={{
+                  color: trip.t_actual_cost === null ? "primary" : "var(--secondary-color)",
+                  background: "white",
+                  "&:hover": {
+                    backgroundColor: trip.t_actual_cost === null ? "var(--primary-hover-color)" : "var(--secondary-hover-color)",
+                  },
+                }}
+              >
+                    {trip.t_actual_cost === null ? "Approve" : "Approved"}
+                  </Button>
               </TableCell>
 
-              <TableCell onClick={() => handleAddIncome(asset)}>
+              <TableCell onClick={() => handleAddIncome(trip)}>
                 <Button
                 sx={{
                   borderRadius: "4px",
@@ -275,7 +317,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
                 > Add Income  </Button>
               </TableCell>
 
-              <TableCell onClick={() => handleAddExpense(asset)}>
+              <TableCell onClick={() => handleAddExpense(trip)}>
                 <Button
                 sx={{
                   borderRadius: "4px",
@@ -298,7 +340,7 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       </Table>
       <TablePagination
         component="div"
-        count={assets.length} // Total number of records
+        count={trips.length} // Total number of records
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
@@ -312,22 +354,31 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
           <Typography>Distance: {selectedtrip.t_distance} </Typography>
           
           <TextField
-            label="Amt disbursed"
-            variant="outlined"
-            type="number"
-            fullWidth
-            sx={{ marginTop: 2 }}
-            name="t_actual_cost"
-            value={formData.t_actual_cost}
-            onChange={(e) => handleChange(e)}
+        label="Amt disbursed"
+        variant="outlined"
+        type="number"
+        fullWidth
+        sx={{ marginTop: 2 }}
+        name="t_actual_cost"
+        value={formData.t_actual_cost}
+        onChange={(e) => handleChange(e)}
           />
         
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => setShowFuelRequestForm(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
+          <Button onClick={() => {
+            setShowFuelRequestForm(false)
+            setSaving(false);
+            }}  >Cancel</Button>
+          <Button variant="contained" color="primary"
+          sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}
+           onClick={() => {
+         setSaving(true);
+         handleSubmit();
+           }} 
+           disabled={saving}
+           >{saving ? "Submitting..." : "Submit"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -383,49 +434,61 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
         />
 
         {/* Client drop down */}
-        <TextField
-          select
-          label="Client"
-          fullWidth
-          name="ti_client"
-          value={formData.ti_client}
-          onChange={(e) => handleChange(e)}
-          margin="dense"
-        >
-             {clientOptions && clientOptions.length > 0 ? (
-            clientOptions.map((client) => (
-             
-                <MenuItem key={client.id} value={client.id}>
-                   {client.c_name} - {client.c_status}
-                </MenuItem>
-              
-            ))
-          ) : (
-            loading && <MenuItem disabled>Loading clients...</MenuItem>
-          )}
-          </TextField>
+          <TextField
+            select
+            label="Client"
+            fullWidth
+            name="ti_client"
+            value={formData.ti_client}
+            onChange={(e) => handleChange(e)}
+            margin="dense"
+          >
+               {clientOptions && clientOptions.length > 0 ? (
+              clientOptions.map((client) => (
+               
+            <MenuItem key={client.id} value={client.id}>
+               {client.c_name} - {client.c_status}
+            </MenuItem>
+                
+              ))
+            ) : (
+              loading && <MenuItem disabled>Loading clients...</MenuItem>
+            )}
+            </TextField>
 
-      </DialogContent>
+              </DialogContent>
 
-      <DialogActions>
-      <Button onClick={() => setAddIncomeForm(false)}>Cancel</Button>
-       
-        <Button variant="contained" color="primary" onClick={handleIncomeSubmit}>
-          Submit
-        </Button>
-      </DialogActions>
-    </Dialog>
+              <DialogActions>
+              <Button 
+              onClick={() => {
+                setAddIncomeForm(false)
+                setSaving(false);
+                }}
+                >Cancel</Button>
+               
+          <Button variant="contained" color="primary"
+           onClick={() => {
+             setSaving(true);
+             handleIncomeSubmit();
+           }}
+           disabled={saving}
+           sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}
+          >
+            {saving ? "Submitting..." : "Submit"}
+          </Button>
+              </DialogActions>
+            </Dialog>
 
 
-    <Dialog open={addExpenseForm} fullWidth>
-      <DialogTitle>Add Expense</DialogTitle>
-      <DialogContent>
-        <Typography sx={{ mb: 2 }}>
-          This is an entry for expense incurred relating to asset{" "}
-          {selectedtrip.a_license_plate} while with {selectedtrip.o_name}.
-        </Typography>
+            <Dialog open={addExpenseForm} fullWidth>
+              <DialogTitle>Add Expense</DialogTitle>
+              <DialogContent>
+          <Typography sx={{ mb: 2 }}>
+            This is an entry for expense incurred relating to asset{" "}
+            {selectedtrip.a_license_plate} while with {selectedtrip.o_name}.
+          </Typography>
 
-        {/* Income Type Dropdown */}
+          {/* Income Type Dropdown */}
         <TextField
           select
           label="Expense Type"
@@ -472,11 +535,27 @@ const AssetsTable = ({ assets, onViewUnitsClick }) => {
       </DialogContent>
 
       <DialogActions>
-      <Button onClick={() => setAddExpenseForm(false)}>Cancel</Button>
-       
-        <Button variant="contained" color="primary" onClick={handleExpenseSubmit}>
-          Submit
-        </Button>
+      <Button
+       onClick={() => {
+        setAddExpenseForm(false)
+        setSaving(false);
+        }}
+        >Cancel</Button>
+
+
+        <Button variant="contained" color="primary"
+           onClick={() => {
+             setSaving(true);
+             handleExpenseSubmit();
+           }}
+           disabled={saving}
+           sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}
+          >
+            {saving ? "Submitting..." : "Submit"}
+          </Button>
+
+
+
       </DialogActions>
     </Dialog>
 

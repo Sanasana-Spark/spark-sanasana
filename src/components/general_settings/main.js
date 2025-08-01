@@ -14,13 +14,15 @@ const OrganizationForm = () => {
 		email: '',
 		phone: '',
 		language: 'English',
-		country: 'USA',
-		currency: 'USD',
+		country: 'Ghana',
+		currency: 'Cedis',
+		petrol_price:0,
+		diesel_price:0
 	});
 
-	// State to manage editable fields
 	const [editingField, setEditingField] = useState(null);
 	const [editedOrganization, setEditedOrganization] = useState({});
+	const [saving, setSaving] = useState(false);
 
 	useEffect(() => {
 		const fetchOrganization = async () => {
@@ -32,7 +34,7 @@ const OrganizationForm = () => {
 						// Assuming data is an array with one item
 						if (Array.isArray(data) && data.length > 0) {
 							setOrganization(data[0]);
-							setEditedOrganization(data[0]); // Initialize edited fields
+							setEditedOrganization(data[0]);
 						} else {
 							console.error('Error: Organization data is not an array or is empty');
 						}
@@ -45,7 +47,7 @@ const OrganizationForm = () => {
 			}
 		};
 		fetchOrganization();
-	}, [baseURL, org_id, user_id]);
+	}, [baseURL, org_id, user_id ]);
 
 	const handleFieldChange = (field, value) => {
 		const updatedOrg = {
@@ -60,36 +62,41 @@ const OrganizationForm = () => {
 		const url = `${baseURL}/organizations/${org_id}/${user_id}/`;
 		const data = {
 			org_currency: editedOrganization.org_currency,
+			org_country: editedOrganization.org_country,
+			org_phone: editedOrganization.org_phone,
+			org_lang: editedOrganization.org_lang,
 			org_diesel_price: editedOrganization.org_diesel_price,
 			org_petrol_price: editedOrganization.org_petrol_price,
+			org_logo: editedOrganization.org_logo,
 			org_email: editedOrganization.org_email,
 			org_name: editedOrganization.org_name,
 			org_size: editedOrganization.org_size,
 			org_fiscal_start: editedOrganization.org_fiscal_start,
 			org_fiscal_stop: editedOrganization.org_fiscal_stop,
 		};
-		console.log('Payload Data:', data); // Log the payload
+		console.log('Payload Data:', data);
 
 		const options = {
-			method: 'PUT', // Specify the HTTP method
+			method: 'PUT',
 			headers: {
-				'Content-Type': 'application/json', // Specify the content type of the request body
+				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data), // Convert data to JSON string for the request body
+			body: JSON.stringify(data),
 		};
 		fetch(url, options)
 			.then(response => {
 				if (!response.ok) {
-					throw new Error('Failed to add trip');
+					throw new Error('Failed to update details');
 				}
-				console.log('trip added successfully');
-				setEditingField(null); // Exit edit mode for the field
+				console.log('updated successfully');
+				setEditingField(null);
+				setSaving(false);
 			})
 			.catch(error => {
-				console.error('Error adding trip:', error);
+				console.error('Error saving :', error);
 			});
 
-		setOrganization(editedOrganization);
+		 setOrganization(editedOrganization);
 	};
 
 	return (
@@ -111,23 +118,32 @@ const OrganizationForm = () => {
 					{/* Display or Edit Mode Section */}
 					<Box style={{ flex: 2 }}>
 						{editingField === 'logo' ? (
-							// Edit Mode: Show Input and Save/Cancel Buttons
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-								<TextField
-									type='text'
-									value={editedOrganization.org_logo_url}
-									onChange={e => handleFieldChange('logo', e.target.value)}
-									style={{
-										flex: 1,
-										padding: '5px',
+								{/* Preview the uploaded image */}
+								{editedOrganization.org_logo && <img src={editedOrganization.org_logo} alt='Preview' style={{ width: '60px', height: '60px', borderRadius: '50%' }} />}
+
+								{/* File input */}
+								<input
+									type='file'
+									accept='image/*'
+									onChange={e => {
+										const file = e.target.files[0];
+										if (file) {
+											const reader = new FileReader();
+											reader.onloadend = () => {
+												handleFieldChange('org_logo', reader.result); // base64 string
+											};
+											reader.readAsDataURL(file);
+										}
 									}}
 								/>
+
 								<Button
 									type='button'
-									onClick={() => handleSave('logo')}
+									onClick={() => handleSave('org_logo')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -138,8 +154,10 @@ const OrganizationForm = () => {
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
-										setEditedOrganization(prev => ({ ...prev, logo: organization.org_logo_url }));
+										setEditedOrganization(prev => ({
+											...prev,
+											org_logo: organization.org_logo,
+										}));
 										setEditingField(null);
 									}}
 									style={{
@@ -154,19 +172,22 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Image and Edit Button
 							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-								<img
-									src={organization.org_logo_url}
-									alt='Logo'
-									style={{
-										width: '100px',
-										height: 'auto',
-										borderRadius: '50%',
-										marginRight: '10px',
-									}}
-								/>
-								<IconButton onClick={() => setEditingField('logo')} sx={{ color: '#047A9A' }}>
+								{organization.org_logo ? (
+									<img
+										src={organization.org_logo}
+										alt='Logo'
+										style={{
+											width: '100px',
+											height: 'auto',
+											borderRadius: '50%',
+											marginRight: '10px',
+										}}
+									/>
+								) : (
+									<Typography style={{ fontStyle: 'italic' }}>No logo</Typography>
+								)}
+								<IconButton onClick={() => setEditingField('logo')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -188,7 +209,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('name')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -217,7 +238,7 @@ const OrganizationForm = () => {
 							// View Mode: Show Field Value and Edit Button
 							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_name}</Typography>
-								<IconButton onClick={() => setEditingField('name')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('name')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -246,7 +267,7 @@ const OrganizationForm = () => {
 								<TextField
 									type='email'
 									value={editedOrganization.org_email}
-									onChange={e => handleFieldChange('email', e.target.value)}
+									onChange={e => handleFieldChange('org_email', e.target.value)}
 									style={{
 										flex: 1,
 										padding: '5px',
@@ -254,10 +275,10 @@ const OrganizationForm = () => {
 								/>
 								<Button
 									type='button'
-									onClick={() => handleSave('email')}
+									onClick={() => handleSave('org_email')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'black',
 										border: 'none',
 										borderRadius: '3px',
@@ -271,7 +292,7 @@ const OrganizationForm = () => {
 										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											email: organization.org_email,
+											org_email: organization.org_email,
 										}));
 										setEditingField(null);
 									}}
@@ -287,7 +308,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -296,7 +316,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_email}</Typography>
-								<IconButton onClick={() => setEditingField('email')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('email')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -320,12 +340,12 @@ const OrganizationForm = () => {
 					{/* Display or Edit Mode Section */}
 					<Box style={{ flex: 2 }}>
 						{editingField === 'phone' ? (
-							// Edit Mode: Show Input and Save/Cancel Buttons
+							// Edit Mode
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<TextField
 									type='text'
 									value={editedOrganization.org_phone}
-									onChange={e => handleFieldChange('phone', e.target.value)}
+									onChange={e => handleFieldChange('org_phone', e.target.value)}
 									style={{
 										flex: 1,
 										padding: '5px',
@@ -333,10 +353,10 @@ const OrganizationForm = () => {
 								/>
 								<Button
 									type='button'
-									onClick={() => handleSave('phone')}
+									onClick={() => handleSave('org_phone')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -347,10 +367,9 @@ const OrganizationForm = () => {
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											phone: organization.org_phone,
+											org_phone: organization.org_phone,
 										}));
 										setEditingField(null);
 									}}
@@ -366,16 +385,10 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
-							<Box
-								style={{
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								}}
-							>
-								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_phone}</Typography>
-								<IconButton onClick={() => setEditingField('phone')} sx={{ color: '#047A9A' }}>
+							// View Mode
+							<Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_phone || 'Not set'}</Typography>
+								<IconButton onClick={() => setEditingField('phone')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -395,12 +408,11 @@ const OrganizationForm = () => {
 				>
 					<Box style={{ flex: 1, fontWeight: 'light' }}>Diesel Price</Box>
 					<Box style={{ flex: 2 }}>
-						{editingField === 'org_diesel_price' ? (
-							// Edit Mode: Show Input and Save/Cancel Buttons
+						{editingField === 'diesel_price' ? (
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<TextField
 									type='text'
-									value={editedOrganization.org_phone}
+									value={editedOrganization.org_diesel_price}
 									onChange={e => handleFieldChange('org_diesel_price', e.target.value)}
 									style={{
 										flex: 1,
@@ -409,21 +421,24 @@ const OrganizationForm = () => {
 								/>
 								<Button
 									type='button'
-									onClick={() => handleSave('org_diesel_price')}
+									onClick={() => {
+										setSaving(true);
+										handleSave('org_diesel_price');
+									}}
+									disabled={saving}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
 									}}
 								>
-									Save
+									{saving ? 'Saving...' : 'Save'}
 								</Button>
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
 											org_diesel_price: organization.org_diesel_price,
@@ -442,7 +457,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -452,7 +466,7 @@ const OrganizationForm = () => {
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_diesel_price}</Typography>
 
-								<IconButton onClick={() => setEditingField('org_diesel_price')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('diesel_price')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -472,12 +486,11 @@ const OrganizationForm = () => {
 				>
 					<Box style={{ flex: 1, fontWeight: 'light' }}>Petrol Price</Box>
 					<Box style={{ flex: 2 }}>
-						{editingField === 'org_petrol_price' ? (
-							// Edit Mode: Show Input and Save/Cancel Buttons
+						{editingField === 'petrol_price' ? (
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<TextField
-									type='text'
-									value={editedOrganization.org_phone}
+									type='number'
+									value={editedOrganization.org_petrol_price}
 									onChange={e => handleFieldChange('org_petrol_price', e.target.value)}
 									style={{
 										flex: 1,
@@ -489,7 +502,7 @@ const OrganizationForm = () => {
 									onClick={() => handleSave('org_petrol_price')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -500,7 +513,6 @@ const OrganizationForm = () => {
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
 											org_petrol_price: organization.org_petrol_price,
@@ -519,7 +531,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -528,7 +539,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_petrol_price}</Typography>
-								<IconButton onClick={() => setEditingField('org_petrol_price')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('petrol_price')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -564,11 +575,10 @@ const OrganizationForm = () => {
 					{/* Display or Edit Mode Section */}
 					<Box style={{ flex: 2 }}>
 						{editingField === 'language' ? (
-							// Edit Mode: Show Dropdown and Save/Cancel Buttons
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<Select
 									value={editedOrganization.org_lang}
-									onChange={e => handleFieldChange('language', e.target.value)}
+									onChange={e => handleFieldChange('org_lang', e.target.value)}
 									style={{
 										flex: 1,
 										padding: '5px',
@@ -578,12 +588,13 @@ const OrganizationForm = () => {
 									<MenuItem value='Spanish'>Spanish</MenuItem>
 									<MenuItem value='French'>French</MenuItem>
 								</Select>
+
 								<Button
 									type='button'
-									onClick={() => handleSave('language')}
+									onClick={() => handleSave('org_lang')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -591,13 +602,13 @@ const OrganizationForm = () => {
 								>
 									Save
 								</Button>
+
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											language: organization.org_lang,
+											org_lang: organization.org_lang,
 										}));
 										setEditingField(null);
 									}}
@@ -613,7 +624,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -622,7 +632,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_lang}</Typography>
-								<IconButton onClick={() => setEditingField('language')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('language')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -631,6 +641,7 @@ const OrganizationForm = () => {
 				</Box>
 
 				{/* Country */}
+
 				<Box
 					style={{
 						paddingBottom: '30px',
@@ -639,32 +650,35 @@ const OrganizationForm = () => {
 						borderBottom: 'solid 0.75px gray',
 					}}
 				>
-					{/* Label Section */}
 					<Box style={{ flex: 1, fontWeight: 'light' }}>Country</Box>
 
-					{/* Display or Edit Mode Section */}
 					<Box style={{ flex: 2 }}>
 						{editingField === 'country' ? (
-							// Edit Mode: Show Dropdown and Save/Cancel Buttons
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-								<Select
-									value={editedOrganization.org_country}
-									onChange={e => handleFieldChange('country', e.target.value)}
-									style={{
-										flex: 1,
-										padding: '5px',
-									}}
-								>
-									<MenuItem value='USA'>Kenya</MenuItem>
-									<MenuItem value='Canada'>Ghana</MenuItem>
-									<MenuItem value='UK'>Other</MenuItem>
+								<Select value={editedOrganization.org_country} onChange={e => handleFieldChange('org_country', e.target.value)} style={{ flex: 1, padding: '5px' }}>
+									<MenuItem value='Kenya'>Kenya</MenuItem>
+									<MenuItem value='Ghana'>Ghana</MenuItem>
+									<MenuItem value='Ethiopia'>Ethiopia</MenuItem>
+									<MenuItem value='Nigeria'>Nigeria</MenuItem>
+									<MenuItem value='Uganda'>Uganda</MenuItem>
+									<MenuItem value='Tanzania'>Tanzania</MenuItem>
+									<MenuItem value='South Africa'>South Africa</MenuItem>
+									<MenuItem value='Rwanda'>Rwanda</MenuItem>
+									<MenuItem value='Burundi'>Burundi</MenuItem>
+									<MenuItem value='Zambia'>Zambia</MenuItem>
+									<MenuItem value='Zimbabwe'>Zimbabwe</MenuItem>
+									<MenuItem value='Malawi'>Malawi</MenuItem>
+									<MenuItem value='South Sudan'>South Sudan</MenuItem>
+									<MenuItem value='USA'>USA</MenuItem>
+									<MenuItem value='Other'>Other</MenuItem>
 								</Select>
+
 								<Button
 									type='button'
-									onClick={() => handleSave('country')}
+									onClick={() => handleSave('org_country')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -672,13 +686,13 @@ const OrganizationForm = () => {
 								>
 									Save
 								</Button>
+
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											country: organization.org_country,
+											org_country: organization.org_country,
 										}));
 										setEditingField(null);
 									}}
@@ -694,7 +708,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -703,7 +716,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_country}</Typography>
-								<IconButton onClick={() => setEditingField('country')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('country')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>
@@ -728,26 +741,38 @@ const OrganizationForm = () => {
 					{/* Display or Edit Mode Section */}
 					<Box style={{ flex: 2 }}>
 						{editingField === 'currency' ? (
-							// Edit Mode: Show Dropdown and Save/Cancel Buttons
 							<Box style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
 								<Select
 									value={editedOrganization.org_currency}
-									onChange={e => handleFieldChange('currency', e.target.value)}
+									onChange={e => handleFieldChange('org_currency', e.target.value)}
 									style={{
 										flex: 1,
 										padding: '5px',
 									}}
 								>
-									<MenuItem value='USD'>Kes</MenuItem>
-									<MenuItem value='EUR'>Cedis</MenuItem>
-									<MenuItem value='GBP'>Usd</MenuItem>
+									<MenuItem value='KES'>Kes</MenuItem>
+									<MenuItem value='GHS'>Cedis</MenuItem>
+									<MenuItem value='NGN'>Naira</MenuItem>
+									<MenuItem value='UGX'>Ush</MenuItem>
+									<MenuItem value='TZS'>Tsh</MenuItem>
+									<MenuItem value='Birr'>Birr</MenuItem>
+									<MenuItem value='ZAR'>Rand</MenuItem>
+									<MenuItem value='RWF'>Rwf</MenuItem>
+									<MenuItem value='BIF'>Bif</MenuItem>
+									<MenuItem value='ZMW'>Zambian Kwacha</MenuItem>
+									<MenuItem value='ZWL'>ZWL</MenuItem>
+									<MenuItem value='MWK'>Malawian Kwacha</MenuItem>
+									<MenuItem value='SSP'>SSP</MenuItem>
+									<MenuItem value='EUR'>EUR</MenuItem>
+									<MenuItem value='USD'>USD</MenuItem>
 								</Select>
+
 								<Button
 									type='button'
-									onClick={() => handleSave('currency')}
+									onClick={() => handleSave('org_currency')}
 									style={{
 										padding: '5px 10px',
-										backgroundColor: 'var(--primary-color)',
+										backgroundColor: 'var(--secondary-color)',
 										color: 'white',
 										border: 'none',
 										borderRadius: '3px',
@@ -755,13 +780,13 @@ const OrganizationForm = () => {
 								>
 									Save
 								</Button>
+
 								<Button
 									type='button'
 									onClick={() => {
-										// Cancel changes: Reset the edited field and exit edit mode
 										setEditedOrganization(prev => ({
 											...prev,
-											currency: organization.org_currency,
+											org_currency: organization.org_currency,
 										}));
 										setEditingField(null);
 									}}
@@ -777,7 +802,6 @@ const OrganizationForm = () => {
 								</Button>
 							</Box>
 						) : (
-							// View Mode: Show Field Value and Edit Button
 							<Box
 								style={{
 									display: 'flex',
@@ -786,7 +810,7 @@ const OrganizationForm = () => {
 								}}
 							>
 								<Typography style={{ margin: 0, flex: 1 }}>{organization.org_currency}</Typography>
-								<IconButton onClick={() => setEditingField('currency')} sx={{ color: '#047A9A' }}>
+								<IconButton onClick={() => setEditingField('currency')} sx={{ color: 'var(--secondary-color)' }}>
 									<EditIcon />
 								</IconButton>
 							</Box>

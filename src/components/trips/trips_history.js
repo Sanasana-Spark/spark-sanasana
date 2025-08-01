@@ -32,7 +32,7 @@ const Trips = () => {
   console.log(loading)
   useEffect(() => {
     if (org_id && user_id) {
-    fetch(`${baseURL}/trips/${org_id}/${user_id}/`)
+    fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=completed`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -40,7 +40,7 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setTrips(data.filter((trip) => ["Completed", ""].includes(trip.t_status)));
+        setTrips(data);
 
 
         setLoading(false);
