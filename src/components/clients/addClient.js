@@ -3,6 +3,7 @@ import { Modal, Box, Typography, IconButton, TextField, Button } from '@mui/mate
 import CloseIcon from '@mui/icons-material/Close';
 
 const AddClientForm = ({ onCancel, open, onSave }) => {
+	const [ saving, setSaving ] = useState(false);
 	const [formData, setFormData] = useState({
 		c_name: '',
 		c_email: '',
@@ -15,14 +16,15 @@ const AddClientForm = ({ onCancel, open, onSave }) => {
 	};
 
 	const handleSubmit = e => {
+		setSaving(true);
 		e.preventDefault();
 		if (!formData.c_name || !formData.c_email || !formData.c_phone) {
 			alert('Please fill in all fields.');
+			setSaving(false);
 			return;
 		}
 		onSave(formData);
 		setFormData({ c_name: '', c_email: '', c_phone: '' });
-		onCancel();
 	};
 
 	return (
@@ -54,7 +56,7 @@ const AddClientForm = ({ onCancel, open, onSave }) => {
 				<TextField fullWidth label='Phone' name='c_phone' value={formData.c_phone} onChange={handleChange} margin='normal' required />
 
 				<Button type='submit' variant='contained' sx={{ mt: 3, backgroundColor: '#047A9A', '&:hover': { backgroundColor: '#008F8F' } }} fullWidth>
-					Save Client
+					{saving ? 'Saving...' : 'Save Client'}
 				</Button>
 			</Box>
 		</Modal>
