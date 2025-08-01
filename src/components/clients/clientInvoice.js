@@ -5,10 +5,8 @@ import { useAuthContext } from "../onboarding/authProvider";
 import InvoicesPreview from './invoices_preview';
 
 const ClientInvoice = ({ selectedClient }) => {
-	console.log("Client in invoice:", selectedClient);
-
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { user_id, org_id, org_currency } = useAuthContext();
 	const [currentPage, setCurrentPage] = useState(0);
 	const [invoices, setInvoices] = useState([]);
 	const [, setLoading] = useState(true);
@@ -17,7 +15,6 @@ const ClientInvoice = ({ selectedClient }) => {
 
 	useEffect(() => {
 		if (org_id && user_id && selectedClient && selectedClient.id) {
-			console.log('Selected client data:', selectedClient);
 
 			const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
 			fetch(apiUrl)
@@ -73,7 +70,7 @@ const ClientInvoice = ({ selectedClient }) => {
 		<Box mt={4}>
 			<Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
 				<Typography variant='subtitle1' gutterBottom>
-					Clients - {selectedClient.c_name} Invoices
+					Client - {selectedClient.c_name}'s Invoices
 				</Typography>
 				<Button
 					disabled={selectedInvoices.length === 0}
@@ -114,16 +111,14 @@ const ClientInvoice = ({ selectedClient }) => {
 				<Table size='small'>
 					<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
 						<TableRow>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}> Select </TableCell>
-
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Invoice No</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Amount</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Balance</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Status</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Date</TableCell>
-							<TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>
-
-
+							<TableCell sx={{ fontWeight: 'bold' }}> Select </TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Invoice No</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Paid</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Balance</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+							<TableCell sx={{ fontWeight: 'bold' }}>Update</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -135,14 +130,19 @@ const ClientInvoice = ({ selectedClient }) => {
 										onChange={() => handleSelectInvoice(invoice)}
 									/>
 								</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.id || '-'}</TableCell>
-
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_amount}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_balance || invoice.ti_amount}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_status}</TableCell>
-								<TableCell sx={{ fontSize: '0.75rem', padding: '4px 8px', border: 'none' }}>{invoice.ti_created_at ? new Date(invoice.ti_created_at).toLocaleDateString('en-GB') : '-'}</TableCell>
-
-								<TableCell sx={{ padding: '4px 8px', border: 'none' }}>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>{invoice.id || '-'}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>
+									{invoice.ti_amount ? Number(invoice.ti_amount).toLocaleString(org_currency, { style: 'currency', currency: org_currency }) : '-'}
+								</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>
+									{invoice.ti_paid ? Number(invoice.ti_paid).toLocaleString(org_currency, { style: 'currency', currency: org_currency }) : Number(0).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}
+								</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>
+									{invoice.ti_balance ? Number(invoice.ti_balance).toLocaleString(org_currency, { style: 'currency', currency: org_currency }) : Number(0).toLocaleString(org_currency, { style: 'currency', currency: org_currency })}
+								</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>{invoice.ti_status}</TableCell>
+								<TableCell sx={{ fontSize: '0.75rem', border: 'none' }}>{invoice.ti_created_at ? new Date(invoice.ti_created_at).toLocaleDateString('en-GB') : '-'}</TableCell>
+								<TableCell >
 									<IconButton size='small' sx={{ color: '#01947A' }}>
 										<EditIcon fontSize='inherit' />
 									</IconButton>
