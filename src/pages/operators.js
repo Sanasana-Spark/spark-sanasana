@@ -78,18 +78,18 @@ const Operators = () => {
 			body: JSON.stringify(data),
 		};
 		fetch(url, options)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Failed to add Operator - check email and mandatory fields ');
-			}
-			console.log('Operator added successfully');
-			setShowAddPropertyForm(false);
-			setSuccessMsg('Operator Added successfully!');
-		})
-		.catch(error => {
-			setErrorMsg(error.message);
-			console.error('Error adding Operator:', error);
-		});
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Failed to add Operator - check email and mandatory fields ');
+				}
+				console.log('Operator added successfully');
+				setShowAddPropertyForm(false);
+				setSuccessMsg('Operator Added successfully!');
+			})
+			.catch(error => {
+				setErrorMsg(error.message);
+				console.error('Error adding Operator:', error);
+			});
 	};
 
 	const handleCancel = () => {
@@ -112,9 +112,9 @@ const Operators = () => {
 		setIsSliderOpen(true);
 	};
 
-	const handleViewDetailsClick = (operatorId) => {
+	const handleViewDetailsClick = operatorId => {
 		setSelectedOperator(operators.find(operator => operator.id === operatorId));
-		
+
 		setCurrentView('RequestDetails');
 		setIsSliderOpen(true);
 	};
@@ -124,7 +124,7 @@ const Operators = () => {
 		setIsSliderOpen(false);
 	};
 
-	const handleSaveEdit = updatedOperator => {
+	const handleSaveEdit = (updatedOperator, onSuccess, onError) => {
 		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
 		const options = {
 			method: 'PUT',
@@ -135,12 +135,16 @@ const Operators = () => {
 		};
 
 		fetch(url, options)
-			.then(response => response.json())
-			.then(() => {
-				setIsSliderOpen(false);
+			.then(async response => {
+				if (!response.ok) {
+					const errorText = await response.text();
+					throw new Error(errorText || 'Server error');
+				}
+				onSuccess();
 			})
 			.catch(error => {
 				console.error('Error updating operator:', error);
+				onError();
 			});
 	};
 
@@ -158,8 +162,16 @@ const Operators = () => {
 	const AssetView = () => (
 		<Stack spacing={2}>
 			{' '}
-			{errorMsg && <Alert severity='error' onClose={() => setErrorMsg(null)} >{errorMsg}</Alert>}
-			{successMsg && <Alert severity='success' onClose={() => setSuccessMsg(null)} >{successMsg}</Alert>}
+			{errorMsg && (
+				<Alert severity='error' onClose={() => setErrorMsg(null)}>
+					{errorMsg}
+				</Alert>
+			)}
+			{successMsg && (
+				<Alert severity='success' onClose={() => setSuccessMsg(null)}>
+					{successMsg}
+				</Alert>
+			)}
 			<Container width='100%' sx={{ fontFamily: 'var(--font-family)', padding: 1 }}>
 				<Box>
 					<Grid item xs={12} marginBottom={5}>
@@ -268,7 +280,7 @@ const Operators = () => {
 
 						<Box>
 							{filteredOperators.length > 0 ? (
-								<OperatorTable operators={filteredOperators}  onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+								<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
 							) : (
 								<TableRow>
 									<TableCell align='center' colSpan={7}>
@@ -334,8 +346,6 @@ const Operators = () => {
 				return null;
 		}
 	};
-
-
 
 	return <> {renderView()} </>;
 };
