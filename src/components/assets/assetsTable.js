@@ -17,7 +17,6 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick, onNewAssetClick })
 		onViewUnitsClick(rowIndex);
 	};
 
-	// Handle pagination change
 	const handleChangePage = (event, newPage) => {
 		setCurrentPage(newPage);
 	};
@@ -38,17 +37,17 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick, onNewAssetClick })
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{/* Render a TableRowItem for each asset in the assets array */}
 					{paginatedAssets.map((asset, index) => (
-						<TableRow key={asset.id}
-						 onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')}
-						  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')}
-						   sx={{ border: 'none' }}
-						   onClick={e => {
-							e.stopPropagation();
-							onNewAssetClick(asset);
-						}}
-						   >
+						<TableRow
+							key={asset.id}
+							onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)')}
+							onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'var(--main-bg-color)')}
+							sx={{ border: 'none' }}
+							onClick={e => {
+								e.stopPropagation();
+								onNewAssetClick(asset);
+							}}
+						>
 							<TableCell>{asset.a_license_plate}</TableCell>
 							<TableCell>{asset.a_status}</TableCell>
 							<TableCell>{asset.a_mileage}</TableCell>
@@ -60,7 +59,13 @@ const AssetsTable = ({ assets, onViewUnitsClick, onEditClick, onNewAssetClick })
 								<Button onClick={() => handleCellClick(asset.id)}>{isDropdownOpen[index] ? 'Close Details' : 'Details'}</Button>
 							</TableCell>
 							<TableCell>
-								<IconButton onClick={() => onEditClick(asset.id)} style={{ marginLeft: '10px' }}>
+								<IconButton
+									onClick={e => {
+										e.stopPropagation();
+										onEditClick(asset.id);
+									}}
+									style={{ marginLeft: '10px' }}
+								>
 									<EditIcon />
 								</IconButton>
 							</TableCell>
