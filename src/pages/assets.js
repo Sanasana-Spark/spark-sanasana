@@ -270,8 +270,8 @@ const Assets = () => {
 					<Box>
 						{filteredAssets.length > 0 ? (
 							<Box>
-							<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} />
-							<AssetIncome selectedAsset={selectedAsset} />
+								<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} />
+								<AssetIncome selectedAsset={selectedAsset} />
 							</Box>
 						) : (
 							<TableRow>
@@ -280,7 +280,6 @@ const Assets = () => {
 								</TableCell>
 							</TableRow>
 						)}
-						
 					</Box>
 				</Grid>
 			</Box>
@@ -290,7 +289,6 @@ const Assets = () => {
 			<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 			{editAsset && isSliderOpen && <EditAssetDetails selectedAsset={editAsset} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
-		
 		</Container>
 	);
 
@@ -467,7 +465,7 @@ const Assets = () => {
 		setIsSliderOpen(true);
 	};
 
-	return <Box  > {renderView()} </Box>;
+	return <Box> {renderView()} </Box>;
 
 	// return <>{assets.length > 0 ? <>{renderView()}</> : <p> add Assets </p>}</>;
 };
