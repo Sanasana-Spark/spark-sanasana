@@ -6,7 +6,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { Box, Button, Typography, TextField, Stack, Divider } from '@mui/material';
+import { Box, Button, Typography, TextField, Stack, CircularProgress } from '@mui/material';
 
 const Reports = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -18,14 +18,15 @@ const Reports = () => {
 		operators_listing: [],
 		tripsByOperator: [],
 		FuelExpenseReport: [],
+		maintenance_listing: [],
 	});
+	const [loading, setLoading] = useState(false);
 
 	const today = new Date();
 	const thirtyDaysAgo = new Date();
 	thirtyDaysAgo.setDate(today.getDate() - 30);
 
-	// Format as 'YYYY-MM-DD'
-	const formatDate = (date) => date.toISOString().split('T')[0];
+	const formatDate = date => date.toISOString().split('T')[0];
 
 	const [startDate, setStartDate] = useState(formatDate(thirtyDaysAgo));
 	const [endDate, setEndDate] = useState(formatDate(today));
@@ -42,6 +43,8 @@ const Reports = () => {
 			return;
 		}
 
+		setLoading(true);
+
 		try {
 			const tripsResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
 				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
@@ -55,20 +58,25 @@ const Reports = () => {
 			const tripsByOperatorResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
 				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
 			});
-
 			const fuel_expenseReport = await axios.get(`${baseURL}/fuel/${org_id}/${user_id}/report/`, {
+				params: { start_date: startDate, end_date: endDate },
+			});
+			const maintenanceResponse = await axios.get(`${baseURL}/maintenances/report/${org_id}/${user_id}/`, {
 				params: { start_date: startDate, end_date: endDate },
 			});
 
 			setReports({
-				trips_listing: tripsResponse.data,
-				assets_listing: assetsResponse.data,
-				operators_listing: operatorsResponse.data,
-				tripsByOperator: tripsByOperatorResponse.data,
-				FuelExpenseReport: fuel_expenseReport.data,
+				trips_listing: Array.isArray(tripsResponse.data) ? tripsResponse.data : [],
+				assets_listing: Array.isArray(assetsResponse.data) ? assetsResponse.data : [],
+				operators_listing: Array.isArray(operatorsResponse.data) ? operatorsResponse.data : [],
+				tripsByOperator: Array.isArray(tripsByOperatorResponse.data) ? tripsByOperatorResponse.data : [],
+				FuelExpenseReport: Array.isArray(fuel_expenseReport.data) ? fuel_expenseReport.data : [],
+				maintenance_listing: Array.isArray(maintenanceResponse.data) ? maintenanceResponse.data : [],
 			});
 		} catch (error) {
 			console.error('Error fetching reports:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -113,44 +121,56 @@ const Reports = () => {
 				<TextField type='date' size='small' value={startDate} onChange={e => setStartDate(e.target.value)} />
 				<Typography>End Date:</Typography>
 				<TextField type='date' size='small' value={endDate} onChange={e => setEndDate(e.target.value)} />
-				<Button variant='contained' onClick={fetchReports}>
-					Refresh Reports
+				<Button variant='contained' onClick={fetchReports} disabled={loading}>
+					{loading ? 'Loading...' : 'Refresh Reports'}
 				</Button>
 			</Stack>
 
-			{Object.entries(reports).map(([key, data]) => (
-				<Box
-					key={key}
-					sx={{
-						mb: 4,
-						p: 2,
-						border: '1px solid #ddd',
-						borderRadius: 2,
-					}}
-				>
-					<Typography variant='h6' fontWeight='bold' gutterBottom>
-						{key.replace(/([A-Z])/g, ' $1')}
-					</Typography>
-
-					<Button variant='outlined' color='success' size='small' sx={{ mt: 1 }}>
-						<CSVLink data={data} filename={`${key}_report.csv`} style={{ textDecoration: 'none', color: 'inherit' }}>
-							Download CSV
-						</CSVLink>
-					</Button>
-
-					{/* Uncomment this button to enable PDF download again
-					<Button
-						variant="outlined"
-						color="error"
-						size="small"
-						onClick={() => generatePDF(data, key)}
-						sx={{ ml: 2 }}
-					>
-						Download PDF
-					</Button>
-					*/}
+			{loading ? (
+				<Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
+					<CircularProgress />
 				</Box>
-			))}
+			) : (
+				Object.entries(reports).map(([key, data]) => (
+					<Box
+						key={key}
+						sx={{
+							mb: 4,
+							p: 2,
+							border: '1px solid #ddd',
+							borderRadius: 2,
+						}}
+					>
+						<Typography variant='h6' fontWeight='bold' gutterBottom>
+							{key.replace(/([A-Z])/g, ' $1')}
+						</Typography>
+
+						{Array.isArray(data) && data.length > 0 ? (
+							<Button variant='outlined' color='success' size='small' sx={{ mt: 1 }}>
+								<CSVLink data={data} filename={`${key}_report.csv`} style={{ textDecoration: 'none', color: 'inherit' }}>
+									Download CSV
+								</CSVLink>
+							</Button>
+						) : (
+							<Typography variant='body2' color='text.secondary' sx={{ mt: 1 }}>
+								No data to download
+							</Typography>
+						)}
+
+						{/* Uncomment to enable PDF download
+						<Button
+							variant="outlined"
+							color="error"
+							size="small"
+							onClick={() => generatePDF(data, key)}
+							sx={{ ml: 2 }}
+						>
+							Download PDF
+						</Button>
+						*/}
+					</Box>
+				))
+			)}
 
 			{previewReport && (
 				<Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
