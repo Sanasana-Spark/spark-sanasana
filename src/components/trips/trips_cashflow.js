@@ -24,13 +24,13 @@ const Trips = () => {
 
 	useEffect(() => {
 		if (org_id && user_id) {
-			fetch(`${baseURL}/trips/${org_id}/${user_id}/`)
+			fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=pending-approval`)
 				.then(response => {
 					if (!response.ok) throw new Error('Network response was not ok');
 					return response.json();
 				})
 				.then(data => {
-					setTrips(data.filter(trip => ['Requested', 'In-Progress'].includes(trip.t_status) || trip.t_actual_cost === null));
+					setTrips(data);
 					setLoading(false);
 					setRefesh(false);
 				})

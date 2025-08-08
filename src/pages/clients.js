@@ -12,17 +12,18 @@ const Clients = () => {
 	const { user_id, org_id } = useAuthContext();
 
 	const [clients, setClients] = useState([]);
+	const [saving, setSaving] = useState(false);
 	const [editClient, setEditClient] = useState(null);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [selectedClient, setSelectedClient] = useState(null);
-	const [invoices, setInvoices] = useState([]);
 	const [showInvoiceForm, setShowInvoiceForm] = useState(false);
-	const [invoice_no, setInvoiceNo] = useState('');
+	const [ti_ext_inv, setTiExtInv] = useState(null);
 	const [ti_amount, setTiAmount] = useState('');
-	const [balance, setBalance] = useState('');
-	const [ti_status, setTiStatus] = useState('Pending');
+	const [ti_paid_amount, setTiPaidAmount] = useState('');
+	const [ti_status, setTiStatus] = useState('Unpaid');
 	const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
 
 	useEffect(() => {
 		const apiUrl = `${baseURL}/clients/${org_id}/${user_id}/`;
@@ -39,24 +40,13 @@ const Clients = () => {
 			}
 		};
 		fetchClients();
-	}, [baseURL, org_id, user_id, isSliderOpen]);
+	}, [baseURL, org_id, user_id, isSliderOpen, showAddPropertyForm]);
 
-	useEffect(() => {
-		if (!selectedClient) return;
-		const fetchInvoices = async () => {
-			try {
-				const invoiceUrl = `${baseURL}/clients/invoices/${org_id}/${selectedClient.id}/`;
-				const response = await fetch(invoiceUrl);
-				const data = await response.json();
-				setInvoices(data.invoices || []);
-			} catch (err) {
-				console.error('Failed to fetch invoices:', err);
-			}
-		};
-		fetchInvoices();
-	}, [selectedClient, baseURL, org_id, user_id]);
+	const handleCancel = () => {
+		setShowAddPropertyForm(false);
+	};
 
-	const handleCancel = () => setShowAddPropertyForm(false);
+
 	const handleAddPropertyClick = () => setShowAddPropertyForm(true);
 
 	const handleEditClick = clientId => {
@@ -95,7 +85,12 @@ const Clients = () => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(newClient),
 			});
-			console.log(response);
+			if (response.ok) {
+				setShowAddPropertyForm(false);
+				console.log('Client saved successfully');
+			} else {
+				console.error('Failed to save client:', response.statusText);
+			}
 		} catch (error) {
 			console.error('Failed to save client:', error);
 		}
@@ -106,18 +101,29 @@ const Clients = () => {
 		setShowInvoiceForm(true);
 	};
 
+	const handleInvoiceCancel = () => {
+		setShowInvoiceForm(false);
+		setTiAmount('');
+		setTiPaidAmount('');
+		setTiExtInv(null);
+		setTiStatus('Pending');
+	};
+	
 	//handling add and saving new invoice
 	const handleInvoiceSubmit = async e => {
-		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${selectedClient.id}/`;
+		setSaving(true);
+		e.preventDefault();
+		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
 		e.preventDefault();
 		const invoiceData = {
-			invoice_no,
+			ti_ext_inv,
 			ti_amount: parseFloat(ti_amount),
-			balance: parseFloat(balance),
+			ti_paid_amount: parseFloat(ti_paid_amount),
+			ti_balance: parseFloat(ti_amount) - parseFloat(ti_paid_amount),
 			ti_status,
 			date,
-			client_id: selectedClient.id,
-			org_id,
+			ti_type: 'Service',
+			ti_description: 'Invoice',
 		};
 
 		try {
@@ -126,6 +132,10 @@ const Clients = () => {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(invoiceData),
 			});
+			setSaving(false);
+			if (!res.ok) {
+				throw new Error('Failed to save invoice');
+			}
 			console.log(res);
 		} catch (err) {
 			console.error('Failed to save invoice:', err);
@@ -144,28 +154,27 @@ const Clients = () => {
 			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} />
 
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
-			{selectedClient && <ClientInvoice invoicesss={invoices} selectedClient={selectedClient} />}
+			{selectedClient && <ClientInvoice selectedClient={selectedClient} />}
 
-			<Dialog open={showInvoiceForm} onClose={() => setShowInvoiceForm(false)} maxWidth='sm' fullWidth>
+			<Dialog open={showInvoiceForm} onClose={handleInvoiceCancel} maxWidth='sm' fullWidth>
 				<DialogTitle>New Invoice for {selectedClient?.c_name}</DialogTitle>
-				<form onSubmit={handleInvoiceSubmit}>
+				<form onSubmit={handleInvoiceSubmit}  >
 					<DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						<TextField label='Invoice No' value={invoice_no} onChange={e => setInvoiceNo(e.target.value)} required fullWidth />
-						<TextField label='Amount' type='number' value={ti_amount} onChange={e => setTiAmount(e.target.value)} required fullWidth />
-						<TextField label='Balance' type='number' value={balance} onChange={e => setBalance(e.target.value)} required fullWidth />
-						<TextField select label='Status' value={ti_status} onChange={e => setTiStatus(e.target.value)} required fullWidth>
-							<MenuItem value='Pending'>Pending</MenuItem>
+						<TextField label='Ref No(external if applicable)' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
+						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Unpaid') setTiPaidAmount(0);}} required fullWidth />
+						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Unpaid') setTiPaidAmount(0); if (value === 'Partially Paid') setTiPaidAmount(0); else if (value === 'Paid') setTiPaidAmount(ti_amount); }} required fullWidth>
 							<MenuItem value='Paid'>Paid</MenuItem>
+							<MenuItem value='Partially Paid'>Partially</MenuItem>
 							<MenuItem value='Unpaid'>Unpaid</MenuItem>
-							<MenuItem value='Overdue'>Overdue</MenuItem>
 						</TextField>
+						<TextField label='Paid Amount' type='number' value={ti_paid_amount} onChange={e => setTiPaidAmount(e.target.value)} required fullWidth />
 						<TextField label='Date' type='date' value={date} onChange={e => setDate(e.target.value)} required fullWidth InputLabelProps={{ shrink: true }} />
 					</DialogContent>
 
 					<DialogActions>
-						<Button onClick={() => setShowInvoiceForm(false)}>Cancel</Button>
-						<Button type='submit' variant='contained'>
-							Save Invoice
+						<Button onClick={() => setShowInvoiceForm(false)} sx={{ color:'#035f77' }} >Cancel</Button>
+						<Button type='submit' variant='contained' sx={{ backgroundColor:'#019678', '&:hover': { backgroundColor: '#008F8F' } }}> 
+						{saving ? 'Saving...' : 'Save Invoice'}
 						</Button>
 					</DialogActions>
 				</form>

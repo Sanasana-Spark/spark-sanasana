@@ -14,6 +14,7 @@ import EditOperatorDetails from '../components/operators/editOperatorDetails';
 import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell, Alert, Stack } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
+import DeleteOperator from '../components/operators/deleteOperator';
 
 const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -21,8 +22,10 @@ const Operators = () => {
 	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
 	const [selectedOperator, setSelectedOperator] = useState([]);
 	const [operators, setOperators] = useState([]);
+	const [filteredOperators, setFilteredOperators] = useState([]);
 	const [, setLoading] = useState(true);
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
+	const [isDeleteSliderOpen, setIsDeleteSliderOpen] = useState(false);
 	const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
@@ -112,7 +115,16 @@ const Operators = () => {
 		setIsSliderOpen(true);
 	};
 
-	const handleViewDetailsClick = operatorId => {
+
+	//handling delete
+	const handleDeleteClick = operatorId => {
+		const operator = operators.find(o => o.id === operatorId);
+		setEditOperator(operator);
+		setIsDeleteSliderOpen(true);
+	};
+
+	const handleViewDetailsClick = (operatorId) => {
+
 		setSelectedOperator(operators.find(operator => operator.id === operatorId));
 
 		setCurrentView('RequestDetails');
@@ -124,7 +136,13 @@ const Operators = () => {
 		setIsSliderOpen(false);
 	};
 
-	const handleSaveEdit = (updatedOperator, onSuccess, onError) => {
+
+	const handleDeleteCancel = () => {
+		setEditOperator(null);
+		setIsDeleteSliderOpen(false);
+	};
+
+	const handleSaveEdit = updatedOperator => {
 		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
 		const options = {
 			method: 'PUT',
@@ -148,16 +166,41 @@ const Operators = () => {
 			});
 	};
 
+	const handleSaveDelete = updatedOperator => {
+		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
+		const options = {
+			method: 'DELETE',
+			headers: {
+					'Content-Type': 'application/json',
+				},
+			};
+
+		fetch(url, options)
+			.then(response => response.json())
+			.then(() => {
+				setIsDeleteSliderOpen(false);
+				setFilteredOperators(filteredOperators => filteredOperators.filter(operator => operator.id !== updatedOperator.id));
+				setEditOperator(null);
+				setSuccessMsg('Operator deleted successfully!');
+			})
+			.catch(error => {
+				console.error('Error updating operator:', error);
+			});
+	};
+
 	//handling search by driver name or contact
-	const filteredOperators = operators.filter(operator => {
-		if (!search) return true;
+	useEffect(() => {
+		const filteredOperators = operators.filter(operator => {
+			if (!search) return true;
 
-		const searchQuery = search.toLowerCase();
-		const phone = operator.o_phone ? operator.o_phone.toString() : '';
-		const localFormat = phone.startsWith('254') ? '0' + phone.slice(3) : phone;
+			const searchQuery = search.toLowerCase();
+			const phone = operator.o_phone ? operator.o_phone.toString() : '';
+			const localFormat = phone.startsWith('254') ? '0' + phone.slice(3) : phone;
 
-		return operator.o_name?.toLowerCase().includes(searchQuery) || phone.includes(searchQuery) || localFormat.includes(searchQuery);
-	});
+			return operator.o_name?.toLowerCase().includes(searchQuery) || phone.includes(searchQuery) || localFormat.includes(searchQuery);
+		});
+		setFilteredOperators(filteredOperators);
+	}, [search, operators]);
 
 	const AssetView = () => (
 		<Stack spacing={2}>
@@ -280,7 +323,9 @@ const Operators = () => {
 
 						<Box>
 							{filteredOperators.length > 0 ? (
-								<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} />
+
+								<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onDeleteClick={handleDeleteClick} />
+
 							) : (
 								<TableRow>
 									<TableCell align='center' colSpan={7}>
@@ -296,6 +341,7 @@ const Operators = () => {
 
 				<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 				{editOperator && isSliderOpen && <EditOperatorDetails selectedOperator={editOperator} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
+				{editOperator && isDeleteSliderOpen && <DeleteOperator selectedOperator={editOperator} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
 			</Container>
 		</Stack>
 	);
