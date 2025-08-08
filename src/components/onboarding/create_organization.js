@@ -140,7 +140,8 @@ const CreateOrganizationPage = () => {
       value={formData.org_country}
       onChange={handleChange}
     >
-      {['Ghana', 'Kenya', 'Ethiopia' , 'Nigeria', 'Uganda', 'Tanzania', 'USA', 'Other'].map((country) => (
+      {['Ghana', 'Kenya', 'Ethiopia', 'Nigeria', 'Uganda', 'Tanzania', 'USA', 'Other',
+        'South Africa', 'Rwanda', 'Burundi', 'Zambia', 'Zimbabwe', 'Malawi', 'South Sudan'].map((country) => (
         <MenuItem key={country} value={country}>
           {country}
         </MenuItem>
@@ -159,7 +160,8 @@ const CreateOrganizationPage = () => {
       value={formData.org_currency}
       onChange={handleChange}
     >
-      {['Cedis', 'Kes','Br' ,'Naira', 'ush', 'tsh', 'usd'].map((currency) => (
+      {['Cedis', 'Kes', 'Br', 'Naira', 'Ush', 'Tsh', 'USD',
+        'Rand', 'Rwf', 'Bif', 'Zambian Kwacha', 'ZWL', 'Malawian Kwacha', 'SSP', 'EUR'].map((currency) => (
         <MenuItem key={currency} value={currency}>
           {currency}
         </MenuItem>
