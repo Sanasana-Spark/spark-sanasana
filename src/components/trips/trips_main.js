@@ -30,7 +30,7 @@ const Trips = () => {
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   useEffect(() => {
     if (org_id && user_id) {
-    fetch(`${baseURL}/trips/${org_id}/${user_id}/`)
+    fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=new`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -38,9 +38,7 @@ const Trips = () => {
         return response.json();
       })
       .then((data) => {
-        setTrips(data.filter((trip) => ["In-Progress", "Pending", "Requested"].includes(trip.t_status)));
-
-
+        setTrips(data);
         setLoading(false);
       })
       .catch((error) => {
@@ -220,10 +218,11 @@ flex: 1,
       </Box>
 
    
-      <AssetsTable
+  <AssetsTable
         trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
+    
     
 
 
