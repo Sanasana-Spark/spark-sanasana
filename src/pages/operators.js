@@ -142,7 +142,7 @@ const Operators = () => {
 		setIsDeleteSliderOpen(false);
 	};
 
-	const handleSaveEdit = updatedOperator => {
+	const handleSaveEdit = (updatedOperator, onSuccess, onError) => {
 		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
 		const options = {
 			method: 'PUT',
