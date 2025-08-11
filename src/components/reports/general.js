@@ -1,119 +1,136 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { CSVLink } from 'react-csv';
 import { useAuthContext } from '../onboarding/authProvider';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { PDFDownloadLink, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { Box, Button, Typography, TextField, Stack, CircularProgress } from '@mui/material';
+import { Box, Button, Typography, TextField, Stack, Table, TableHead, TableRow, TableCell, TableBody, Modal } from '@mui/material';
 
 const Reports = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
 	const { org_id, user_id } = useAuthContext();
-
-	const [reports, setReports] = useState({
-		trips_listing: [],
-		assets_listing: [],
-		operators_listing: [],
-		tripsByOperator: [],
-		FuelExpenseReport: [],
-		maintenance_listing: [],
-	});
 	const [loading, setLoading] = useState(false);
-
 	const today = new Date();
 	const thirtyDaysAgo = new Date();
 	thirtyDaysAgo.setDate(today.getDate() - 30);
-
 	const formatDate = date => date.toISOString().split('T')[0];
 
 	const [startDate, setStartDate] = useState(formatDate(thirtyDaysAgo));
 	const [endDate, setEndDate] = useState(formatDate(today));
-	const [previewReport, setPreviewReport] = useState(null);
+	const [previewUrl, setPreviewUrl] = useState(null);
+	const [fileType, setFileType] = useState('excel');
+	const [reportData, setReportData] = useState([]);
+	const [activeReport, setActiveReport] = useState(null);
+
+	const reports_urls_param = [
+		{id:1, report_name: "trip_listing_report", url: `${baseURL}/reports/${org_id}/trip-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:2, report_name: "assets_listing_report", url: `${baseURL}/reports/${org_id}/assets-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:3, report_name: "new_assets_report", url: `${baseURL}/reports/${org_id}/new-asset-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:4, report_name: "fuel_requests_expense_report", url: `${baseURL}/reports/${org_id}/fuel-requests-expense/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:5, report_name: "maintenance_listing_report", url: `${baseURL}/reports/${org_id}/maintenance-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:6, report_name: "operators_listing_report", url: `${baseURL}/reports/${org_id}/operators-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+		{id:7, report_name: "new_operators_listing_report", url: `${baseURL}/reports/${org_id}/new-operators-listing/`,
+		params: {start_date: startDate, end_date: endDate, export:fileType } },
+	];
 
 	useEffect(() => {
-		fetchReports();
-		// eslint-disable-next-line
-	}, []);
-
-	const fetchReports = async () => {
-		if (!org_id) {
-			console.error('Organization ID is not available');
-			return;
+		if (org_id && reports_urls_param.length > 0) {
+			setActiveReport(reports_urls_param[0]);
 		}
+	}, [org_id]);
 
+	useEffect(() => {
+		if (activeReport) {
+			fetchReport();
+		}
+	}, [activeReport]);
+
+	const fetchReport = async () => {
+		if (!activeReport) return;
 		setLoading(true);
 
-		try {
-			const tripsResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
-				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
-			});
-			const assetsResponse = await axios.get(`${baseURL}/assets/reports/${org_id}`, {
-				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
-			});
-			const operatorsResponse = await axios.get(`${baseURL}/operators/reports/${org_id}`, {
-				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
-			});
-			const tripsByOperatorResponse = await axios.get(`${baseURL}/trips/reports/${org_id}`, {
-				params: { organization_id: org_id, start_date: startDate, end_date: endDate },
-			});
-			const fuel_expenseReport = await axios.get(`${baseURL}/fuel/${org_id}/${user_id}/report/`, {
-				params: { start_date: startDate, end_date: endDate },
-			});
-			const maintenanceResponse = await axios.get(`${baseURL}/maintenances/report/${org_id}/${user_id}/`, {
-				params: { start_date: startDate, end_date: endDate },
+		// Build query string from params
+		const params = new URLSearchParams();
+		Object.entries(activeReport.params).forEach(([key, value]) => {
+			if (typeof value === 'object') {
+				Object.entries(value).forEach(([subKey, subValue]) => {
+					params.append(`${key}[${subKey}]`, subValue);
+				});
+			} else {
+				params.append(key, value);
+			}
+		});
+
+		const urlWithParams = `${activeReport.url}?${params.toString()}`;
+		fetch(urlWithParams)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Network response was not ok");
+				}
+				return response.json();
+			})
+			.then(data => {
+				setReportData(data);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error("Error fetching report:", error);
+				setLoading(false);
 			});
 
-			setReports({
-				trips_listing: Array.isArray(tripsResponse.data) ? tripsResponse.data : [],
-				assets_listing: Array.isArray(assetsResponse.data) ? assetsResponse.data : [],
-				operators_listing: Array.isArray(operatorsResponse.data) ? operatorsResponse.data : [],
-				tripsByOperator: Array.isArray(tripsByOperatorResponse.data) ? tripsByOperatorResponse.data : [],
-				FuelExpenseReport: Array.isArray(fuel_expenseReport.data) ? fuel_expenseReport.data : [],
-				maintenance_listing: Array.isArray(maintenanceResponse.data) ? maintenanceResponse.data : [],
-			});
-		} catch (error) {
-			console.error('Error fetching reports:', error);
-		} finally {
-			setLoading(false);
+	};
+
+	const buildReportUrl = (report, fileType) => {
+		const params = new URLSearchParams({
+			...report.params,
+			export: fileType,
+			start_date: startDate,
+			end_date: endDate
+		});
+		return `${report.url}?${params.toString()}`;
+	};
+	const handleDownload = (id, fileType) => {
+		const report = reports_urls_param.find(r => r.id === id);
+		if (report) {
+			const updatedReport = {
+				...report,
+				params: {
+					...report.params,
+					export: fileType
+				}
+			};
+			setActiveReport(updatedReport);
+			const downloadUrl = buildReportUrl(report, fileType);
+			// Trigger browser download by opening in a new tab
+			window.open(downloadUrl, "_blank");
 		}
 	};
 
-	const generatePDF = (reportData, reportName) => {
-		const doc = new jsPDF();
-		doc.setFontSize(16);
-		doc.text(`${reportName} Report`, 14, 15);
+	const handlePreview = (id, fileType) => {
+		const report = reports_urls_param.find(r => r.id === id);
+		if (!report) return;
 
-		if (reportData.length > 0) {
-			const columns = Object.keys(reportData[0]).map(col => col.replace(/_/g, ' ').toUpperCase());
-			const rows = reportData.map(item => Object.values(item));
+		const url = buildReportUrl(report, fileType);
 
-			autoTable(doc, {
-				head: [columns],
-				body: rows,
-				startY: 25,
-				styles: { fontSize: 10, cellPadding: 3 },
-				headStyles: { fillColor: [44, 62, 80], textColor: 255, fontStyle: 'bold' },
-			});
-		} else {
-			doc.text('No data available', 14, 25);
-		}
+		setLoading(true);
+		fetch(url)
+			.then(res => {
+			if (!res.ok) throw new Error("Failed to fetch PDF");
+			return res.blob();
+			})
+			.then(blob => {
+			const fileURL = URL.createObjectURL(blob);
+			setPreviewUrl(fileURL); // now iframe can use it
+			})
+			.catch(err => console.error("Error fetching PDF preview:", err))
+			.finally(() => setLoading(false));
+		};
+		console.log('Preview URL:', previewUrl);
 
-		doc.save(`${reportName}_report.pdf`);
-	};
-
-	const ReportPDF = ({ report }) => (
-		<Document>
-			<Page size='A4' style={styles.page}>
-				<View style={styles.section}>
-					<Text>Report ID: {report.id}</Text>
-					<Text>Details: {JSON.stringify(report, null, 2)}</Text>
-				</View>
-			</Page>
-		</Document>
-	);
-
+  	
 	return (
 		<Box sx={{ p: 4 }}>
 			<Stack direction='row' spacing={2} alignItems='center' mb={4}>
@@ -121,74 +138,50 @@ const Reports = () => {
 				<TextField type='date' size='small' value={startDate} onChange={e => setStartDate(e.target.value)} />
 				<Typography>End Date:</Typography>
 				<TextField type='date' size='small' value={endDate} onChange={e => setEndDate(e.target.value)} />
-				<Button variant='contained' onClick={fetchReports} disabled={loading}>
+				{/* <Button variant='contained' onClick={fetchReports} disabled={loading}>
 					{loading ? 'Loading...' : 'Refresh Reports'}
-				</Button>
+				</Button> */}
 			</Stack>
 
-			{loading ? (
-				<Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-					<CircularProgress />
-				</Box>
-			) : (
-				Object.entries(reports).map(([key, data]) => (
-					<Box
-						key={key}
-						sx={{
-							mb: 4,
-							p: 2,
-							border: '1px solid #ddd',
-							borderRadius: 2,
-						}}
-					>
-						<Typography variant='h6' fontWeight='bold' gutterBottom>
-							{key.replace(/([A-Z])/g, ' $1')}
-						</Typography>
+			   {/* Reports List */}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell><strong>Report Name</strong></TableCell>
+            <TableCell><strong>Actions</strong></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {reports_urls_param.map(r => (
+            <TableRow key={r.id}>
+              <TableCell>{r.report_name}</TableCell>
+            
+              <TableCell>
+                <Button onClick={() => handleDownload(r.id, 'pdf')}>PDF↓</Button>
+                <Button onClick={() => handleDownload(r.id, 'excel')}>XLSX↓</Button>
+				<Button onClick={() => handlePreview(r.id, 'pdf')}></Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
 
-						{Array.isArray(data) && data.length > 0 ? (
-							<Button variant='outlined' color='success' size='small' sx={{ mt: 1 }}>
-								<CSVLink data={data} filename={`${key}_report.csv`} style={{ textDecoration: 'none', color: 'inherit' }}>
-									Download CSV
-								</CSVLink>
-							</Button>
-						) : (
-							<Typography variant='body2' color='text.secondary' sx={{ mt: 1 }}>
-								No data to download
-							</Typography>
-						)}
+      {/* Preview Modal */}
+      {previewUrl && (
+        <Modal onClose={() => setPreviewUrl(null)}>
+          <Box sx={{ p: 2, backgroundColor: '#fff', width: '80%', height: '80%', margin: 'auto', mt: 4 }}>
+      <iframe
+        src={previewUrl}
+        width="100%"
+        height="100%"
+        style={{ border: 'none' }}
+      />
+    </Box>
+        </Modal>
+      )}
 
-						{/* Uncomment to enable PDF download
-						<Button
-							variant="outlined"
-							color="error"
-							size="small"
-							onClick={() => generatePDF(data, key)}
-							sx={{ ml: 2 }}
-						>
-							Download PDF
-						</Button>
-						*/}
-					</Box>
-				))
-			)}
-
-			{previewReport && (
-				<Box sx={{ mt: 4, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-					<Typography variant='h6' fontWeight='bold' gutterBottom>
-						PDF Preview for Report ID: {previewReport.id}
-					</Typography>
-					<PDFDownloadLink document={<ReportPDF report={previewReport} />} fileName={`report_${previewReport.id}.pdf`}>
-						{({ loading }) => (loading ? 'Loading preview...' : 'Download PDF Preview')}
-					</PDFDownloadLink>
-				</Box>
-			)}
 		</Box>
 	);
 };
-
-const styles = StyleSheet.create({
-	page: { padding: 20 },
-	section: { marginBottom: 10 },
-});
 
 export default Reports;
