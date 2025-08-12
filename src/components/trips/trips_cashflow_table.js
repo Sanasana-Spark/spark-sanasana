@@ -14,13 +14,14 @@ import {
   DialogContent,
   DialogActions,TextField,
   Typography,
-  MenuItem
+  MenuItem,
+  Box,
 } from "@mui/material";
 import { useAuthContext } from "../onboarding/authProvider";
 
 const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_id, userId, org_currency, user_id } = useAuthContext();
+  const { org_id, org_currency, user_id } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [showFuelRequestForm, setShowFuelRequestForm] = useState(false);
   const [addIncomeForm, setAddIncomeForm] = useState(false);
@@ -34,8 +35,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const [, setError] = useState(null);
   const [clientOptions, setClientOptions] = useState([]);
   const [saving, setSaving] = useState(false);
-
-
+  const [fuelRequest, setFuelRequest] = useState({});
 
   useEffect(() => {
     if (org_id && user_id) {
@@ -56,6 +56,23 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
         setLoading(false);
       });
   }}, [ baseURL, org_id, user_id]);
+
+  useEffect(() => {
+    if (selectedtrip && showFuelRequestForm) {
+      const url = `${baseURL}/trips/fuel_request/${org_id}/${user_id}/${selectedtrip.id}/`;
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          setFuelRequest(data);
+        })
+        .catch(error => {
+          console.error('Error fetching fuel request:', error);
+        });
+    }
+  }, [selectedtrip, org_id, user_id,baseURL, showFuelRequestForm]);
 
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => ({
@@ -110,7 +127,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
     try {
       const response = await fetch(
-        `${baseURL}/trips/approve_request/${org_id}/${userId}/`,
+        `${baseURL}/trips/approve_request/${org_id}/${user_id}/`,
         {
           method: "POST",
           headers: {
@@ -126,6 +143,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
       setSuccess("Approval submitted successfully!");
       setShowFuelRequestForm(false);
+      setFuelRequest({});
       reloadtrips();
       setSaving(false);
     } catch (err) {
@@ -148,7 +166,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
     }
     try {
       const response = await fetch(
-        `${baseURL}/trips/income/${org_id}/${userId}/${selectedtrip.id}/`,
+        `${baseURL}/trips/income/${org_id}/${user_id}/${selectedtrip.id}/`,
         {
           method: "POST",
           headers: {
@@ -183,7 +201,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
     }
     try {
       const response = await fetch(
-        `${baseURL}/trips/expense/${org_id}/${userId}/${selectedtrip.id}/`,
+        `${baseURL}/trips/expense/${org_id}/${user_id}/${selectedtrip.id}/`,
         {
           method: "POST",
           headers: {
@@ -348,13 +366,49 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
       />
 
       <Dialog open={showFuelRequestForm} fullWidth>
-        <DialogTitle>Approve Request</DialogTitle>
+        <DialogTitle> <strong> Approve Fuel Request for {selectedtrip.a_license_plate}</strong> </DialogTitle>
         <DialogContent>
-          <Typography> This is a fuel request by {selectedtrip.o_name} for asset {selectedtrip.a_license_plate} </Typography>
+           <Box sx={{ mb: 3 }}>
+             <Typography><strong>Driver:</strong> {selectedtrip.o_name}</Typography>
+            <Typography><strong>Distance:</strong> {selectedtrip.t_distance} </Typography>
+
+          {/* <Typography> Driver {selectedtrip.o_name} requested fuel for {selectedtrip.a_license_plate} </Typography>
           <Typography>Distance: {selectedtrip.t_distance} </Typography>
-          
+           */}
+           </Box>
+
+           {/* Fuel Estimate */}
+  <Box sx={{ mb: 3, p: 2, bgcolor: "#f9f9f9", borderRadius: 2 }}>
+    <Typography variant="h6" gutterBottom>⛽ Fuel Estimate</Typography>
+    {selectedtrip.a_efficiency_rate ? (
+      <>
+        <Typography>Fuel Economy: <strong>{selectedtrip.a_efficiency_rate} km/litre</strong></Typography>
+        <Typography>
+          Estimated Cost: <strong style={{ color: "var(--secondary-color)" }}> 
+           {fuelRequest.f_estimated_cost ? (<>{fuelRequest.f_estimated_cost} {org_currency}</>) : "fetching..."}
+            </strong>
+        </Typography>
+        <Typography>Estimated Litres:  {fuelRequest.f_estimated_litres ? <strong>{fuelRequest.f_estimated_litres}</strong> : "fetching..."}</Typography>
+      </>
+    ) : (
+      <>
+        <Typography>Default Fuel Economy: <strong>4 km/litre</strong></Typography>
+        <Typography>
+          Estimated Cost: <strong style={{ color: "#d32f2f" }}>
+            {fuelRequest ? (<>{fuelRequest.f_estimated_cost} {org_currency}</>) : "fetching..."}</strong>
+        </Typography>
+        <Typography variant="body2" color="textSecondary">
+          Please update the fuel economy for {selectedtrip.a_license_plate} for more accurate estimates.
+        </Typography>
+      </>
+    )}
+  </Box>
+
+
+         
+          <Typography variant="h6" gutterBottom>💵 Disbursement</Typography>
           <TextField
-        label="Amt disbursed"
+        label="Amount to be disbursed"
         variant="outlined"
         type="number"
         fullWidth
@@ -370,6 +424,7 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
           <Button onClick={() => {
             setShowFuelRequestForm(false)
             setSaving(false);
+            setFuelRequest({}); // Reset fuel request state
             }}  >Cancel</Button>
           <Button variant="contained" color="primary"
           sx={{ backgroundColor: "var(--secondary-color)", color: "white" }}

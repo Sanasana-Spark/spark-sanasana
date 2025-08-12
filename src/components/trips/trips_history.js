@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import AssetsTable from "./tripsTable"
+import AssetsTable from "./trips_history_table";
 import AddAssetForm from "./addTripMap";
 import AssetDetails from "./tripDetails";
 import { useAuthContext } from '../onboarding/authProvider';
