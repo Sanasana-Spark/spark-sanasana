@@ -52,7 +52,8 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
             <TableCell>Odometer Distance</TableCell>
             <TableCell>Expected Duration</TableCell>
             <TableCell>Actual Duration</TableCell>
-            <TableCell>Origin</TableCell>           
+            <TableCell>Carbon Emissions</TableCell>
+            <TableCell>Origin</TableCell>
             <TableCell>Destination</TableCell>
           </TableRow>
         </TableHead>
@@ -118,6 +119,7 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
                   return `${hours}h ${minutes}m`;
                 })()}
               </TableCell>
+              <TableCell>{trip.t_carbon_emission != null ? `${trip.t_carbon_emission} kg` : '—'}</TableCell>
                <TableCell>{trip.t_origin_place_query}</TableCell>
               <TableCell>{trip.t_destination_place_query}</TableCell>
             </TableRow>
