@@ -2,7 +2,7 @@
 import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography, Box } from "@mui/material";
 import Loader from "../loader";
-import Map from "../maps/singleTripMap";
+import Map from "../maps/singleTripMarkedMap";
 //  import Map1 from "../maps/newmap";
 
 
@@ -63,6 +63,7 @@ const PropCard = ({ selectedAsset }) => {
                 destination={destination}
                 key={asset.id}
                 center={start}
+                tripid={asset.id}
               />
             </Box>
 
