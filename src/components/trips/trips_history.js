@@ -4,9 +4,9 @@ import React, { useEffect, useState } from "react";
 import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
-import AssetsTable from "./trips_history_table";
-import AddAssetForm from "./addTripMap";
-import AssetDetails from "./tripDetails";
+import TripsTable from "./trips_history_table";
+import AddTripForm from "./addTripMap";
+import TripDetails from "./tripDetails";
 import { useAuthContext } from '../onboarding/authProvider';
 import {
   Container,
@@ -100,7 +100,7 @@ const Trips = () => {
         console.error("Error adding trip:", error);
       });
   };
-  const selectedAsset = trips.filter(
+  const selectedTrip = trips.filter(
     (trip) => trip["id"] === selectedTicket
   );
 
@@ -180,7 +180,7 @@ flex: 1,
       </Box>
 
   
-      <AssetsTable
+      <TripsTable
         trips={trips}
         onViewUnitsClick={handleViewDetailsClick}
       />
@@ -192,7 +192,7 @@ flex: 1,
 
 </Box>
 
-<AddAssetForm
+<AddTripForm
   open={showAddPropertyForm}
   onSubmit={handleSubmit}
   onCancel={handleCancel}
@@ -204,7 +204,7 @@ flex: 1,
 
   );
 
-  const DetailView = ({ selectedAsset, isOpen }) => (
+  const DetailView = ({ selectedTrip, isOpen }) => (
     <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
 
       <Box>
@@ -292,7 +292,7 @@ flex: 1,
           </Box>
 
           <Box>
-            <AssetsTable
+            <TripsTable
               trips={trips}
               onViewUnitsClick={handleViewDetailsClick}
             />
@@ -302,13 +302,13 @@ flex: 1,
 
         <div className={`slider ${isOpen ? "open" : ""}`}>
           <Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
-          <AssetDetails selectedAsset={selectedAsset} />
+          <TripDetails selectedTrip={selectedTrip} />
           </Box>
         </div>
 
     
 
-      <AddAssetForm
+      <AddTripForm
         open={showAddPropertyForm}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
@@ -349,7 +349,7 @@ flex: 1,
           <>
          
           <DetailView
-          selectedAsset={selectedAsset}
+          selectedTrip={selectedTrip}
           isOpen={isSliderOpen}
           />
           </>
