@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 // import actionicon from "../../trips/actionicon.svg"
 
-const AssetsTable = ({ trips, onViewUnitsClick }) => {
+const TripsTable = ({ trips, onViewUnitsClick }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0); // Track the current page
@@ -110,4 +110,4 @@ const AssetsTable = ({ trips, onViewUnitsClick }) => {
   );
 };
 
-export default AssetsTable;
+export default TripsTable;
