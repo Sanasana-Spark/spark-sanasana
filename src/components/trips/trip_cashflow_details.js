@@ -2,17 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Card, CardContent, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import Loader from "../loader";
-import Map from "../maps/singleTripMap";
+import Map from "../maps/singleTripMarkedMap";
 import { useAuthContext } from '../onboarding/authProvider';
 
-const PropCard = ({ selectedAsset }) => {
+const PropCard = ({ selectedTrip }) => {
   const baseURL = process.env.REACT_APP_BASE_URL
   const {org_id, user_id , org_currency } = useAuthContext();
   const [tripIncome, setTripIncome] = useState([]);
   const [tripExpense, setTripExpense] = useState([]);
   const [tripSummary, setTripSummary] = useState([]);
   const [loading, setLoading] = useState(true);
-  const trip_id  = selectedAsset[0]?.id;
+  const trip_id  = selectedTrip[0]?.id;
 
   useEffect(() => {
       if (org_id && user_id && trip_id) {
@@ -78,15 +78,15 @@ const PropCard = ({ selectedAsset }) => {
 
   return (
     <div>
-      {selectedAsset.map((asset) => {
-        const startLat = parseFloat(asset.t_start_lat);
-        const startLong = parseFloat(asset.t_start_long);
+      {selectedTrip.map((trip) => {
+        const startLat = parseFloat(trip.t_start_lat);
+        const startLong = parseFloat(trip.t_start_long);
         const start = { lat: startLat, lng: startLong };
-        const origin = asset.t_origin_place_query;
-        const destination = asset.t_destination_place_query;
+        const origin = trip.t_origin_place_query;
+        const destination = trip.t_destination_place_query;
 
         return (
-          <Box key={asset.id}
+          <Box key={trip.id}
           sx={{ 
             backgroundColor: "#F9FAFB", // Light gray background
             boxShadow: 2, // Adds a slight shadow
@@ -96,12 +96,12 @@ const PropCard = ({ selectedAsset }) => {
           }}
           >
             <Typography variant="h6" fontWeight="bold">
-                      {asset.a_license_plate} ({asset.a_make} - {asset.a_model})
+                      {trip.a_license_plate} ({trip.a_make} - {trip.a_model})
                     </Typography>
 
             {/* Minimized Map */}
             <Box sx={{  marginBottom: 2 }}>
-              <Map origin={origin} destination={destination} center={start} />
+              <Map origin={origin} destination={destination} center={start} tripid={trip.id} />
             </Box>
 
             <Grid container spacing={2}>

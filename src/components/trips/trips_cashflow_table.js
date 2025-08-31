@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { useAuthContext } from "../onboarding/authProvider";
 
-const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
+const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
   const { org_id, org_currency, user_id } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
@@ -619,4 +619,4 @@ const AssetsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   );
 };
 
-export default AssetsTable;
+export default TripsTable;

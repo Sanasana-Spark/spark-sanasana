@@ -97,8 +97,8 @@ const Trips = () => {
         console.error("Error adding trip:", error);
       });
   };
-  const selectedAsset = trips.filter(
-    (asset) => asset["id"] === selectedTicket
+  const selectedTrip = trips.filter(
+    (trip) => trip["id"] === selectedTicket
   );
 
   const handleCancel = () => {
@@ -239,7 +239,7 @@ flex: 1,
 
   );
 
-  const DetailView = ({ selectedAsset, isOpen }) => (
+  const DetailView = ({ selectedTrip, isOpen }) => (
     // <Container width="100%"  sx={{ fontFamily: "var(--font-family)", padding: 1 }}>
     <Container maxWidth="xl" disableGutters sx={{ padding: { xs: 1, sm: 2 } }}>
 
@@ -297,7 +297,7 @@ flex: 1,
 
         <div className={`slider ${isOpen ? "open" : ""}`}>
           <Box sx={{ fontFamily: "var(--font-family)", padding: 1, position:"fixed", right:0, width:"40vw" }}>        
-          <AssetDetails selectedAsset={selectedAsset} />
+          <AssetDetails selectedTrip={selectedTrip} />
           </Box>
         </div>
 
@@ -344,7 +344,7 @@ flex: 1,
           <>
          
           <DetailView
-          selectedAsset={selectedAsset}
+          selectedTrip={selectedTrip}
           isOpen={isSliderOpen}
           />
           </>
