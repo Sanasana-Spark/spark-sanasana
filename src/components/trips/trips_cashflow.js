@@ -6,7 +6,7 @@ import Reorder from '@mui/icons-material/Reorder';
 import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault';
 import TripsTable from './trips_cashflow_table';
 import AddTripForm from './addTripMap';
-import AssetDetails from './trip_cashflow_details';
+import TripDetails from './trip_cashflow_details';
 import { useAuthContext } from '../onboarding/authProvider';
 import { Container, Box, IconButton, TextField } from '@mui/material';
 import { Search } from '@mui/icons-material';
@@ -59,7 +59,7 @@ const Trips = () => {
 			.catch(error => console.error('Error adding trip:', error));
 	};
 
-	const selectedAsset = trips.filter(asset => asset['id'] === selectedTicket);
+	const selectedTrip = trips.filter(asset => asset['id'] === selectedTicket);
 	const handleCancel = () => setShowAddPropertyForm(false);
 	const AssetView = () => (
 		<Container maxWidth='xl' disableGutters sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column', overflow: 'scroll', flex: 1 }}>
@@ -111,7 +111,7 @@ const Trips = () => {
 		</Container>
 	);
 
-	const DetailView = ({ selectedAsset, isOpen }) => (
+	const DetailView = ({ selectedTrip, isOpen }) => (
 		<Container maxWidth='xl' disableGutters sx={{ padding: { xs: 1, sm: 2 } }}>
 			<Box sx={{ display: 'flex', padding: '15px 25px' }}>
 				<TextField
@@ -149,7 +149,7 @@ const Trips = () => {
 			</Box>
 			<div className={`slider ${isOpen ? 'open' : ''}`}>
 				<Box sx={{ fontFamily: 'var(--font-family)', padding: 1, position: 'fixed', right: 0, width: '40vw' }}>
-					<AssetDetails selectedAsset={selectedAsset} />
+					<TripDetails selectedTrip={selectedTrip} />
 				</Box>
 			</div>
 			<AddTripForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
@@ -169,7 +169,7 @@ const Trips = () => {
 			case 'TableView':
 				return <AssetView />;
 			case 'RequestDetails':
-				return <DetailView selectedAsset={selectedAsset} isOpen={isSliderOpen} />;
+				return <DetailView selectedTrip={selectedTrip} isOpen={isSliderOpen} />;
 			default:
 				return null;
 		}
