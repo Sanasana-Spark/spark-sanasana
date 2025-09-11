@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { UserButton } from "@clerk/clerk-react";
 import {
   IconButton,
@@ -29,7 +29,7 @@ import Logout from "@mui/icons-material/Logout";
 
 const TopBar = () => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_name, user_id } = useAuthContext();
+  const { org_name, apiFetch } = useAuthContext();
   const [notifications, setNotifications] = useState([]);
   const [tab, setTab] = useState(2);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -48,11 +48,13 @@ const accountOpen = Boolean(accountAnchorEl);
     setAccountAnchorEl(null);
   };
 
-  // Fetch notifications based on tab (all, read, unread)
-  const fetchNotifications = async (status = "unread") => {
+
+  const fetchNotifications = useCallback(async (status = "unread") => {
     try {
-      const apiUrl = `${baseURL}/notifications/${user_id}?status=${status}`;
-      const response = await fetch(apiUrl);
+      const apiUrl = `${baseURL}/notifications/?status=${status}`;
+       const response = await apiFetch(apiUrl, {
+        method: "GET",
+      });
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -61,7 +63,10 @@ const accountOpen = Boolean(accountAnchorEl);
     } catch (err) {
       console.error("Error fetching notifications", err);
     }
-  };
+  }, [apiFetch, baseURL]);
+
+
+
 
   useEffect(() => {
     // initial fetch with all
@@ -79,12 +84,11 @@ const accountOpen = Boolean(accountAnchorEl);
   };
 
   // Update status
-  const updateStatus = async (notification_id, status) => {
+  const updateStatus = useCallback(async (notification_id, status) => {
     try {
-      const apiUrl = `${baseURL}/notifications/${user_id}/update-status/`;
-      await fetch(apiUrl, {
+      const apiUrl = `${baseURL}/notifications/update-status/`;
+      await apiFetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notification_id: notification_id, status: status }),
       });
       // refresh current tab data
@@ -94,7 +98,7 @@ const accountOpen = Boolean(accountAnchorEl);
     } catch (err) {
       console.error("Error updating status", err);
     }
-  };
+  }, [apiFetch, tab, baseURL, fetchNotifications]);
 
   // Open notification dialog
   const handleOpenNotification = (notification) => {
