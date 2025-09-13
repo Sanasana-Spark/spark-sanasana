@@ -10,7 +10,7 @@ import { Box, Typography, TextField, Button, MenuItem, Select, InputLabel, FormC
 
 const Reports = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { org_id } = useAuthContext();
+	const { org_id, apiFetch } = useAuthContext();
 	const [reports, setReports] = useState({
 		trips_listing: [],
 		assets_listing: [],
@@ -35,7 +35,13 @@ const Reports = () => {
 
 		try {
 			const params = { organization_id: org_id, start_date: startDate, end_date: endDate, operator };
-			const [trips, assets, operators, tripsByOperator] = await Promise.all([axios.get(`${baseURL}/trips/reports/${org_id}`, { params }), axios.get(`${baseURL}/assets/reports/${org_id}`, { params }), axios.get(`${baseURL}/operators/reports/${org_id}`, { params }), axios.get(`${baseURL}/trips/reports/${org_id}`, { params })]);
+			const [trips, assets, operators, tripsByOperator] = await Promise.all(
+				[
+					apiFetch(`${baseURL}/trips/reports/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/assets/reports/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/operators/reports/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/trips/reports/`, { method: 'GET', params })
+				]);
 
 			setReports({
 				trips_listing: trips.data,

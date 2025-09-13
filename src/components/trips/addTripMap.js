@@ -30,8 +30,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { user_id } = useAuthContext();
-  const { org_id } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [operatorOptions, setOperatorOptions] = useState([]);
@@ -62,9 +61,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   },[]);
 
   useEffect(() => {
-    if (org_id && user_id) {
-    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
-    fetch(apiUrl)
+    const apiUrl = `${baseURL}/operators/`;
+    apiFetch(apiUrl, { method: "GET" })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -79,12 +77,11 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }}, [ baseURL, org_id, user_id, open]);
+  }, [ baseURL, apiFetch, open]);
 
   useEffect(() => {
-    if (org_id && user_id) {
-    const apiUrl = `${baseURL}/clients/${org_id}/${user_id}`;
-    fetch(apiUrl)
+    const apiUrl = `${baseURL}/clients/`;
+    apiFetch(apiUrl, { method: "GET" })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -99,7 +96,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }}, [ baseURL, org_id, user_id, open]);
+  }, [ baseURL, apiFetch, open]);
 
 
 

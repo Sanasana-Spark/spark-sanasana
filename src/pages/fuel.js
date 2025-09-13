@@ -5,7 +5,7 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 
 const Fuel = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { org_id, org_currency, user_id } = useAuthContext();
+	const { org_currency, apiFetch } = useAuthContext();
 
 	const [loading, setLoading] = useState(true);
 	console.log(loading);
@@ -21,23 +21,22 @@ const Fuel = () => {
 	const [filteredEntries, setFilteredEntries] = useState([]);
 
 	useEffect(() => {
-		if (org_id && user_id) {
-			const apiUrl = `${baseURL}/fuel/${org_id}/${user_id}`;
-			fetch(apiUrl)
-				.then(response => {
-					if (!response.ok) throw new Error('Network response was not ok');
-					return response.json();
-				})
-				.then(data => {
-					setFuelEntries(data);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-					setLoading(false);
-				});
-		}
-	}, [baseURL, org_id, user_id]);
+		const apiUrl = `${baseURL}/fuel/`;
+		apiFetch(apiUrl, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) throw new Error('Network response was not ok');
+				return response.json();
+			})
+			.then(data => {
+				setFuelEntries(data);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				setLoading(false);
+			});
+
+	}, [baseURL, apiFetch]);
 
 	useEffect(() => {
 		let filtered = fuelEntries;

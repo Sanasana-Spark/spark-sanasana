@@ -29,8 +29,7 @@ const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { user_id } = useAuthContext();
-  const { org_id } = useAuthContext();
+  const {apiFetch } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [operatorOptions, setOperatorOptions] = useState([]);
   const [, setAutocomplete] = useState(null);
@@ -59,9 +58,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   console.log(origin_lat)
 
   useEffect(() => {
-    if (org_id && user_id) {
-    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
-    fetch(apiUrl)
+    const apiUrl = `${baseURL}/operators/`;
+    apiFetch(apiUrl, { method: "GET" })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -76,7 +74,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }}, [ baseURL, org_id, user_id, open]);
+  }, [ baseURL, apiFetch, open]);
 
 
 

@@ -4,7 +4,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 
 	const [formData, setFormData] = useState({ id: selectedOperator?.id });
 	const [errors, setErrors] = useState({});
@@ -33,24 +33,22 @@ const EditOperatorDetails = ({ selectedOperator, onCancel, open, onSave }) => {
 
 	useEffect(() => {
 		if (!open) return;
-		if (org_id && user_id) {
-			const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
-			setLoading(true);
-			fetch(apiUrl)
-				.then(response => {
-					if (!response.ok) throw new Error('Network response was not ok');
-					return response.json();
-				})
-				.then(data => {
-					setAssetOptions(data.assets || []);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Error fetching assets:', error);
-					setLoading(false);
-				});
-		}
-	}, [org_id, user_id, open, baseURL]);
+		const apiUrl = `${baseURL}/assets/`;
+		setLoading(true);
+		apiFetch(apiUrl, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) throw new Error('Network response was not ok');
+				return response.json();
+			})
+			.then(data => {
+				setAssetOptions(data.assets || []);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error('Error fetching assets:', error);
+				setLoading(false);
+			});
+	}, [apiFetch, open, baseURL]);
 
 	const handleChange = e => {
 		const { name, value } = e.target;

@@ -21,7 +21,7 @@ import { useAuthContext } from "../onboarding/authProvider";
 
 const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { org_id, org_currency, user_id } = useAuthContext();
+  const { org_currency, apiFetch } = useAuthContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState({});
   const [showFuelRequestForm, setShowFuelRequestForm] = useState(false);
   const [addIncomeForm, setAddIncomeForm] = useState(false);
@@ -38,9 +38,8 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const [fuelRequest, setFuelRequest] = useState({});
 
   useEffect(() => {
-    if (org_id && user_id) {
-    const apiUrl = `${baseURL}/clients/${org_id}/${user_id}`;
-    fetch(apiUrl)
+    const apiUrl = `${baseURL}/clients/`;
+    apiFetch(apiUrl, { method: "GET" })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -55,12 +54,12 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }}, [ baseURL, org_id, user_id]);
+  }, [ baseURL, apiFetch]);
 
   useEffect(() => {
     if (selectedtrip && showFuelRequestForm) {
-      const url = `${baseURL}/trips/fuel_request/${org_id}/${user_id}/${selectedtrip.id}/`;
-      fetch(url)
+      const url = `${baseURL}/trips/fuel_request/${selectedtrip.id}/`;
+      apiFetch(url, { method: 'GET' })
         .then(response => {
           if (!response.ok) throw new Error('Network response was not ok');
           return response.json();
@@ -72,7 +71,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
           console.error('Error fetching fuel request:', error);
         });
     }
-  }, [selectedtrip, org_id, user_id,baseURL, showFuelRequestForm]);
+  }, [selectedtrip, apiFetch, baseURL, showFuelRequestForm]);
 
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => ({
@@ -126,13 +125,10 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
     }
 
     try {
-      const response = await fetch(
-        `${baseURL}/trips/approve_request/${org_id}/${user_id}/`,
+      const response = await apiFetch(
+        `${baseURL}/trips/approve_request/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(payload),
         }
       );
@@ -165,13 +161,10 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
       ti_amount: formData.ti_amount,
     }
     try {
-      const response = await fetch(
-        `${baseURL}/trips/income/${org_id}/${user_id}/${selectedtrip.id}/`,
+      const response = await apiFetch(
+        `${baseURL}/trips/income/${selectedtrip.id}/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(payload),
         }
       );
@@ -200,13 +193,10 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
       te_amount: formData.te_amount,
     }
     try {
-      const response = await fetch(
-        `${baseURL}/trips/expense/${org_id}/${user_id}/${selectedtrip.id}/`,
+      const response = await apiFetch(
+        `${baseURL}/trips/expense/${selectedtrip.id}/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(payload),
         }
       );
