@@ -4,7 +4,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 	const [saving, setSaving] = useState(false);
 	const [assetOptions, setAssetOptions] = useState([]);
 	const [loading, setLoading] = useState(true);
@@ -28,26 +28,23 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
 
 	useEffect(() => {
 		if (!open) return; // Only fetch when dialog is open
-		if (org_id && user_id) {
-			const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
-			setLoading(true);
-			fetch(apiUrl)
-				.then(response => {
-					if (!response.ok) throw new Error('Network response was not ok');
-					return response.json();
-				})
-				.then(data => {
-					setAssetOptions(data.assets || []);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Error fetching assets:', error);
-					setLoading(false);
-				});
-		}
+		const apiUrl = `${baseURL}/assets/`;
+		setLoading(true);
+		apiFetch(apiUrl, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) throw new Error('Network response was not ok');
+				return response.json();
+			})
+			.then(data => {
+				setAssetOptions(data.assets || []);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error('Error fetching assets:', error);
+				setLoading(false);
+			});
 	},
-	// eslint-disable-next-line
-	 [org_id, user_id, open]);
+	 [apiFetch, baseURL, open]);
 
 	const handleChange = e => {
 		const { name, value } = e.target;

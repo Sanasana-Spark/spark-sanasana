@@ -5,7 +5,7 @@ import { Box, Button, Typography, TextField, Stack, Table, TableHead, TableRow, 
 
 const Reports = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { org_id, user_id } = useAuthContext();
+	const { org_id, apiFetch } = useAuthContext();
 	const [loading, setLoading] = useState(false);
 	const today = new Date();
 	const thirtyDaysAgo = new Date();
@@ -20,19 +20,19 @@ const Reports = () => {
 	const [activeReport, setActiveReport] = useState(null);
 
 	const reports_urls_param = [
-		{id:1, report_name: "trip_listing_report", url: `${baseURL}/reports/${org_id}/trip-listing/`,
+		{id:1, report_name: "trip_listing_report", url: `${baseURL}/reports/trip-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:2, report_name: "assets_listing_report", url: `${baseURL}/reports/${org_id}/assets-listing/`,
+		{id:2, report_name: "assets_listing_report", url: `${baseURL}/reports/assets-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:3, report_name: "new_assets_report", url: `${baseURL}/reports/${org_id}/new-asset-listing/`,
+		{id:3, report_name: "new_assets_report", url: `${baseURL}/reports/new-asset-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:4, report_name: "fuel_requests_expense_report", url: `${baseURL}/reports/${org_id}/${user_id}/fuel-requests-expense/`,
+		{id:4, report_name: "fuel_requests_expense_report", url: `${baseURL}/reports/fuel-requests-expense/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:5, report_name: "maintenance_listing_report", url: `${baseURL}/reports/${org_id}/${user_id}/maintenance-listing/`,
+		{id:5, report_name: "maintenance_listing_report", url: `${baseURL}/reports/maintenance-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:6, report_name: "operators_listing_report", url: `${baseURL}/reports/${org_id}/operators-listing/`,
+		{id:6, report_name: "operators_listing_report", url: `${baseURL}/reports/operators-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
-		{id:7, report_name: "new_operators_listing_report", url: `${baseURL}/reports/${org_id}/new-operators-listing/`,
+		{id:7, report_name: "new_operators_listing_report", url: `${baseURL}/reports/new-operators-listing/`,
 		params: {start_date: startDate, end_date: endDate, export:fileType } },
 	];
 
@@ -65,7 +65,7 @@ const Reports = () => {
 		});
 
 		const urlWithParams = `${activeReport.url}?${params.toString()}`;
-		fetch(urlWithParams)
+		apiFetch(urlWithParams, { method: 'GET' })
 			.then(response => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");

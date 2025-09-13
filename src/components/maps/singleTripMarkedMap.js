@@ -9,7 +9,7 @@ const libraries = ["places", "marker"];
 
 const DirectionsMap = ({ origin, destination, center, tripid }) => {
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { user_id, org_id } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [driverLocations, setDriverLocations] = useState([]);
@@ -68,8 +68,7 @@ const DirectionsMap = ({ origin, destination, center, tripid }) => {
   );
 
   useEffect(() => {
-      if (org_id && user_id) {
-      fetch(`${baseURL}/trips/location/${org_id}/${user_id}/${tripid}`)
+      apiFetch(`${baseURL}/trips/location/${tripid}`, { method: 'GET' })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -84,7 +83,7 @@ const DirectionsMap = ({ origin, destination, center, tripid }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-  }},[baseURL,org_id, user_id, tripid] );
+  },[baseURL,apiFetch, tripid] );
 
   const driverPath = driverLocations.map(loc => ({
     lat: loc.or_latitude,

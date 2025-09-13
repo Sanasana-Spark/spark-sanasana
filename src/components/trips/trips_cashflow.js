@@ -13,7 +13,7 @@ import { Search } from '@mui/icons-material';
 
 const Trips = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView');
 	const [selectedTicket, setSelectedTicket] = useState([]);
 	const [trips, setTrips] = useState([]);
@@ -23,34 +23,32 @@ const Trips = () => {
 	const [refesh, setRefesh] = useState(false);
 
 	useEffect(() => {
-		if (org_id && user_id) {
-			fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=pending-approval`)
-				.then(response => {
-					if (!response.ok) throw new Error('Network response was not ok');
-					return response.json();
-				})
-				.then(data => {
-					setTrips(data);
-					setLoading(false);
-					setRefesh(false);
-				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-					setLoading(false);
-					setRefesh(false);
-				});
-		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm, refesh]);
+		apiFetch(`${baseURL}/trips/?state=pending-approval`, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) throw new Error('Network response was not ok');
+				return response.json();
+			})
+			.then(data => {
+				setTrips(data);
+				setLoading(false);
+				setRefesh(false);
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				setLoading(false);
+				setRefesh(false);
+			});
+		
+	}, [baseURL, apiFetch, showAddPropertyForm, refesh]);
 
 	const handleSubmit = assetData => {
-		const url = `${baseURL}/trips/${org_id}/${user_id}/`;
+		const url = `${baseURL}/trips/`;
 		const data = { ...assetData };
 		const options = {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data),
 		};
-		fetch(url, options)
+		apiFetch(url, options)
 			.then(response => {
 				if (!response.ok) throw new Error('Failed to add trip');
 				console.log('trip added successfully');

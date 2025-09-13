@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 const OrganizationForm = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 	// State to hold organization details fetched from backend
 	const [organization, setOrganization] = useState({
 		logo: '',
@@ -26,28 +26,26 @@ const OrganizationForm = () => {
 
 	useEffect(() => {
 		const fetchOrganization = async () => {
-			if (user_id) {
-				try {
-					const response = await fetch(`${baseURL}/organizations/${org_id}`);
-					if (response.ok) {
-						const data = await response.json();
-						// Assuming data is an array with one item
-						if (Array.isArray(data) && data.length > 0) {
-							setOrganization(data[0]);
-							setEditedOrganization(data[0]);
-						} else {
-							console.error('Error: Organization data is not an array or is empty');
-						}
+			try {
+				const response = await apiFetch(`${baseURL}/organizations/`, { method: 'GET' });
+				if (response.ok) {
+					const data = await response.json();
+					// Assuming data is an array with one item
+					if (Array.isArray(data) && data.length > 0) {
+						setOrganization(data[0]);
+						setEditedOrganization(data[0]);
 					} else {
-						console.error('Error fetching organization:', response.statusText);
+						console.error('Error: Organization data is not an array or is empty');
 					}
-				} catch (error) {
-					console.error('Error fetching organization:', error);
+				} else {
+					console.error('Error fetching organization:', response.statusText);
 				}
+			} catch (error) {
+				console.error('Error fetching organization:', error);
 			}
 		};
 		fetchOrganization();
-	}, [baseURL, org_id, user_id ]);
+	}, [baseURL, apiFetch ]);
 
 	const handleFieldChange = (field, value) => {
 		const updatedOrg = {
@@ -59,7 +57,7 @@ const OrganizationForm = () => {
 
 	const handleSave = field => {
 		console.log(editedOrganization);
-		const url = `${baseURL}/organizations/${org_id}/${user_id}/`;
+		const url = `${baseURL}/organizations/`;
 		const data = {
 			org_currency: editedOrganization.org_currency,
 			org_country: editedOrganization.org_country,
@@ -74,16 +72,7 @@ const OrganizationForm = () => {
 			org_fiscal_start: editedOrganization.org_fiscal_start,
 			org_fiscal_stop: editedOrganization.org_fiscal_stop,
 		};
-		console.log('Payload Data:', data);
-
-		const options = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		};
-		fetch(url, options)
+		apiFetch(url, { method: 'PUT', body: JSON.stringify(data) })
 			.then(response => {
 				if (!response.ok) {
 					throw new Error('Failed to update details');
