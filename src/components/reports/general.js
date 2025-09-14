@@ -49,39 +49,44 @@ const Reports = () => {
 	}, [activeReport]);
 
 	const fetchReport = async () => {
-		if (!activeReport) return;
-		setLoading(true);
+	if (!activeReport) return;
 
-		// Build query string from params
+	setLoading(true);
+	try {
+		// Build query string
 		const params = new URLSearchParams();
-		Object.entries(activeReport.params).forEach(([key, value]) => {
-			if (typeof value === 'object') {
-				Object.entries(value).forEach(([subKey, subValue]) => {
-					params.append(`${key}[${subKey}]`, subValue);
-				});
-			} else {
-				params.append(key, value);
-			}
+		Object.entries(activeReport.params || {}).forEach(([key, value]) => {
+		if (typeof value === "object" && value !== null) {
+			Object.entries(value).forEach(([subKey, subValue]) => {
+			params.append(`${key}[${subKey}]`, subValue);
+			});
+		} else if (value !== undefined && value !== null) {
+			params.append(key, value);
+		}
 		});
 
-		const urlWithParams = `${activeReport.url}?${params.toString()}`;
-		apiFetch(urlWithParams, { method: 'GET' })
-			.then(response => {
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-				return response.json();
-			})
-			.then(data => {
-				setReportData(data);
-				setLoading(false);
-			})
-			.catch(error => {
-				console.error("Error fetching report:", error);
-				setLoading(false);
-			});
+		const queryString = params.toString();
+		const urlWithParams = queryString
+		? `${activeReport.url}?${queryString}`
+		: activeReport.url;
 
+		console.log("Fetching report from:", urlWithParams); // helpful for debugging
+
+		const response = await apiFetch(urlWithParams, { method: "GET" });
+
+		if (!response.ok) {
+		throw new Error(`Failed to fetch report: ${response.status}`);
+		}
+
+		const data = await response.json();
+		setReportData(data);
+	} catch (error) {
+		console.error("Error fetching report:", error);
+	} finally {
+		setLoading(false);
+	}
 	};
+
 
 	const buildReportUrl = (report, fileType) => {
 		const params = new URLSearchParams({
@@ -92,22 +97,50 @@ const Reports = () => {
 		});
 		return `${report.url}?${params.toString()}`;
 	};
-	const handleDownload = (id, fileType) => {
+
+	// const handleDownload = (id, fileType) => {
+	// 	const report = reports_urls_param.find(r => r.id === id);
+	// 	if (report) {
+	// 		const updatedReport = {
+	// 			...report,
+	// 			params: {
+	// 				...report.params,
+	// 				export: fileType
+	// 			}
+	// 		};
+	// 		setActiveReport(updatedReport);
+	// 		const downloadUrl = buildReportUrl(report, fileType);
+	// 		// Trigger browser download by opening in a new tab
+	// 		window.open(downloadUrl, "_blank");
+	// 	}
+	// };
+
+	const handleDownload = async (id, fileType) => {
 		const report = reports_urls_param.find(r => r.id === id);
-		if (report) {
-			const updatedReport = {
-				...report,
-				params: {
-					...report.params,
-					export: fileType
-				}
-			};
-			setActiveReport(updatedReport);
-			const downloadUrl = buildReportUrl(report, fileType);
-			// Trigger browser download by opening in a new tab
-			window.open(downloadUrl, "_blank");
+		if (!report) return;
+
+		const downloadUrl = buildReportUrl(report, fileType);
+
+		try {
+			const response = await apiFetch(downloadUrl, { method: "GET" });
+			if (!response.ok) throw new Error(`Failed to download ${fileType}`);
+
+			const blob = await response.blob();
+			const fileURL = URL.createObjectURL(blob);
+
+			// Create a temporary link to trigger download
+			const link = document.createElement("a");
+			link.href = fileURL;
+			link.download = `report.${fileType === "excel" ? "xlsx" : "pdf"}`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(fileURL);
+		} catch (err) {
+			console.error("Download failed:", err);
 		}
-	};
+};
+
 
 	const handlePreview = (id, fileType) => {
 		const report = reports_urls_param.find(r => r.id === id);
@@ -116,7 +149,7 @@ const Reports = () => {
 		const url = buildReportUrl(report, fileType);
 
 		setLoading(true);
-		fetch(url)
+		apiFetch(url, { method: "GET" })
 			.then(res => {
 			if (!res.ok) throw new Error("Failed to fetch PDF");
 			return res.blob();
@@ -157,8 +190,8 @@ const Reports = () => {
               <TableCell>{r.report_name}</TableCell>
             
               <TableCell>
-                <Button onClick={() => handleDownload(r.id, 'pdf')}>PDF↓</Button>
-                <Button onClick={() => handleDownload(r.id, 'excel')}>XLSX↓</Button>
+                <Button variant='text'  size='small' sx={{ color: 'var(--primary-color)' }} onClick={() => handleDownload(r.id, 'pdf')}>PDF↓</Button>
+                <Button variant='text' size='small' sx={{ color: 'var(--secondary-color)' }} onClick={() => handleDownload(r.id, 'excel')}>XLSX↓</Button>
 				<Button onClick={() => handlePreview(r.id, 'pdf')}></Button>
               </TableCell>
             </TableRow>

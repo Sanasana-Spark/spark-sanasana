@@ -34,13 +34,13 @@ const Reports = () => {
 		}
 
 		try {
-			const params = { organization_id: org_id, start_date: startDate, end_date: endDate, operator };
+			const params = { organization_id: org_id, start_date: startDate, end_date: endDate, operator: operator };
 			const [trips, assets, operators, tripsByOperator] = await Promise.all(
 				[
-					apiFetch(`${baseURL}/trips/reports/`, { method: 'GET', params }),
-					apiFetch(`${baseURL}/assets/reports/`, { method: 'GET', params }),
-					apiFetch(`${baseURL}/operators/reports/`, { method: 'GET', params }),
-					apiFetch(`${baseURL}/trips/reports/`, { method: 'GET', params })
+					apiFetch(`${baseURL}/reports/trip-listing/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/reports/assets-listing/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/reports/operators-listing/`, { method: 'GET', params }),
+					apiFetch(`${baseURL}/reports/trips-by-operator/`, { method: 'GET', params })
 				]);
 
 			setReports({
