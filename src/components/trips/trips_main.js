@@ -51,6 +51,7 @@ const Trips = () => {
     // Define the URL for the POST request
     const url = `${baseURL}/trips/`;
     const data = {
+      stops: assetData.stops,
       t_type: assetData.t_type,
       t_start_lat: assetData.t_start_lat,
       t_start_long: assetData.t_start_long,
@@ -213,8 +214,6 @@ flex: 1,
       />
     
     
-
-
 
 <AddAssetForm
   open={showAddPropertyForm}
