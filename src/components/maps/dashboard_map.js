@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import { useJsApiLoader, GoogleMap, DirectionsRenderer, Marker, InfoWindow } from "@react-google-maps/api";
+import { useAuthContext } from "../onboarding/authProvider";
 
 const libraries = ["places", "marker"];
 
@@ -10,14 +11,15 @@ const DirectionsMap = ({ trips }) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [tripsWithStops, setTripsWithStops] = useState([]);
   const mapRef = useRef(null);
+  const baseURL = process.env.REACT_APP_BASE_URL
+  const { apiFetch } = useAuthContext();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries,
   });
 
-  const defaultCenter = { lat: 5.6037, lng: -0.1870 };
-
+  
   const center = useMemo(() => {
     if (trips?.length > 0) {
       const firstTrip = trips[0];
@@ -26,7 +28,7 @@ const DirectionsMap = ({ trips }) => {
         lng: parseFloat(firstTrip.t_start_long) 
       };
     }
-    return defaultCenter;
+    return { lat: 5.6037, lng: -0.1870 };
   }, [trips]);
 
   const options = useMemo(
@@ -48,13 +50,12 @@ const DirectionsMap = ({ trips }) => {
     const fetchStopsForTrips = async () => {
       if (!trips || trips.length === 0) return;
 
-      const baseURL = process.env.REACT_APP_BASE_URL;
       const tripsWithStopsData = await Promise.all(
         trips.map(async (trip) => {
           try {
             // You'll need to implement an endpoint to get stops by trip_id
             // For now, assuming stops are included in trip data or need to be fetched
-            const response = await fetch(`${baseURL}/trips/stops/${trip.id}/`, {
+            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}/`, {
               method: "GET",
               headers: {
                 "Authorization": `Bearer ${localStorage.getItem("access_token")}`, // Adjust based on your auth
@@ -79,7 +80,7 @@ const DirectionsMap = ({ trips }) => {
     };
 
     fetchStopsForTrips();
-  }, [trips]);
+  }, [trips, apiFetch, baseURL]);
 
   useEffect(() => {
     if (!isLoaded || !mapRef.current || !window.google || !window.google.maps || !tripsWithStops.length) return;
@@ -196,7 +197,8 @@ const DirectionsMap = ({ trips }) => {
 
   // Helper function to get marker icon based on type
   const getMarkerIcon = (type, tripIndex) => {
-    const color = getRouteColor(tripIndex);
+    console.log("Getting icon for type:", type, "tripIndex:", tripIndex);
+    // const color = getRouteColor(tripIndex);
     
     switch (type) {
       case "start":

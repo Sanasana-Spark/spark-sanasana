@@ -15,42 +15,41 @@ const PropCard = ({ selectedTrip }) => {
     if (selectedTrip) {
       setLoading(false);
       // Fetch stops for each trip
+      const fetchStopsForTrips = async () => {
+        const stopsData = {};
+        
+        try {
+          // Fetch stops for each trip
+          for (const trip of selectedTrip) {
+            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}`, { 
+              method: 'GET' 
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              stopsData[trip.id] = data.stops || [];
+            } else {
+              console.warn(`Failed to fetch stops for trip ${trip.id}`);
+              stopsData[trip.id] = [];
+            }
+          }
+          
+          setTripStops(stopsData);
+        } catch (error) {
+          console.error("Error fetching trip stops:", error);
+          // Initialize with empty arrays for each trip
+          const emptyStops = {};
+          selectedTrip.forEach(trip => {
+            emptyStops[trip.id] = [];
+          });
+          setTripStops(emptyStops);
+        }
+      };
       fetchStopsForTrips();
     } else {
       setLoading(true);
     }
-  }, [selectedTrip]);
-
-  const fetchStopsForTrips = async () => {
-    const stopsData = {};
-    
-    try {
-      // Fetch stops for each trip
-      for (const trip of selectedTrip) {
-        const response = await apiFetch(`${baseURL}/trips/${trip.id}/stops`, { 
-          method: 'GET' 
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          stopsData[trip.id] = data.stops || [];
-        } else {
-          console.warn(`Failed to fetch stops for trip ${trip.id}`);
-          stopsData[trip.id] = [];
-        }
-      }
-      
-      setTripStops(stopsData);
-    } catch (error) {
-      console.error("Error fetching trip stops:", error);
-      // Initialize with empty arrays for each trip
-      const emptyStops = {};
-      selectedTrip.forEach(trip => {
-        emptyStops[trip.id] = [];
-      });
-      setTripStops(emptyStops);
-    }
-  };
+  }, [selectedTrip, apiFetch, baseURL]);
 
   if (loading) {
     return <Loader />;
