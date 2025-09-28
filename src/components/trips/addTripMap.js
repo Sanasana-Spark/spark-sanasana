@@ -58,7 +58,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const stopsRefs = useRef([]);
 
   // Map markers for visualization
-  const [mapMarkers, setMapMarkers] = useState([]);
+  // const [mapMarkers, setMapMarkers] = useState([]);
   const [routeMarkers, setRouteMarkers] = useState([]);
 
   const [trip, setTrip] = useState(
@@ -221,7 +221,46 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
   // Update markers when stops change
   useEffect(() => {
-    updateMapMarkers();
+    // Update map markers based on current route
+    const updateMapMarkersLocal = () => {
+      const markers = [];
+
+      // Add origin marker
+      if (origin_lat && origin_lng) {
+        markers.push({
+          position: { lat: origin_lat, lng: origin_lng },
+          type: "start",
+          title: "Start Location",
+          label: "S",
+        });
+      }
+
+      // Add stop markers
+      stops.forEach((stop, index) => {
+        if (stop.s_lat && stop.s_long) {
+          markers.push({
+            position: { lat: stop.s_lat, lng: stop.s_long },
+            type: "stop",
+            title: `Stop ${index + 1}`,
+            label: `${index + 1}`,
+          });
+        }
+      });
+
+      // Add destination marker
+      if (destination_lat && destination_lng) {
+        markers.push({
+          position: { lat: destination_lat, lng: destination_lng },
+          type: "end",
+          title: "End Location",
+          label: "E",
+        });
+      }
+
+      setRouteMarkers(markers);
+    };
+
+    updateMapMarkersLocal();
   }, [stops, origin_lat, origin_lng, destination_lat, destination_lng]);
 
   const handleSubmit = (e) => {
