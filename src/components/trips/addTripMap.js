@@ -53,13 +53,9 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   const originRef = useRef();
   const destiantionRef = useRef();
 
-  // Multiple stops state
+  // ⭐ ADDED: multiple stops state
   const [stops, setStops] = useState([]);
   const stopsRefs = useRef([]);
-
-  // Map markers for visualization
-  // const [mapMarkers, setMapMarkers] = useState([]);
-  const [routeMarkers, setRouteMarkers] = useState([]);
 
   const [trip, setTrip] = useState(
     {
@@ -73,7 +69,6 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     []
   );
 
-  // useEffect hooks for fetching data
   useEffect(() => {
     const apiUrl = `${baseURL}/operators/`;
     apiFetch(apiUrl, { method: "GET" })
@@ -115,10 +110,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     if (name === "t_operator_id") {
       const operator = operatorOptions.find((op) => op.id === value);
       if (operator && operator.o_assigned_asset) {
-        setTrip((prevTrip) => ({
-          ...prevTrip,
-          t_asset_id: operator.o_assigned_asset,
-        }));
+        setTrip((prevTrip) => ({ ...prevTrip, t_asset_id: operator.o_assigned_asset }));
       }
     }
   };
@@ -135,133 +127,21 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       },
     ]);
   };
-
   // Remove stop by index
   const removeStop = (index) => {
     setStops((prev) => prev.filter((_, i) => i !== index));
-    stopsRefs.current.splice(index, 1);
-    // Update map markers after removing stop
-    updateMapMarkers();
+    stopsRefs.current.splice(index, 1); // keep refs array in sync
   };
 
-  // Update stop fields
-  const handleStopChange = (index, e) => {
-    const { name, value } = e.target;
-    setStops((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [name]: value };
-      return updated;
-    });
-  };
-
-  // Helper function to get marker icon based on type
-  const getMarkerIcon = (type) => {
-    switch (type) {
-      case "start":
-        return {
-          url: "http://maps.google.com/mapfiles/ms/icons/green-dot.png",
-          scaledSize: new window.google.maps.Size(40, 40),
-        };
-      case "stop":
-        return {
-          url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
-          scaledSize: new window.google.maps.Size(35, 35),
-        };
-      case "end":
-        return {
-          url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-          scaledSize: new window.google.maps.Size(40, 40),
-        };
-      default:
-        return {
-          url: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png",
-          scaledSize: new window.google.maps.Size(35, 35),
-        };
-    }
-  };
-
-  // Update map markers based on current route
-  const updateMapMarkers = () => {
-    const markers = [];
-
-    // Add origin marker
-    if (origin_lat && origin_lng) {
-      markers.push({
-        position: { lat: origin_lat, lng: origin_lng },
-        type: "start",
-        title: "Start Location",
-        label: "S",
-      });
-    }
-
-    // Add stop markers
-    stops.forEach((stop, index) => {
-      if (stop.s_lat && stop.s_long) {
-        markers.push({
-          position: { lat: stop.s_lat, lng: stop.s_long },
-          type: "stop",
-          title: `Stop ${index + 1}`,
-          label: `${index + 1}`,
-        });
-      }
-    });
-
-    // Add destination marker
-    if (destination_lat && destination_lng) {
-      markers.push({
-        position: { lat: destination_lat, lng: destination_lng },
-        type: "end",
-        title: "End Location",
-        label: "E",
-      });
-    }
-
-    setRouteMarkers(markers);
-  };
-
-  // Update markers when stops change
-  useEffect(() => {
-    // Update map markers based on current route
-    const updateMapMarkersLocal = () => {
-      const markers = [];
-
-      // Add origin marker
-      if (origin_lat && origin_lng) {
-        markers.push({
-          position: { lat: origin_lat, lng: origin_lng },
-          type: "start",
-          title: "Start Location",
-          label: "S",
-        });
-      }
-
-      // Add stop markers
-      stops.forEach((stop, index) => {
-        if (stop.s_lat && stop.s_long) {
-          markers.push({
-            position: { lat: stop.s_lat, lng: stop.s_long },
-            type: "stop",
-            title: `Stop ${index + 1}`,
-            label: `${index + 1}`,
-          });
-        }
-      });
-
-      // Add destination marker
-      if (destination_lat && destination_lng) {
-        markers.push({
-          position: { lat: destination_lat, lng: destination_lng },
-          type: "end",
-          title: "End Location",
-          label: "E",
-        });
-      }
-
-      setRouteMarkers(markers);
-    };
-
-    updateMapMarkersLocal();
-  }, [stops, origin_lat, origin_lng, destination_lat, destination_lng]);
+  // Update stop fields (like s_client_id) safely
+const handleStopChange = (index, e) => {
+  const { name, value } = e.target;
+  setStops((prev) => {
+    const updated = [...prev];
+    updated[index] = { ...updated[index], [name]: value };
+    return updated;
+  });
+};
 
   const handleSubmit = (e) => {
     setSaving(true);
@@ -280,6 +160,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_origin_place_query: origin_place_query,
       t_destination_place_id: destination_place_id,
       t_destination_place_query: destination_place_query,
+      // t_directionsResponse: directionsResponse,
       t_distance: distance,
       t_duration: duration,
       t_start_lat: origin_lat,
@@ -288,12 +169,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_end_long: destination_lng,
     });
 
-    setTrip({
-      t_status: "Pending",
-      t_operator_id: "",
-      t_asset_id: "",
-      t_type: "N/A",
-    });
+    setTrip({ t_status: "Pending", t_operator_id: "", t_asset_id: "", t_type: "N/A" });
   };
 
   const { isLoaded } = useJsApiLoader({
@@ -302,11 +178,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   });
 
   const options = useMemo(
-    () => ({
-      mapId: "9ebfa89edaafd2e",
-      disableDefaultUI: true,
-      clickableIcons: false,
-    }),
+    () => ({ mapId: "9ebfa89edaafd2e", disableDefaultUI: true, clickableIcons: false }),
     []
   );
 
@@ -322,8 +194,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       .map((ref) => ref?.value)
       .filter(Boolean)
       .map((stop) => ({ location: stop, stopover: true }));
-
-    // eslint-disable-next-line no-undef
+     // eslint-disable-next-line no-undef
     const directionsService = new google.maps.DirectionsService();
     const results = await directionsService.route({
       origin: originRef.current.value,
@@ -336,14 +207,8 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
 
     setDirectionsResponse(results);
 
-    const totalDistance = results.routes[0].legs.reduce(
-      (sum, leg) => sum + leg.distance.value,
-      0
-    );
-    const totalDuration = results.routes[0].legs.reduce(
-      (sum, leg) => sum + leg.duration.value,
-      0
-    );
+    const totalDistance = results.routes[0].legs.reduce((sum, leg) => sum + leg.distance.value, 0);
+    const totalDuration = results.routes[0].legs.reduce((sum, leg) => sum + leg.duration.value, 0);
     setDistance((totalDistance / 1000).toFixed(1) + " km");
     setDuration(Math.round(totalDuration / 60) + " mins");
 
@@ -360,292 +225,189 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     setDestinationLat(lastLeg.end_location.lat());
     setDestinationLng(lastLeg.end_location.lng());
 
-    // Process stops with their locations
-    setStops((prevStops) => {
-      const updatedStops = prevStops.map((stop, i) => {
-        // For stops, we use the end location of each leg (except the last one)
-        const leg = results.routes[0].legs[i];
-        return {
-          ...stop,
-          s_place_query: stopsRefs.current[i]?.value || "",
-          s_lat: leg?.end_location?.lat() || null,
-          s_long: leg?.end_location?.lng() || null,
-          s_place_id: results.geocoded_waypoints[i + 1]?.place_id || null,
-        };
-      });
-      return updatedStops;
-    });
 
-    // Update map markers after route calculation
-    setTimeout(updateMapMarkers, 100);
+    // Process stops
+    setStops((prevStops) => {
+        const updatedStops = prevStops.map((stop, i) => {
+          const leg = results.routes[0].legs[i];
+          return {
+            ...stop,
+            s_place_query: stopsRefs.current[i]?.value || "",
+            s_lat: leg?.end_location?.lat() || null,
+            s_long: leg?.end_location?.lng() || null,
+            s_place_id: results.geocoded_waypoints[i + 1]?.place_id || null,
+          };
+        });
+        return updatedStops;
+      });
+
+
   }
 
   function clearRoute() {
     setDirectionsResponse(null);
     setDistance("");
     setDuration("");
-    setOriginLat(null);
-    setOriginLng(null);
-    setDestinationLat(null);
-    setDestinationLng(null);
     originRef.current.value = "";
     destiantionRef.current.value = "";
-    setStops([]);
-    setRouteMarkers([]);
-    stopsRefs.current = [];
+    setStops([{ place: "" }]);
   }
+
+
 
   const renderForm = () => (
     <form onSubmit={handleSubmit}>
       <Grid item xs={12} sm={6}>
-        <Typography sx={{ marginTop: "16px" }}>
-          Distance: {distance} Duration: {duration}
-        </Typography>
+          <Typography sx={{ marginTop: "16px" }}>Distance: {distance}  Duration: {duration}</Typography>
+        </Grid>
+
+      <Grid item xs={12} sm={6} sx={{ height: isMobile ? "300px" : "30vh", marginBottom: isMobile ? 2 : 0 }}>
+          <GoogleMap center={center} zoom={15} mapContainerStyle={{ width: "inherit", height: "inherit" }} options={options}>
+            <Marker position={center} />
+            {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
+          </GoogleMap>
       </Grid>
 
-      <Grid
-        item
-        xs={12}
-        sm={6}
-        sx={{
-          height: isMobile ? "300px" : "30vh",
-          marginBottom: isMobile ? 2 : 0,
-        }}
-      >
-        <GoogleMap
-          center={center}
-          zoom={15}
-          mapContainerStyle={{ width: "inherit", height: "inherit" }}
-          options={options}
-        >
-          {/* Default center marker when no route */}
-          {!directionsResponse && <Marker position={center} />}
+      
+        
 
-          {/* Directions renderer */}
-          {directionsResponse && (
-            <DirectionsRenderer
-              directions={directionsResponse}
-              options={{
-                suppressMarkers: true, // We'll show custom markers
-                polylineOptions: {
-                  strokeColor: "#2196f3",
-                  strokeWeight: 4,
-                  strokeOpacity: 0.8,
-                },
-              }}
-            />
-          )}
+        <Grid item xs={12} md={6}>
+          
+          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+            <TextField fullWidth label="Origin" inputRef={originRef} margin="normal" />
+          </Autocomplete>
 
-          {/* Custom markers for start, stops, and end */}
-          {routeMarkers.map((marker, index) => (
-            <Marker
-              key={index}
-              position={marker.position}
-              icon={getMarkerIcon(marker.type)}
-              title={marker.title}
-              label={{
-                text: marker.label,
-                fontSize: "12px",
-                fontWeight: "bold",
-                color: "white",
-              }}
-            />
-          ))}
-        </GoogleMap>
-      </Grid>
+          {/* ⭐ Dynamic Stops */}
+         {stops.map((stop, index) => (
+            <Grid container spacing={1} key={index} alignItems="center">
+              <Grid item xs={12} sm={4}>
+                <Autocomplete>
+                  <TextField
+                    fullWidth
+                    label={`Stop ${index + 1}`}
+                    inputRef={(el) => (stopsRefs.current[index] = el)}
+                    defaultValue={stop.place}
+                    margin="normal"
+                  />
+                </Autocomplete>
+              </Grid>
 
-      <Grid item xs={12} md={6}>
-        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-          <TextField
-            fullWidth
-            label="Origin"
-            inputRef={originRef}
-            margin="normal"
-          />
-        </Autocomplete>
-
-        {/* Dynamic Stops */}
-        {stops.map((stop, index) => (
-          <Grid container spacing={1} key={index} alignItems="center">
-            <Grid item xs={12} sm={4}>
-              <Autocomplete>
+              <Grid item xs={12} sm={4}>
                 <TextField
+                  select
                   fullWidth
-                  label={`Stop ${index + 1}`}
-                  inputRef={(el) => (stopsRefs.current[index] = el)}
-                  defaultValue={stop.place}
-                  margin="normal"
-                />
-              </Autocomplete>
-            </Grid>
-
-            <Grid item xs={12} sm={4}>
-              <TextField
-                select
-                fullWidth
-                label="Client"
-                labelId={`stop-client-label-${index}`}
-                name="s_client_id"
-                value={stop.s_client_id || ""}
-                onChange={(e) => handleStopChange(index, e)}
-              >
-                {clientOptions.length > 0
-                  ? clientOptions.map((client) => (
+                  label="Client"
+                  labelId={`stop-client-label-${index}`}
+                  name="s_client_id"
+                  value={stop.s_client_id || ""}
+                  onChange={(e) => handleStopChange(index, e)}
+                >
+                  {clientOptions.length > 0 ? (
+                    clientOptions.map((client) => (
                       <MenuItem key={client.id} value={client.id}>
                         {client.c_name} - {client.c_status}
                       </MenuItem>
                     ))
-                  : loading && <MenuItem disabled>Loading clients...</MenuItem>}
-              </TextField>
+                  ) : (
+                    loading && <MenuItem disabled>Loading clients...</MenuItem>
+                  )}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <Button
+                  onClick={() => removeStop(index)}
+                  color="error"
+                  size="small"
+                  variant="outlined"
+                  sx={{ marginTop: "8px" }}
+                >
+                  Remove
+                </Button>
+              </Grid>
+
+
             </Grid>
+          ))}
 
-            <Grid item xs={12} sm={4}>
-              <Button
-                onClick={() => removeStop(index)}
-                color="error"
-                size="small"
-                variant="outlined"
-                sx={{ marginTop: "8px" }}
-              >
-                Remove
-              </Button>
-            </Grid>
-          </Grid>
-        ))}
+          <Button variant="outlined" onClick={addStop} sx={{ marginTop: 1, marginBottom: 2 }}>
+            + Add Stop
+          </Button>
 
-        <Button
-          variant="outlined"
-          onClick={addStop}
-          sx={{ marginTop: 1, marginBottom: 2 }}
-        >
-          + Add Stop
-        </Button>
+          <Autocomplete>
+            <TextField fullWidth label="Destination" inputRef={destiantionRef} margin="normal" />
+          </Autocomplete>
 
-        <Autocomplete>
-          <TextField
-            fullWidth
-            label="Destination"
-            inputRef={destiantionRef}
-            margin="normal"
-          />
-        </Autocomplete>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={calculateRoute}
+            sx={{ marginTop: "16px", marginRight: "8px", backgroundColor: "var(--secondary-color)", color: "white" }}
+          >
+            Calculate Route
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={clearRoute}
+            sx={{ marginTop: "16px", backgroundColor: "var(--primary-color)", color: "white" }}
+          >
+            Clear Route
+          </Button>
 
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={calculateRoute}
-          sx={{
-            marginTop: "16px",
-            marginRight: "8px",
-            backgroundColor: "var(--secondary-color)",
-            color: "white",
-          }}
-        >
-          Calculate Route
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={clearRoute}
-          sx={{
-            marginTop: "16px",
-            backgroundColor: "var(--primary-color)",
-            color: "white",
-          }}
-        >
-          Clear Route
-        </Button>
-      </Grid>
+          
+        </Grid>
 
-      <Divider
-        sx={{ margin: "16px 0", backgroundColor: "var(--secondary-color)" }}
-      />
+        <Divider sx={{ margin: "16px 0", backgroundColor: "var(--secondary-color)" }} />
 
-      <Grid container spacing={3}>
+       <Grid container spacing={3}>
+
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Load(Tonnes)"
-            name="t_load"
-            type="number"
-            value={trip.t_load}
-            onChange={handleChange}
-          />
+          <TextField fullWidth label="Load(Tonnes)" name="t_load" type="number" value={trip.t_load} onChange={handleChange} />
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="LPO/Description"
-            name="t_type"
-            type="text"
-            value={trip.t_type}
-            onChange={handleChange}
-          />
+          <TextField fullWidth label="LPO/Description" name="t_type" type="text" value={trip.t_type} onChange={handleChange} />
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Start Date"
-            name="t_start_date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={trip.t_start_date}
-            onChange={handleChange}
-          />
+          <TextField fullWidth label="Start Date" name="t_start_date" type="date" InputLabelProps={{ shrink: true }} value={trip.t_start_date} onChange={handleChange} />
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="End Date"
-            name="t_end_date"
-            type="date"
-            InputLabelProps={{ shrink: true }}
-            value={trip.t_end_date}
-            onChange={handleChange}
-          />
+          <TextField fullWidth label="End Date" name="t_end_date" type="date" InputLabelProps={{ shrink: true }} value={trip.t_end_date} onChange={handleChange} />
         </Grid>
 
         <Grid item xs={12} sm={6}>
           <InputLabel id="operator-label">Assign Driver</InputLabel>
-          <Select
-            fullWidth
-            labelId="operator-label"
-            name="t_operator_id"
-            value={trip.t_operator_id}
-            onChange={handleChange}
-          >
-            {operatorOptions.length > 0
-              ? operatorOptions.map((operator) => (
-                  <MenuItem key={operator.id} value={operator.id}>
-                    {operator.o_name} - {operator.a_license_plate} -{" "}
-                    {operator.o_status}
-                  </MenuItem>
-                ))
-              : loading && <MenuItem disabled>Loading operators...</MenuItem>}
+          <Select fullWidth labelId="operator-label" name="t_operator_id" value={trip.t_operator_id} onChange={handleChange}>
+            {operatorOptions.length > 0 ? (
+              operatorOptions.map((operator) => (
+                <MenuItem key={operator.id} value={operator.id}>
+                  {operator.o_name} - {operator.a_license_plate} - {operator.o_status}
+                </MenuItem>
+              ))
+            ) : (
+              loading && <MenuItem disabled>Loading operators...</MenuItem>
+            )}
           </Select>
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <InputLabel id="client-label">Assign Client</InputLabel>
-          <Select
-            fullWidth
-            labelId="client-label"
-            name="t_client_id"
-            value={trip.t_client_id}
-            onChange={handleChange}
-          >
-            {clientOptions.length > 0
-              ? clientOptions.map((client) => (
-                  <MenuItem key={client.id} value={client.id}>
-                    {client.c_name} - {client.c_status}
-                  </MenuItem>
-                ))
-              : loading && <MenuItem disabled>Loading clients...</MenuItem>}
+          <InputLabel id="asset-label">Assign Client</InputLabel>
+          <Select fullWidth labelId="client-label" name="t_client_id" value={trip.t_client_id} onChange={handleChange}>
+            {clientOptions.length > 0 ? (
+              clientOptions.map((client) => (
+                <MenuItem key={client.id} value={client.id}>
+                  {client.c_name} - {client.c_status}
+                </MenuItem>
+              ))
+            ) : (
+              loading && <MenuItem disabled>Loading clients...</MenuItem>
+            )}
           </Select>
         </Grid>
+
       </Grid>
 
       <DialogActions>
@@ -657,11 +419,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         >
           {saving ? "Submitting..." : "Submit"}
         </Button>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "var(--primary-color)", color: "white" }}
-          onClick={onCancel}
-        >
+        <Button variant="contained" sx={{ backgroundColor: "var(--primary-color)", color: "white" }} onClick={onCancel}>
           Cancel
         </Button>
       </DialogActions>
@@ -672,80 +430,20 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     <>
       {isMobile ? (
         <Modal open={open} onClose={onCancel} sx={{ zIndex: 1300 }}>
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              width: "100vw",
-              height: "95vh",
-              bgcolor: "background.paper",
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
-              p: 2,
-              overflowY: "auto",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "sticky",
-                top: 0,
-                bgcolor: "background.paper",
-                zIndex: 10,
-                pb: 1,
-              }}
-            >
+          <Box sx={{ position: "absolute", bottom: 0, left: 0, width: "100vw", height: "95vh", bgcolor: "background.paper", borderTopLeftRadius: 16, borderTopRightRadius: 16, p: 2, overflowY: "auto" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, bgcolor: "background.paper", zIndex: 10, pb: 1 }}>
               <Typography variant="h6">Add Trip</Typography>
-              <IconButton onClick={onCancel}>
-                <CloseIcon />
-              </IconButton>
+              <IconButton onClick={onCancel}><CloseIcon /></IconButton>
             </Box>
             {renderForm()}
           </Box>
         </Modal>
       ) : (
-        <Modal
-          open={open}
-          onClose={onCancel}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 100,
-          }}
-        >
-          <Box
-            sx={{
-              position: "relative",
-              width: "90%",
-              maxWidth: 700,
-              maxHeight: "90vh",
-              overflowY: "auto",
-              bgcolor: "background.paper",
-              boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                position: "sticky",
-                top: 0,
-                bgcolor: "background.paper",
-                zIndex: 10,
-                pb: 1,
-              }}
-            >
+        <Modal open={open} onClose={onCancel} sx={{ display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100}}>
+          <Box sx={{position: "relative", width: "90%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", bgcolor: "background.paper", boxShadow: 24, p: 4, borderRadius: 2 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, bgcolor: "background.paper", zIndex: 10, pb: 1 }}>
               <Typography variant="h6">Add Trip</Typography>
-              <IconButton onClick={onCancel}>
-                <CloseIcon />
-              </IconButton>
+              <IconButton onClick={onCancel}><CloseIcon /></IconButton>
             </Box>
             {renderForm()}
           </Box>
