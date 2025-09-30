@@ -21,7 +21,7 @@ const PropCard = ({ selectedTrip }) => {
         try {
           // Fetch stops for each trip
           for (const trip of selectedTrip) {
-            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}`, { 
+            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}/`, { 
               method: 'GET' 
             });
             
@@ -50,6 +50,7 @@ const PropCard = ({ selectedTrip }) => {
       setLoading(true);
     }
   }, [selectedTrip, apiFetch, baseURL]);
+  console.log("tripStops>>>", tripStops);
 
   if (loading) {
     return <Loader />;
