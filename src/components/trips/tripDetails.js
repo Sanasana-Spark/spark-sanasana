@@ -1,56 +1,15 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { Grid, Card, CardContent, Typography, Box, Chip } from "@mui/material";
 import Loader from "../loader";
 import Map from "../maps/singleTripMarkedMap";
-import { useAuthContext } from '../onboarding/authProvider';
 
 const PropCard = ({ selectedTrip }) => {
   const [loading, setLoading] = useState(true);
-  const [tripStops, setTripStops] = useState({});
-  const baseURL = process.env.REACT_APP_BASE_URL;
-  const { apiFetch } = useAuthContext();
 
-  useEffect(() => {
-    if (selectedTrip) {
-      setLoading(false);
-      // Fetch stops for each trip
-      const fetchStopsForTrips = async () => {
-        const stopsData = {};
-        
-        try {
-          // Fetch stops for each trip
-          for (const trip of selectedTrip) {
-            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}/`, { 
-              method: 'GET' 
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              stopsData[trip.id] = data.stops || [];
-            } else {
-              console.warn(`Failed to fetch stops for trip ${trip.id}`);
-              stopsData[trip.id] = [];
-            }
-          }
-          
-          setTripStops(stopsData);
-        } catch (error) {
-          console.error("Error fetching trip stops:", error);
-          // Initialize with empty arrays for each trip
-          const emptyStops = {};
-          selectedTrip.forEach(trip => {
-            emptyStops[trip.id] = [];
-          });
-          setTripStops(emptyStops);
-        }
-      };
-      fetchStopsForTrips();
-    } else {
-      setLoading(true);
-    }
-  }, [selectedTrip, apiFetch, baseURL]);
-  console.log("tripStops>>>", tripStops);
+  if (selectedTrip) {
+    setLoading(false);
+  }
 
   if (loading) {
     return <Loader />;
@@ -65,7 +24,7 @@ const PropCard = ({ selectedTrip }) => {
         const start = { lat: startLat, lng: startLong };
         const origin = trip.t_origin_place_query;
         const destination = trip.t_destination_place_query;
-        const stops = tripStops[trip.id] || [];
+        const stops = trip.stops || [];
 
         console.log("origin", origin, "destination", destination, "stops", stops);
 
