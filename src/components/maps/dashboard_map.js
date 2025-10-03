@@ -1,18 +1,13 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import { useJsApiLoader, GoogleMap, DirectionsRenderer, Marker, InfoWindow } from "@react-google-maps/api";
-import { useAuthContext } from "../onboarding/authProvider";
 
 const libraries = ["places", "marker"];
 
 const DirectionsMap = ({ trips }) => {
-  console.log("Trips data in DirectionsMap:", trips);
   const [directionsResponses, setDirectionsResponses] = useState([]);
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [tripsWithStops, setTripsWithStops] = useState([]);
   const mapRef = useRef(null);
-  const baseURL = process.env.REACT_APP_BASE_URL
-  const { apiFetch } = useAuthContext();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -45,45 +40,15 @@ const DirectionsMap = ({ trips }) => {
     height: "500px",
   };
 
-  // Fetch stops data for each trip
+
+
   useEffect(() => {
-    const fetchStopsForTrips = async () => {
-      if (!trips || trips.length === 0) return;
-
-      const tripsWithStopsData = await Promise.all(
-        trips.map(async (trip) => {
-          try {
-            // You'll need to implement an endpoint to get stops by trip_id
-            // For now, assuming stops are included in trip data or need to be fetched
-            const response = await apiFetch(`${baseURL}/trips/stops/${trip.id}/`, {
-              method: "GET",
-              headers: {
-                "Authorization": `Bearer ${localStorage.getItem("access_token")}`, // Adjust based on your auth
-                "Content-Type": "application/json",
-              },
-            });
-            
-            if (response.ok) {
-              const stops = await response.json();
-              return { ...trip, stops };
-            } else {
-              return { ...trip, stops: [] };
-            }
-          } catch (error) {
-            console.error(`Error fetching stops for trip ${trip.id}:`, error);
-            return { ...trip, stops: [] };
-          }
-        })
-      );
-
-      setTripsWithStops(tripsWithStopsData);
+    if (!isLoaded || !mapRef.current || !window.google || !window.google.maps || !trips.length) return;
+    const getRouteColor = (tripIndex ) => {
+      // Spread colors evenly around the color wheel
+      const hue = (tripIndex * (360 / trips.length)) % 360;
+      return `hsl(${hue}, 70%, 50%)`; // vibrant, readable colors
     };
-
-    fetchStopsForTrips();
-  }, [trips, apiFetch, baseURL]);
-
-  useEffect(() => {
-    if (!isLoaded || !mapRef.current || !window.google || !window.google.maps || !tripsWithStops.length) return;
 
     const map = mapRef.current.state.map;
     if (!map) return;
@@ -96,7 +61,7 @@ const DirectionsMap = ({ trips }) => {
     setDirectionsResponses([]);
     setMarkers([]);
 
-    tripsWithStops.forEach((trip, tripIndex) => {
+    trips.forEach((trip, tripIndex) => {
       const origin = { 
         lat: parseFloat(trip.t_start_lat), 
         lng: parseFloat(trip.t_start_long) 
@@ -187,17 +152,15 @@ const DirectionsMap = ({ trips }) => {
         });
       }
     });
-  }, [isLoaded, tripsWithStops]);
+  }, [isLoaded, trips]);
 
-  // Helper function to get different colors for different routes
-  const getRouteColor = (tripIndex) => {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF9FF3', '#54A0FF'];
-    return colors[tripIndex % colors.length];
-  };
+
+
+
+
 
   // Helper function to get marker icon based on type
   const getMarkerIcon = (type, tripIndex) => {
-    console.log("Getting icon for type:", type, "tripIndex:", tripIndex);
     // const color = getRouteColor(tripIndex);
     
     switch (type) {
