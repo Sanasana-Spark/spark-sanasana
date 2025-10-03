@@ -4,19 +4,19 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const AssetIncome = ({  selectedAsset }) => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 
 
 	const [incomeData, setIncomeData] = React.useState([]);
 	useEffect(() => {
-		if (!selectedAsset || !org_id || !user_id) return;
-		fetch(`${baseURL}/trips/asset_income/${org_id}/${user_id}/${selectedAsset.id}/`)
+		if (!selectedAsset) return;
+		apiFetch(`${baseURL}/trips/asset_income/${selectedAsset.id}/`, { method: 'GET' })
 			.then(res => res.json())
 			.then(data => {
 				setIncomeData(data);
 			})
 			.catch(err => console.error('Error loading income:', err));
-	}, [baseURL, selectedAsset, org_id, user_id]);
+	}, [baseURL, selectedAsset, apiFetch]);
 
 	// if (!selectedAsset) return null;
 	return (

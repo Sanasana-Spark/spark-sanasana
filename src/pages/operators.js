@@ -18,7 +18,7 @@ import DeleteOperator from '../components/operators/deleteOperator';
 
 const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const {apiFetch } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView'); // Initial view state
 	const [selectedOperator, setSelectedOperator] = useState([]);
 	const [operators, setOperators] = useState([]);
@@ -34,29 +34,28 @@ const Operators = () => {
 	const [errorMsg, setErrorMsg] = useState('');
 
 	useEffect(() => {
-		if (org_id && user_id) {
-			const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
-			// to be corrected to dynamic
-			fetch(apiUrl)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					return response.json();
-				})
-				.then(data => {
-					setOperators(data);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-					setLoading(false);
-				});
-		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm, isSliderOpen]);
+		const apiUrl = `${baseURL}/operators/`;
+		// to be corrected to dynamic
+		apiFetch(apiUrl, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				setOperators(data);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				setLoading(false);
+			});
+
+	}, [baseURL, apiFetch, showAddPropertyForm, isSliderOpen]);
 
 	const handleSubmit = async operatorData => {
-		const url = `${baseURL}/operators/${org_id}/${user_id}/`;
+		const url = `${baseURL}/operators/`;
 		const data = {
 			o_name: operatorData.o_name,
 			o_email: operatorData.o_email,
@@ -73,14 +72,7 @@ const Operators = () => {
 			o_expirence: operatorData.o_expirence,
 			o_assigned_asset: operatorData.o_assigned_asset,
 		};
-		const options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		};
-		fetch(url, options)
+		apiFetch(url, { method: 'POST', body: JSON.stringify(data) })
 			.then(response => {
 				if (!response.ok) {
 					throw new Error('Failed to add Operator - check email and mandatory fields ');
@@ -143,16 +135,8 @@ const Operators = () => {
 	};
 
 	const handleSaveEdit = (updatedOperator, onSuccess, onError) => {
-		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
-		const options = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(updatedOperator),
-		};
-
-		fetch(url, options)
+		const url = `${baseURL}/operators/${updatedOperator.id}/`;
+		apiFetch(url, { method: 'PUT', body: JSON.stringify(updatedOperator) })
 			.then(async response => {
 				if (!response.ok) {
 					const errorText = await response.text();
@@ -167,15 +151,8 @@ const Operators = () => {
 	};
 
 	const handleSaveDelete = updatedOperator => {
-		const url = `${baseURL}/operators/${org_id}/${user_id}/${updatedOperator.id}/`;
-		const options = {
-			method: 'DELETE',
-			headers: {
-					'Content-Type': 'application/json',
-				},
-			};
-
-		fetch(url, options)
+		const url = `${baseURL}/operators/${updatedOperator.id}/`;
+		apiFetch(url, { method: 'DELETE' })
 			.then(response => response.json())
 			.then(() => {
 				setIsDeleteSliderOpen(false);

@@ -6,7 +6,7 @@ import { IconButton, Button, Box, MenuItem, TextField, InputLabel, Select, FormC
 
 const UserSettings = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { org_id, user_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 
 	// State for users data
 	const [users, setUsers] = useState([]);
@@ -21,7 +21,7 @@ const UserSettings = () => {
 		// Fetch users data
 		const fetchUsers = async () => {
 			try {
-				const response = await fetch(`${baseURL}/organizations/users/${org_id}/${user_id}`);
+				const response = await apiFetch(`${baseURL}/organizations/users/`, { method: 'GET' });
 				if (response.ok) {
 					const data = await response.json();
 					setUsers(data);
@@ -32,8 +32,8 @@ const UserSettings = () => {
 				console.error('Error fetching users:', error);
 			}
 		};
-		if (user_id) fetchUsers();
-	}, [baseURL, org_id, user_id]);
+		if (apiFetch) fetchUsers();
+	}, [baseURL, apiFetch]);
 
 	// Handle form input change
 	const handleFieldChange = (field, value) => {
@@ -42,15 +42,9 @@ const UserSettings = () => {
 
 	// Save changes
 	const handleSave = () => {
-		const url = `${baseURL}/organizations/edituser/${org_id}/${user_id}/`;
-		const options = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(editedUser),
-		};
-		fetch(url, options)
+		const url = `${baseURL}/organizations/edituser/`;
+
+		apiFetch(url, { method: 'PUT', body: JSON.stringify(editedUser) })
 			.then(response => {
 				if (!response.ok) {
 					console.error('Error saving user:', response.statusText);
@@ -92,21 +86,14 @@ const UserSettings = () => {
 	const handleInvite = e => {
 		setIsSaving(true);
 		// Define the URL for the POST request
-		const url = `${baseURL}/organizations/users/${org_id}/${user_id}/`;
+		const url = `${baseURL}/organizations/users/`;
 		const data = {
 			email: userData.email,
 			username: userData.username,
 			role: userData.role,
 			phone: userData.phone,
 		};
-		const options = {
-			method: 'POST', // Specify the HTTP method
-			headers: {
-				'Content-Type': 'application/json', // Specify the content type of the request body
-			},
-			body: JSON.stringify(data), // Convert data to JSON string for the request body
-		};
-		fetch(url, options)
+		apiFetch(url, { method: 'POST', body: JSON.stringify(data) })
 			.then(response => {
 				if (!response.ok) {
 					throw new Error('Failed to invite user confirm user email');

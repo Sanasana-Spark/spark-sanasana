@@ -19,15 +19,14 @@ import { useAuthContext } from "../onboarding/authProvider";
 
 const AddAssetForm = ({ onSubmit, onCancel, open }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { user_id, org_id } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [assetOptions, setAssetOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (org_id && user_id) {
-      const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
-      fetch(apiUrl)
+      const apiUrl = `${baseURL}/assets/`;
+      apiFetch(apiUrl, { method: "GET" })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -42,8 +41,7 @@ const AddAssetForm = ({ onSubmit, onCancel, open }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-    }
-  }, [baseURL, org_id, user_id, open]); // Empty dependency array ensures this effect runs only once when the component mounts
+  }, [baseURL, apiFetch, open]); // Empty dependency array ensures this effect runs only once when the component mounts
 
   //   const classes = useStyles();
   const [maitenance, setMaitenance] = useState({

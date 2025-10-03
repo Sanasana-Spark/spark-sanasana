@@ -45,7 +45,7 @@ const CreateOrganizationPage = () => {
       organizationId = org.id;
     }
 
-		const url = `${baseURL}/organizations/`;
+		const url = `${baseURL}/public/organizations/`;
     const data = {
     org_name: formData.org_name,
     org_id: organizationId,
