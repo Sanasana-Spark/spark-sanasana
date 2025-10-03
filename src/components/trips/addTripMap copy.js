@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
+import { useTheme, useMediaQuery } from "@mui/material";
 import {
   Modal,
   Box,
@@ -14,8 +15,6 @@ import {
   Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
-
 import {
   useJsApiLoader,
   GoogleMap,
@@ -28,11 +27,14 @@ const libraries = ["places", "marker"];
 const center = { lat: 0.00075, lng: 36.0098 };
 
 const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const baseURL = process.env.REACT_APP_BASE_URL;
-  const { user_id } = useAuthContext();
-  const { org_id } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [operatorOptions, setOperatorOptions] = useState([]);
+  const [clientOptions, setClientOptions] = useState([]);
   const [, setAutocomplete] = useState(null);
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
@@ -55,13 +57,12 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     t_type: "N/A",
     t_start_date: null,
     t_end_date: null,
+    t_client_id: null,
   },[]);
-  console.log(origin_lat)
 
   useEffect(() => {
-    if (org_id && user_id) {
-    const apiUrl = `${baseURL}/operators/${org_id}/${user_id}`;
-    fetch(apiUrl)
+    const apiUrl = `${baseURL}/operators/`;
+    apiFetch(apiUrl, { method: "GET" })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -76,7 +77,26 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }}, [ baseURL, org_id, user_id, open]);
+  }, [ baseURL, apiFetch, open]);
+
+  useEffect(() => {
+    const apiUrl = `${baseURL}/clients/`;
+    apiFetch(apiUrl, { method: "GET" })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setClientOptions(data.clients || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setLoading(false);
+      });
+  }, [ baseURL, apiFetch, open]);
 
 
 
@@ -103,6 +123,7 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
   };
 
   const handleSubmit = (e) => {
+    setSaving(true);
     e.preventDefault();
 
     setTrip((prevTrip) => ({
@@ -119,24 +140,25 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
       t_start_long:origin_lng,
       t_end_long:destination_lng,
       t_type:trip.t_type,
+      t_client_id:trip.t_client_id
 
     }));
-console.log(directionsResponse)
-  onSubmit({
-    ...trip, // this includes previous trip values
-    t_origin_place_id:origin_place_id,
-    t_origin_place_query:origin_place_query,
-    t_destination_place_id:destination_place_id,
-    t_destination_place_query:destination_place_query,
-    t_directionsResponse:directionsResponse,
-    t_distance:distance,
-    t_duration:duration,
-    t_start_lat:origin_lat,
-    t_end_lat:destination_lat,
-    t_start_long:origin_lng,
-    t_end_long:destination_lng,
-    t_type:trip.t_type
-  });
+    onSubmit({
+      ...trip, // this includes previous trip values
+      t_origin_place_id:origin_place_id,
+      t_origin_place_query:origin_place_query,
+      t_destination_place_id:destination_place_id,
+      t_destination_place_query:destination_place_query,
+      t_directionsResponse:directionsResponse,
+      t_distance:distance,
+      t_duration:duration,
+      t_start_lat:origin_lat,
+      t_end_lat:destination_lat,
+      t_start_long:origin_lng,
+      t_end_long:destination_lng,
+      t_type:trip.t_type,
+      t_client_id:trip.t_client_id
+    });
     // Optionally, you can reset the form after submission
     setTrip({
       t_status: "Pending",
@@ -145,6 +167,8 @@ console.log(directionsResponse)
       t_type: "N/A",
     });
   };
+
+
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -159,9 +183,6 @@ console.log(directionsResponse)
     }),
     []
   );
-
-
-
 
 
   const onLoad = (autocomplete) => {
@@ -212,246 +233,315 @@ console.log(directionsResponse)
   }
 
 
-  if (directionsResponse) {
-    console.log(
-     "origin", origin_place_id,origin_place_query,
-     "Dest", destination_place_id,destination_place_query,
-     "distance", distance,
-     "time", duration,
-     "cordi", origin_lat, destination_lat, origin_lng, destination_lng,
-     "directionsResponse",directionsResponse
-    );
-  }
+
+
+
+
+  const renderForm = () => (
+    <form onSubmit={handleSubmit}>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={6}>
+        <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+          <TextField
+            fullWidth
+            type="text"
+            label="Origin"
+            inputRef={originRef}
+            autoComplete="on"
+            margin="normal"
+          />
+        </Autocomplete>
+        <Autocomplete>
+          <TextField
+            fullWidth
+            type="text"
+            label="Destination"
+            inputRef={destiantionRef}
+            autoComplete="off"
+            margin="normal"
+          />
+        </Autocomplete>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={calculateRoute}
+          sx={{ marginTop: '16px', marginRight: '8px',
+            backgroundColor: "var(--secondary-color)",
+            "&:hover": {
+              backgroundColor: "var(--secondary-hover-color)",
+            },
+            color: "white",
+           }}
+        >
+          Calculate Route
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={clearRoute}
+          sx={{
+             marginTop: '16px',
+            backgroundColor: "var(--primary-color)",
+            "&:hover": {
+              backgroundColor: "var(--primary-hover-color)",
+            },
+            color: "white",
+           }}
+          
+        >
+          Clear Route
+        </Button>
+        <Typography style={{ marginTop: '16px' }}>Distance: {distance} </Typography>
+        <Typography>Duration: {duration} </Typography>
+      </Grid>
+
+
+      <Grid item xs={12} sm={6}>
+        <GoogleMap
+          center={center}
+          zoom={15}
+          mapContainerStyle={{ width: "400px", height: "300px" }}
+          options={options}
+          onLoad={onLoad}
+        >
+          <Marker position={center} />
+          {directionsResponse && (
+            <DirectionsRenderer directions={directionsResponse} />
+          )}
+        </GoogleMap>
+        </Grid>
+
+
+
+      <Divider></Divider>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Load(Tonnes)"
+          name="t_load"
+          type="number"
+          value={trip.t_load}
+          onChange={handleChange}
+        />
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="LPO/Description"
+          name="t_type"
+          type="text"
+          value={trip.t_type}
+          onChange={handleChange}
+        />
+      </Grid>
+
+
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="Start Date"
+          name="t_start_date"
+          type="date"
+          value={trip.t_start_date}
+          onChange={handleChange}
+        />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <TextField
+          fullWidth
+          label="End Date"
+          name="t_end_date"
+          type="date"
+          value={trip.t_end_date}
+          onChange={handleChange}
+        />
+      </Grid>
+
+
+      <Grid item xs={12} sm={6} style={{ display: 'none' }}>
+        <TextField
+          fullWidth
+          hidden 
+          type="text"
+          label="Distance"
+          name="t_distance"
+          value={distance}
+          onChange={handleChange} 
+        />
+      </Grid>
+
+
+
+      <Grid item xs={12} sm={6}>
+        <InputLabel id="operator-label">Assign Driver</InputLabel>
+        <Select
+          fullWidth
+          labelId="operator-label"
+          label="Operator"
+          name="t_operator_id"
+          value={trip.t_operator_id}
+          onChange={handleChange}
+        >
+        {operatorOptions && operatorOptions.length > 0 ? (
+          operatorOptions.map((operator) => (
+            <MenuItem key={operator.id} value={operator.id}>
+              {operator.o_name} - {operator.a_license_plate} -{operator.o_status}
+            </MenuItem>
+          ))
+        ) : ( loading &&
+          <MenuItem disabled>
+            Loading operators...
+          </MenuItem>
+        )}
+        </Select>
+      </Grid>
+
+      <Grid item xs={12} sm={6}>
+        <InputLabel id="asset-label">Assign client</InputLabel>
+        <Select
+          fullWidth
+          labelId="cliient-label"
+          label="Client"
+          name="t_client_id"
+          value={trip.t_client_id}
+          onChange={handleChange}
+        >
+          {clientOptions && clientOptions.length > 0 ? (
+            clientOptions.map((client) => (
+             
+                <MenuItem key={client.id} value={client.id}>
+                   {client.c_name} - {client.c_status}
+                </MenuItem>
+              
+            ))
+          ) : (
+            loading && <MenuItem disabled>Loading clients...</MenuItem>
+          )}
+        </Select>
+      </Grid>
+
+
+    </Grid>
+    <DialogActions>
+      <Button type="submit" variant="contained"
+      disabled={saving}
+      sx={{
+
+        backgroundColor: "var(--secondary-color)",
+        "&:hover": {
+          backgroundColor: "var(--secondary-hover-color)",
+        },
+        color: "white",
+      }
+      } >
+        {saving ? "Submitting..." : "Submit"}
+        
+      </Button>
+      <Button variant="contained"
+      sx={{
+
+        backgroundColor: "var(--primary-color)",
+        "&:hover": {
+          backgroundColor: "var(--primary-hover-color)",
+        },
+        color: "white",
+      }
+      } 
+      
+      onClick={onCancel}>
+        Cancel
+      </Button>
+    </DialogActions>
+ 
+  </form>
+  );
+
 
   return (
-    <Modal open={open} onClose={onCancel} sx={{ zIndex: 100}} >
-            <Box
+    <>
+    {isMobile ? (
+  // 🔹 MOBILE MODAL
+  <Modal open={open} onClose={onCancel} sx={{ zIndex: 1300 }}>
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        width: "100vw",
+        height: "95vh",
+        bgcolor: "background.paper",
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        p: 2,
+        overflowY: "auto",
+      }}
+    >
+      <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: 700,
-          maxHeight: "80vh",
-          overflowY: "auto",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
           bgcolor: "background.paper",
-          boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
+          zIndex: 10,
+          pb: 1,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            position: "sticky",
-            top: 0,
-            bgcolor: "background.paper",
-            zIndex: 10,
-            pb: 1,
-          }}
-        >
-          <Typography variant="h6">Add Trip</Typography>
-          <IconButton onClick={onCancel}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
+        <Typography variant="h6">Add Trip</Typography>
+        <IconButton onClick={onCancel}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
+      {renderForm()}
+    </Box>
+  </Modal>
+) : (
+  // 🔹 DESKTOP MODAL
+  <Modal open={open} onClose={onCancel} sx={{ zIndex: 100 }}>
+    <Box
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 700,
+        maxHeight: "80vh",
+        overflowY: "auto",
+        bgcolor: "background.paper",
+        boxShadow: 24,
+        p: 4,
+        borderRadius: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          position: "sticky",
+          top: 0,
+          bgcolor: "background.paper",
+          zIndex: 10,
+          pb: 1,
+        }}
+      >
+        <Typography variant="h6">Add Trip</Typography>
+        <IconButton onClick={onCancel}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
 
+      {renderForm()}
+    </Box>
+  </Modal>
+)}
 
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-                  <TextField
-                    fullWidth
-                    type="text"
-                    label="Origin"
-                    inputRef={originRef}
-                    autoComplete="on"
-                    margin="normal"
-                  />
-                </Autocomplete>
-                <Autocomplete>
-                  <TextField
-                    fullWidth
-                    type="text"
-                    label="Destination"
-                    inputRef={destiantionRef}
-                    autoComplete="off"
-                    margin="normal"
-                  />
-                </Autocomplete>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={calculateRoute}
-                  sx={{ marginTop: '16px', marginRight: '8px',
-                    backgroundColor: "var(--secondary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--secondary-hover-color)",
-                    },
-                    color: "white",
-                   }}
-                >
-                  Calculate Route
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={clearRoute}
-                  sx={{
-                     marginTop: '16px',
-                    backgroundColor: "var(--primary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--primary-hover-color)",
-                    },
-                    color: "white",
-                   }}
-                  
-                >
-                  Clear Route
-                </Button>
-                <Typography style={{ marginTop: '16px' }}>Distance: {distance} </Typography>
-                <Typography>Duration: {duration} </Typography>
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <GoogleMap
-                  center={center}
-                  zoom={15}
-                  mapContainerStyle={{ width: "400px", height: "300px" }}
-                  options={options}
-                  onLoad={onLoad}
-                >
-                  <Marker position={center} />
-                  {directionsResponse && (
-                    <DirectionsRenderer directions={directionsResponse} />
-                  )}
-                </GoogleMap>
-                </Grid>
-
-     
-
-              <Divider></Divider>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Load(Tonnes)"
-                  name="t_load"
-                  type="number"
-                  value={trip.t_load}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="LPO/Description"
-                  name="t_type"
-                  type="text"
-                  value={trip.t_type}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Start Date"
-                  name="t_start_date"
-                  type="date"
-                  value={trip.t_start_date}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="End Date"
-                  name="t_end_date"
-                  type="date"
-                  value={trip.t_end_date}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Distance"
-                  name="t_distance"
-                  value={distance}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-
-
-              <Grid item xs={12} sm={6}>
-                <InputLabel id="operator-label">Assign Driver</InputLabel>
-                <Select
-                  fullWidth
-                  labelId="operator-label"
-                  label="Operator"
-                  name="t_operator_id"
-                  value={trip.t_operator_id}
-                  onChange={handleChange}
-                >
-                {operatorOptions && operatorOptions.length > 0 ? (
-                  operatorOptions.map((operator) => (
-                    <MenuItem key={operator.id} value={operator.id}>
-                      {operator.o_name} - {operator.o_status} - {operator.o_a_license_plate}
-                    </MenuItem>
-                  ))
-                ) : ( loading &&
-                  <MenuItem disabled>
-                    Loading operators...
-                  </MenuItem>
-                )}
-                </Select>
-              </Grid>
-
-
-            </Grid>
-            <DialogActions>
-              <Button type="submit" variant="contained"
-              sx={{
-
-                backgroundColor: "var(--secondary-color)",
-                "&:hover": {
-                  backgroundColor: "var(--secondary-hover-color)",
-                },
-                color: "white",
-              }
-              } >
-                Submit
-              </Button>
-              <Button variant="contained"
-              sx={{
-
-                backgroundColor: "var(--primary-color)",
-                "&:hover": {
-                  backgroundColor: "var(--primary-hover-color)",
-                },
-                color: "white",
-              }
-              } 
-              
-              onClick={onCancel}>
-                Cancel
-              </Button>
-            </DialogActions>
-         
-          </form>
-</Box>
-</Modal>
+    </>
+    
   );
 };
 export default AddTripMapForm;

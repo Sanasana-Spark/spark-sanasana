@@ -6,7 +6,7 @@ import InvoicesPreview from './invoices_preview';
 
 const ClientInvoice = ({ selectedClient }) => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id, org_currency } = useAuthContext();
+	const { org_currency, apiFetch } = useAuthContext();
 	const [currentPage, setCurrentPage] = useState(0);
 	const [invoices, setInvoices] = useState([]);
 	const [, setLoading] = useState(true);
@@ -14,10 +14,10 @@ const ClientInvoice = ({ selectedClient }) => {
 	const [previewOpen, setPreviewOpen] = useState(false);
 
 	useEffect(() => {
-		if (org_id && user_id && selectedClient && selectedClient.id) {
+		if (selectedClient && selectedClient.id) {
 
-			const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
-			fetch(apiUrl)
+			const apiUrl = `${baseURL}/clients/invoices/${selectedClient.id}/`;
+			apiFetch(apiUrl, { method: 'GET' })
 				.then((response) => {
 					if (!response.ok) {
 						throw new Error("Network response was not ok");
@@ -34,7 +34,7 @@ const ClientInvoice = ({ selectedClient }) => {
 					setLoading(false);
 				});
 		}
-	}, [baseURL, org_id, user_id, selectedClient]);
+	}, [baseURL, apiFetch, selectedClient]);
 
 	const rowsPerPage = 5;
 	// Handle pagination change

@@ -7,7 +7,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const PropCard = ({ selectedTrip }) => {
   const baseURL = process.env.REACT_APP_BASE_URL
-  const {org_id, user_id , org_currency } = useAuthContext();
+  const { org_currency, apiFetch } = useAuthContext();
   const [tripIncome, setTripIncome] = useState([]);
   const [tripExpense, setTripExpense] = useState([]);
   const [tripSummary, setTripSummary] = useState([]);
@@ -15,8 +15,8 @@ const PropCard = ({ selectedTrip }) => {
   const trip_id  = selectedTrip[0]?.id;
 
   useEffect(() => {
-      if (org_id && user_id && trip_id) {
-      fetch(`${baseURL}/trips/income/${org_id}/${user_id}/${trip_id}`)
+      if (trip_id) {
+      apiFetch(`${baseURL}/trips/income/${trip_id}`, { method: 'GET' })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -31,11 +31,11 @@ const PropCard = ({ selectedTrip }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-    }},[baseURL,org_id, user_id, trip_id] );
+    }},[baseURL,apiFetch, trip_id] );
 
     useEffect(() => {
-      if (org_id && user_id && trip_id) {
-      fetch(`${baseURL}/trips/expense/${org_id}/${user_id}/${trip_id}`)
+      if (trip_id) {
+      apiFetch(`${baseURL}/trips/expense/${trip_id}`, { method: 'GET' })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -51,7 +51,7 @@ const PropCard = ({ selectedTrip }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-    }},[baseURL,org_id, user_id, trip_id] );
+    }},[baseURL,apiFetch, trip_id] );
 
   // Calculate income, expense, and profit summaries
   // when tripIncome or tripExpense changes
@@ -61,7 +61,7 @@ const PropCard = ({ selectedTrip }) => {
   // This is a good practice to avoid unnecessary calculations
   // and to ensure that the component behaves correctly
   useEffect(() => {
-    if (org_id && user_id && trip_id) {
+    if ( trip_id) {
       setTripSummary((prevSummary) => ({
         ...prevSummary,
         income_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0),
@@ -69,7 +69,7 @@ const PropCard = ({ selectedTrip }) => {
         profit_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0) - tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
       }));
     }
-  }, [org_id, user_id, trip_id, tripIncome, tripExpense]);
+  }, [trip_id, tripIncome, tripExpense]);
 
 
   if (loading) {

@@ -7,7 +7,7 @@ import { useAuthContext } from '../onboarding/authProvider';
 
 const PropCard = ({ selectedAsset }) => {
   const baseURL = process.env.REACT_APP_BASE_URL
-  const {org_id, user_id , org_currency } = useAuthContext();
+  const {org_currency, apiFetch } = useAuthContext();
   const [tripIncome, setTripIncome] = useState([]);
   const [tripExpense, setTripExpense] = useState([]);
   const [tripSummary, setTripSummary] = useState([]);
@@ -15,8 +15,8 @@ const PropCard = ({ selectedAsset }) => {
   const asset_id = selectedAsset[0]?.id;
 
   useEffect(() => {
-      if (org_id && user_id && asset_id) {
-      fetch(`${baseURL}/assets/income/${org_id}/${user_id}/${asset_id}`)
+      if (asset_id) {
+      apiFetch(`${baseURL}/assets/income/${asset_id}`, { method: 'GET' })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -31,11 +31,11 @@ const PropCard = ({ selectedAsset }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-    }},[baseURL,org_id, user_id, asset_id] );
+    }},[baseURL, asset_id, apiFetch] );
 
     useEffect(() => {
-      if (org_id && user_id && asset_id) {
-      fetch(`${baseURL}/assets/expense/${org_id}/${user_id}/${asset_id}`)
+      if (asset_id) {
+      apiFetch(`${baseURL}/assets/expense/${asset_id}`, { method: 'GET' })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -51,11 +51,11 @@ const PropCard = ({ selectedAsset }) => {
           console.error("Error fetching data:", error);
           setLoading(false);
         });
-    }},[baseURL,org_id, user_id, asset_id] );
+    }},[baseURL,apiFetch, asset_id] );
 
 
   useEffect(() => {
-    if (org_id && user_id && asset_id) {
+    if (asset_id) {
       setTripSummary((prevSummary) => ({
         ...prevSummary,
         income_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0),
@@ -63,7 +63,7 @@ const PropCard = ({ selectedAsset }) => {
         profit_summary: tripIncome.reduce((acc, item) => acc + parseFloat(item.ti_amount), 0) - tripExpense.reduce((acc, item) => acc + parseFloat(item.te_amount), 0),
       }));
     }
-  }, [org_id, user_id, asset_id, tripIncome, tripExpense]);
+  }, [asset_id, tripIncome, tripExpense]);
 
   if (loading) {
     return <Loader />;

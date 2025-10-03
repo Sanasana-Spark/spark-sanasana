@@ -19,7 +19,7 @@ import DeleteAsset from '../components/assets/deleteAsset';
 
 const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 	const [currentView, setCurrentView] = useState('TableView');
 	const [assets, setAssets] = useState([]);
 	const [, setLoading] = useState(true);
@@ -33,29 +33,28 @@ const Assets = () => {
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [isDeleteSliderOpen, setIsDeleteSliderOpen] = useState(false);
 	useEffect(() => {
-		if (org_id && user_id) {
-			const apiUrl = `${baseURL}/assets/${org_id}/${user_id}`;
-			fetch(apiUrl)
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					return response.json();
-				})
-				.then(data => {
-					setAssets(data.assets);
-					setLoading(false);
-				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-					setLoading(false);
-				});
-		}
-	}, [baseURL, org_id, user_id, showAddPropertyForm, isSliderOpen]);
+		const apiUrl = `${baseURL}/assets/`;
+		apiFetch(apiUrl, { method: 'GET' })
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				setAssets(data.assets);
+				setLoading(false);
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				setLoading(false);
+			});
+
+	}, [baseURL, apiFetch, showAddPropertyForm, isSliderOpen]);
 
 	const handleSubmit = assetData => {
 		// Define the URL for the POST request
-		const url = `${baseURL}/assets/${org_id}/${user_id}/`;
+		const url = `${baseURL}/assets/`;
 		const data = {
 			a_make: assetData.a_make,
 			a_model: assetData.a_model,
@@ -72,14 +71,7 @@ const Assets = () => {
 			a_attachment1: null,
 			a_attachment2: null,
 		};
-		const options = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		};
-		fetch(url, options)
+		apiFetch(url, { method: 'POST', body: JSON.stringify(data) })
 			.then(response => {
 				if (!response.ok) {
 					throw new Error('Failed to add asset');
@@ -135,15 +127,8 @@ const Assets = () => {
 	};
 
 	const handleSaveEdit = updatedAsset => {
-		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
-		const options = {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(updatedAsset),
-		};
-		fetch(url, options)
+		const url = `${baseURL}/assets/${updatedAsset.id}/`;
+		apiFetch(url, { method: 'PUT', body: JSON.stringify(updatedAsset) })
 			.then(response => response.json())
 			.then(() => {
 				setEditAsset(null);
@@ -155,15 +140,8 @@ const Assets = () => {
 	};
 
 	const handleSaveDelete = updatedAsset => {
-		const url = `${baseURL}/assets/${org_id}/${user_id}/${updatedAsset.id}/`;
-		const options = {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		};
-		fetch(url, options)
-			.then(response => response.json())
+		const url = `${baseURL}/assets/${updatedAsset.id}/`;
+		apiFetch(url, { method: 'DELETE' })
 			.then(() => {
 				setEditAsset(null);
 				setIsDeleteSliderOpen(false);
@@ -173,6 +151,15 @@ const Assets = () => {
 				console.error('Error deleting asset:', error);
 			});
 	};
+
+	//handling search by vehicle registration and driver/asset
+	useEffect(() => {
+		let filtered = assets;
+		if (search) {
+			filtered = filtered.filter(asset => asset.a_license_plate.toLowerCase().includes(search.toLowerCase()));
+		}
+		setFilteredAssets(filtered);
+	}, [search, assets]);
 
 	//handling search by vehicle registration and driver/asset
 	useEffect(() => {

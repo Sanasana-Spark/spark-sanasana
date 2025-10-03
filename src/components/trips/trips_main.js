@@ -21,7 +21,7 @@ import { Search } from "@mui/icons-material";
 const Trips = () => {
   
   const baseURL = process.env.REACT_APP_BASE_URL
-  const { user_id, org_id } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [currentView, setCurrentView] = useState("TableView"); // Initial view state
   const [selectedTicket, setSelectedTicket] = useState([]);
   const [trips, setTrips] = useState([]);
@@ -29,8 +29,7 @@ const Trips = () => {
   const [isSliderOpen, setIsSliderOpen] = useState(false);
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   useEffect(() => {
-    if (org_id && user_id) {
-    fetch(`${baseURL}/trips/${org_id}/${user_id}/?state=new`)
+    apiFetch(`${baseURL}/trips/?state=new`, { method: 'GET' })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -45,13 +44,14 @@ const Trips = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  }},[baseURL,org_id, user_id, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
+  },[baseURL,apiFetch, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
   const handleSubmit = (assetData) => {
     // Define the URL for the POST request
-    const url = `${baseURL}/trips/${org_id}/${user_id}/`;
+    const url = `${baseURL}/trips/`;
     const data = {
+      stops: assetData.stops,
       t_type: assetData.t_type,
       t_start_lat: assetData.t_start_lat,
       t_start_long: assetData.t_start_long,
@@ -75,17 +75,7 @@ const Trips = () => {
       t_client_id: assetData.t_client_id,
     };
 
-    console.log("Payload Data:", data); // Log the payload
-
-    const options = {
-      method: "POST", // Specify the HTTP method
-      headers: {
-        "Content-Type": "application/json", // Specify the content type of the request body
-      },
-      body: JSON.stringify(data), // Convert data to JSON string for the request body
-    };
-    console.log(data)
-    fetch(url, options)
+    apiFetch(url, { method: "POST", body: JSON.stringify(data) })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to add trip");
@@ -224,8 +214,6 @@ flex: 1,
       />
     
     
-
-
 
 <AddAssetForm
   open={showAddPropertyForm}

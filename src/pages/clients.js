@@ -9,7 +9,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem 
 
 const Clients = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
-	const { user_id, org_id } = useAuthContext();
+	const { apiFetch } = useAuthContext();
 
 	const [clients, setClients] = useState([]);
 	const [saving, setSaving] = useState(false);
@@ -26,10 +26,10 @@ const Clients = () => {
 
 
 	useEffect(() => {
-		const apiUrl = `${baseURL}/clients/${org_id}/${user_id}/`;
+		const apiUrl = `${baseURL}/clients/`;
 		const fetchClients = async () => {
 			try {
-				const response = await fetch(apiUrl);
+				const response = await apiFetch(apiUrl, { method: 'GET' });
 				const data = await response.json();
 				if (data.clients && data.clients.length > 0) {
 					setClients(data.clients);
@@ -40,7 +40,7 @@ const Clients = () => {
 			}
 		};
 		fetchClients();
-	}, [baseURL, org_id, user_id, isSliderOpen, showAddPropertyForm]);
+	}, [baseURL, apiFetch, isSliderOpen, showAddPropertyForm]);
 
 	const handleCancel = () => {
 		setShowAddPropertyForm(false);
@@ -61,14 +61,9 @@ const Clients = () => {
 	};
 
 	const handleSaveEdit = updatedClient => {
-		const url = `${baseURL}/clients/${org_id}/${user_id}/${updatedClient.id}/`;
-		const options = {
-			method: 'PUT',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(updatedClient),
-		};
+		const url = `${baseURL}/clients/${updatedClient.id}/`;
 
-		fetch(url, options)
+		apiFetch(url, { method: 'PUT', body: JSON.stringify(updatedClient) })
 			.then(response => response.json())
 			.then(() => {
 				setEditClient(null);
@@ -78,11 +73,10 @@ const Clients = () => {
 	};
 
 	const handleSaveClient = async newClient => {
-		const apiUrl = `${baseURL}/clients/${org_id}/${user_id}/`;
+		const apiUrl = `${baseURL}/clients/`;
 		try {
-			const response = await fetch(apiUrl, {
+			const response = await apiFetch(apiUrl, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(newClient),
 			});
 			if (response.ok) {
@@ -113,7 +107,7 @@ const Clients = () => {
 	const handleInvoiceSubmit = async e => {
 		setSaving(true);
 		e.preventDefault();
-		const apiUrl = `${baseURL}/clients/invoices/${org_id}/${user_id}/${selectedClient.id}/`;
+		const apiUrl = `${baseURL}/clients/invoices/${selectedClient.id}/`;
 		e.preventDefault();
 		const invoiceData = {
 			ti_ext_inv,
@@ -127,9 +121,8 @@ const Clients = () => {
 		};
 
 		try {
-			const res = await fetch(apiUrl, {
+			const res = await apiFetch(apiUrl, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(invoiceData),
 			});
 			setSaving(false);

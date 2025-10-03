@@ -31,7 +31,7 @@ import CarbonEmissionChart from "../components/carbon_emission/main";
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Dashboard = () => {
-  const { org_id, user_id, user_org, org_currency } = useAuthContext();
+  const { org_id, user_id, user_org, org_currency, apiFetch } = useAuthContext();
 
   if (user_id && !user_org && !org_id) {
     window.location.href = "/create-organization";
@@ -65,32 +65,29 @@ const Dashboard = () => {
   const [startDate] = useState(formatDate(sevenDaysAgo));
   const [endDate] = useState(formatDate(today));
 
-  useEffect(
-    () => {
-      if (!org_id) return; // Prevent unnecessary updates
-      fetch(
-        `${baseURL}/assets/fleet_performance/${org_id}/?start_date=${startDate}&end_date=${endDate}`
-      )
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setAssetPerformance(data.fleet_data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        });
-    },
-    // eslint-disable-next-line
-    [org_id]
-  );
+
+  useEffect(() => {async function fetchData() {
+    try {
+      const response = await apiFetch(
+        `${baseURL}/assets/fleet_performance/?start_date=${startDate}&end_date=${endDate}`, { method: "GET" }
+      );
+      if (!response.ok) throw new Error("Network error");
+
+      const data = await response.json();
+      setAssetPerformance(data.fleet_data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchData();
+}, [apiFetch, startDate, endDate]);
+
 
   useEffect(() => {
+
     if (!trips.length) return; // Prevent unnecessary updates
 
     // Prepare daily fuel costs for the last 7 days
@@ -140,7 +137,7 @@ const Dashboard = () => {
 
   useEffect(
     () => {
-      fetch(`${baseURL}/trips/${org_id}/${user_id}/`)
+      apiFetch(`${baseURL}/trips/`, { method: "GET" })
         .then((response) => {
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -160,7 +157,7 @@ const Dashboard = () => {
         });
     },
     // eslint-disable-next-line
-    [org_id, user_id]
+    [apiFetch, baseURL]
   );
 
   const [, setPrevOrgId] = useState(null);
@@ -178,7 +175,7 @@ const Dashboard = () => {
 
     setLoading(true); // Ensure loading state is set correctly
 
-    fetch(`${baseURL}/summaries/${org_id}/`, { signal })
+    apiFetch(`${baseURL}/summaries/`, { method: "GET", signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -197,7 +194,7 @@ const Dashboard = () => {
       });
 
     return () => controller.abort(); // Cleanup previous fetch request
-  }, [org_id]); // Runs only when org_id changes
+  }, [apiFetch, org_id]); // Runs only when org_id changes
 
   // Pagination controls
   const handleNextPage = () => {
