@@ -301,6 +301,7 @@ flex: 1,
 
   const handleIconClick = (iconIndex) => {
     const newView = iconIndex === 0 ? "TableView" : "RequestDetails"; // Determine view based on index
+    console.log("Icon clicked, switching to view:", newView);
     setCurrentView(newView);
     setIsSliderOpen(iconIndex !== 0); // Open slider if iconIndex is not 0
   };
@@ -344,9 +345,10 @@ flex: 1,
   };
 
   const handleViewDetailsClick = (rowIndex) => {
-    setCurrentView("RequestDetails");
-    setSelectedTicket(rowIndex);
-    setIsSliderOpen(true);
+    console.log("View details clicked for row index:", rowIndex);
+     setSelectedTicket(rowIndex);
+     setCurrentView("RequestDetails");
+     setIsSliderOpen(true);
   };
 
   return (
