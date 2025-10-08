@@ -31,6 +31,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   const [page, setPage] = useState(0); // Track the current page
   const rowsPerPage = 7; // Number of records per page
   const [loading, setLoading] = useState(true);
+  const [tripLoading, setTripLoading] = useState(true);
   const [, setSuccess] = useState(null);
   const [, setError] = useState(null);
   const [clientOptions, setClientOptions] = useState([]);
@@ -225,7 +226,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
   useEffect(() => {
     if (trips && trips.length > 0) {
-      setLoading(false);
+      setTripLoading(false);
     }
   }, [trips]);
 
@@ -255,14 +256,14 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
         </TableHead>
         <TableBody>
           {/* Render a TableRowItem for each asset in the trips array */}
-          {loading && (
+          {tripLoading && (
             <TableRow>
               <TableCell colSpan={12} align="center">
                 Fetching trips...
               </TableCell>
             </TableRow>
           )}
-          {!loading && paginatedTrips.length === 0 && (
+          {!tripLoading && paginatedTrips.length === 0 && (
             <TableRow>
               <TableCell colSpan={12} align="center">
                 No trips available.
