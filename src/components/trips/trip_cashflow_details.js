@@ -84,6 +84,7 @@ const PropCard = ({ selectedTrip }) => {
         const start = { lat: startLat, lng: startLong };
         const origin = trip.t_origin_place_query;
         const destination = trip.t_destination_place_query;
+        const stops = trip.stops || [];
 
         return (
           <Box key={trip.id}
@@ -101,7 +102,7 @@ const PropCard = ({ selectedTrip }) => {
 
             {/* Minimized Map */}
             <Box sx={{  marginBottom: 2 }}>
-              <Map origin={origin} destination={destination} center={start} tripid={trip.id} />
+              <Map origin={origin} destination={destination}  stops={stops} center={start} tripid={trip.id} />
             </Box>
 
             <Grid container spacing={2}>
