@@ -18,12 +18,15 @@ const TripsTable = ({ trips, onViewUnitsClick }) => {
   const rowsPerPage = 7; // Number of records per page
 
   const handleCellClick = (rowIndex) => {
+    console.log("Row index clicked:", rowIndex);
     setIsDropdownOpen((prevState) => ({
       ...prevState,
       [rowIndex]: !prevState[rowIndex], // Toggle the state for the specific trip id
     }));
     onViewUnitsClick(rowIndex);
   };
+
+  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -81,7 +84,7 @@ const TripsTable = ({ trips, onViewUnitsClick }) => {
             >
 
 
-              <TableCell onClick={() => handleCellClick(trip.id)}  >
+              <TableCell onClick={() => handleCellClick(trip.id)} >
                 {!isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}> View </Button>}
 
                 {isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}

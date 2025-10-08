@@ -127,8 +127,6 @@ const DirectionsMap = ({ origin, destination, center, tripid, stops = [] }) => {
     setRouteMarkers(markers);
   };
 
-  console.log(directionsResponse);
-
   // Run when component loads or when origin/destination/stops changes
   useEffect(() => {
     if (isLoaded) {

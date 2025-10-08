@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState} from "react";
+import React, { useState, useEffect} from "react";
 import { Grid, Card, CardContent, Typography, Box, Chip } from "@mui/material";
 import Loader from "../loader";
 import Map from "../maps/singleTripMarkedMap";
@@ -7,9 +7,12 @@ import Map from "../maps/singleTripMarkedMap";
 const PropCard = ({ selectedTrip }) => {
   const [loading, setLoading] = useState(true);
 
-  if (selectedTrip) {
-    setLoading(false);
-  }
+  useEffect(() => {
+    if (selectedTrip && selectedTrip.length > 0) {
+      setLoading(false);
+    }
+  }, [selectedTrip]);
+
 
   if (loading) {
     return <Loader />;
