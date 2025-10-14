@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination, IconButton } from '@mui/material';
+import { DeleteForever } from '@mui/icons-material';
 
-const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick }) => {
+const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, onDeleteClick }) => {
 	const [currentPage, setCurrentPage] = useState(0);
 	const rowsPerPage = 5;
 	// Handle pagination change
@@ -20,23 +21,23 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 						<TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
 						<TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
 						<TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
-						 {/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>  */}
-											</TableRow>
-										</TableHead>
-										<TableBody>
-											{paginatedClients.map((client, index) => (
-												<TableRow
-													key={index}
-													onClick={() => onClientClick(client)}
-													sx={{
-														cursor: 'pointer',
-														backgroundColor: client.isActive ? 'var(--secondary-color)' : '#f5f5f5', // Set active row color
-														'&:hover': {
-															backgroundColor: client.isActive ? 'var(--secondary-color-hover)' : '#e0e0e0',
-														},
-													}}
-												>
-													{/* <TableCell>
+						{/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>  */}
+					</TableRow>
+				</TableHead>
+				<TableBody>
+					{paginatedClients.map((client, index) => (
+						<TableRow
+							key={index}
+							onClick={() => onClientClick(client)}
+							sx={{
+								cursor: 'pointer',
+								backgroundColor: client.isActive ? 'var(--secondary-color)' : '#f5f5f5', // Set active row color
+								'&:hover': {
+									backgroundColor: client.isActive ? 'var(--secondary-color-hover)' : '#e0e0e0',
+								},
+							}}
+						>
+							{/* <TableCell>
 														<Button
 															size='small'
 															variant='contained'
@@ -88,6 +89,11 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick })
 								>
 									New Invoice
 								</Button>
+							</TableCell>
+							<TableCell>
+								<IconButton onClick={() => onDeleteClick(client.id)} style={{ marginLeft: '10px' }}>
+									<DeleteForever sx={{ color: 'red' }} />
+								</IconButton>
 							</TableCell>
 
 							{/* <TableCell>
