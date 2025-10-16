@@ -72,7 +72,7 @@ const DirectionsMap = ({ origin, destination, center, tripid, stops = [] }) => {
           origin: origin,
           destination: destination,
           waypoints: waypoints,
-          optimizeWaypoints: false, // Set to true if you want Google to optimize the order
+          optimizeWaypoints: true, // Set to true if you want Google to optimize the order
           travelMode: window.google.maps.TravelMode.DRIVING,
         },
         (result, status) => {
