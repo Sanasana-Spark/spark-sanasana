@@ -10,6 +10,7 @@ import {
 import New from "../components/trips/trips_main";
 import Requested from "../components/trips/trips_cashflow";
 import History from "../components/trips/trips_history";
+import Summary from "../components/trips/trips_summary";
 
 const Trips = () => {
   const [activeTab, setActiveTab] = useState("New");
@@ -73,12 +74,14 @@ const Trips = () => {
           <Tab label="New/In-Progress" value="New" />
           <Tab label="Income/Expenses" value="Fuel_Requests" />
           <Tab label="History" value="History" />
+          <Tab label="Summary" value="Summary" />
         </Tabs>
 
     
           {activeTab === "New" && <New />}
           {activeTab === "Fuel_Requests" && <Requested />}
           {activeTab === "History" && <History />}
+          {activeTab === "Summary" && <Summary/>}
        
      
     </Box>
