@@ -13,7 +13,7 @@ import History from "../components/trips/trips_history";
 import Summary from "../components/trips/trips_summary";
 
 const Trips = () => {
-  const [activeTab, setActiveTab] = useState("New");
+  const [activeTab, setActiveTab] = useState("Summary");
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -71,19 +71,18 @@ const Trips = () => {
             // color: "var(--secondary-color)",
           }}
         >
+          <Tab label="Summary" value="Summary" />
           <Tab label="New/In-Progress" value="New" />
           <Tab label="Income/Expenses" value="Fuel_Requests" />
           <Tab label="History" value="History" />
-          <Tab label="Summary" value="Summary" />
         </Tabs>
 
-    
+          {activeTab === "Summary" && <Summary onNavigateTab={setActiveTab} />}
+
           {activeTab === "New" && <New />}
           {activeTab === "Fuel_Requests" && <Requested />}
           {activeTab === "History" && <History />}
-          {activeTab === "Summary" && <Summary/>}
-       
-     
+          
     </Box>
   );
 };
