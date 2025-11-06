@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 
 import Upcoming from "../components/maintenance/upcoming";
-import Summaries from "../components/maintenance/upcoming";
+import Summaries from "../components/maintenance/maintenance_summary";
 import History from "../components/maintenance/history";
 const Maintenance = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
