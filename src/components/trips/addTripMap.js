@@ -61,7 +61,6 @@ const AddTripMapForm = ({ onSubmit, onCancel, open }) => {
     {
       t_load: 0,
       t_status: "Pending",
-      t_type: "N/A",
       t_start_date: null,
       t_end_date: null,
       t_client_id: null,
@@ -169,7 +168,7 @@ const handleStopChange = (index, e) => {
       t_end_long: destination_lng,
     });
 
-    setTrip({ t_status: "Pending", t_operator_id: "", t_asset_id: "", t_type: "N/A" });
+    setTrip({ t_status: "Pending", t_operator_id: "", t_asset_id: "" });
   };
 
   const { isLoaded } = useJsApiLoader({
@@ -367,7 +366,7 @@ const handleStopChange = (index, e) => {
         </Grid>
 
         <Grid item xs={12} sm={6}>
-          <TextField fullWidth label="LPO/Description" name="t_type" type="text" value={trip.t_type} onChange={handleChange} />
+          <TextField required fullWidth label="LPO/Description" name="t_type" type="text" value={trip.t_type} onChange={handleChange} />
         </Grid>
 
         <Grid item xs={12} sm={6}>
