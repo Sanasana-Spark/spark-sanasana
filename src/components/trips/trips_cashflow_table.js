@@ -457,6 +457,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
         {/* Description */}
         <TextField
+          required
           label="Description"
           fullWidth
           name="ti_description"
@@ -555,6 +556,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
         {/* Description */}
         <TextField
+          required
           label="Description"
           fullWidth
           name="te_description"
