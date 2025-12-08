@@ -59,6 +59,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
 
   useEffect(() => {
     if (selectedtrip && showFuelRequestForm) {
+      setLoading(true)
       const url = `${baseURL}/trips/fuel_request/${selectedtrip.id}/`;
       apiFetch(url, { method: 'GET' })
         .then(response => {
@@ -67,6 +68,7 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
         })
         .then(data => {
           setFuelRequest(data);
+          setLoading(false)
         })
         .catch(error => {
           console.error('Error fetching fuel request:', error);
@@ -83,6 +85,9 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
   };
 
   const handleRequestClick = (trip) => {
+    if(trip.t_status === "Pending"){
+      return alert("The driver is yet to submit a fuel request")
+    }
     setShowFuelRequestForm(true);
     setSelectedTrip(trip);
   };
@@ -298,14 +303,21 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
               <TableCell onClick={() => handleRequestClick(trip)}>
               <Button
                 sx={{
-                  color: trip.t_actual_cost === null ? "primary" : "var(--secondary-color)",
+                  color: trip.t_actual_cost === null ? "var(--primary-color)" : "var(--secondary-color)",
                   background: "white",
                   "&:hover": {
                     backgroundColor: trip.t_actual_cost === null ? "var(--primary-hover-color)" : "var(--secondary-hover-color)",
                   },
                 }}
               >
-                    {trip.t_actual_cost === null ? "Approve" : "Approved"}
+                    {/* {trip.t_actual_cost === null ? "Approve" : "Approved"} */}
+                    {
+                      trip.t_actual_cost === null
+                        ? (trip.t_status === "Pending" ? "Pending Request" : "Approve")
+                        : "Approved"
+                    }
+
+                    
                   </Button>
               </TableCell>
 
@@ -374,12 +386,17 @@ const TripsTable = ({ trips, onViewUnitsClick, reloadtrips }) => {
     {selectedtrip.a_efficiency_rate ? (
       <>
         <Typography>Fuel Economy: <strong>{selectedtrip.a_efficiency_rate} km/litre</strong></Typography>
+        { loading ? ( <Typography> The driver is yet to submit a fuel Request  </Typography> ): (
+          <>
         <Typography>
           Estimated Cost: <strong style={{ color: "var(--secondary-color)" }}> 
            {fuelRequest.f_estimated_cost ? (<>{fuelRequest.f_estimated_cost} {org_currency}</>) : "fetching..."}
             </strong>
         </Typography>
         <Typography>Estimated Litres:  {fuelRequest.f_estimated_litres ? <strong>{fuelRequest.f_estimated_litres}</strong> : "fetching..."}</Typography>
+        </>
+        )}
+     
       </>
     ) : (
       <>
