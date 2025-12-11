@@ -3,6 +3,7 @@ import { useAuthContext } from '../components/onboarding/authProvider';
 import { Box, Button, Typography } from '@mui/material';
 import ClientTable from '../components/clients/clientsTable';
 import EditClientDetails from '../components/clients/editClientDetails';
+import DeleteClient from '../components/clients/deleteClient';
 import AddClientForm from '../components/clients/addClient';
 import ClientInvoice from '../components/clients/clientInvoice';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem } from '@mui/material';
@@ -23,7 +24,7 @@ const Clients = () => {
 	const [ti_paid_amount, setTiPaidAmount] = useState('');
 	const [ti_status, setTiStatus] = useState('Unpaid');
 	const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-
+	const [isDeleteSliderOpen, setIsDeleteSliderOpen] = useState(false);
 
 	useEffect(() => {
 		const apiUrl = `${baseURL}/clients/`;
@@ -46,7 +47,6 @@ const Clients = () => {
 		setShowAddPropertyForm(false);
 	};
 
-
 	const handleAddPropertyClick = () => setShowAddPropertyForm(true);
 
 	const handleEditClick = clientId => {
@@ -58,6 +58,31 @@ const Clients = () => {
 	const handleEditCancel = () => {
 		setEditClient(null);
 		setIsSliderOpen(false);
+	};
+
+	//handling Delete
+	const handleDeleteClick = assetId => {
+		const asset = clients.find(asset => asset.id === assetId);
+		setEditClient(asset);
+		setIsDeleteSliderOpen(true);
+	};
+
+	const handleDeleteCancel = () => {
+		setEditClient(null);
+		setIsDeleteSliderOpen(false);
+	};
+
+	const handleSaveDelete = updatedClient => {
+		const url = `${baseURL}/clients/${updatedClient.id}/`;
+		apiFetch(url, { method: 'DELETE' })
+			.then(() => {
+				setEditClient(null);
+				setIsDeleteSliderOpen(false);
+				setClients(prevClients => prevClients.filter(client => client.id !== updatedClient.id));
+			})
+			.catch(error => {
+				console.error('Error deleting client:', error);
+			});
 	};
 
 	const handleSaveEdit = updatedClient => {
@@ -102,7 +127,7 @@ const Clients = () => {
 		setTiExtInv(null);
 		setTiStatus('Pending');
 	};
-	
+
 	//handling add and saving new invoice
 	const handleInvoiceSubmit = async e => {
 		setSaving(true);
@@ -144,18 +169,41 @@ const Clients = () => {
 				</Button>
 			</Box>
 
-			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} />
+			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} onDeleteClick={handleDeleteClick} />
 
 			<AddClientForm open={showAddPropertyForm} onCancel={handleCancel} onSave={handleSaveClient} />
 			{selectedClient && <ClientInvoice selectedClient={selectedClient} />}
 
 			<Dialog open={showInvoiceForm} onClose={handleInvoiceCancel} maxWidth='sm' fullWidth>
 				<DialogTitle>New Invoice for {selectedClient?.c_name}</DialogTitle>
-				<form onSubmit={handleInvoiceSubmit}  >
+				<form onSubmit={handleInvoiceSubmit}>
 					<DialogContent dividers sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-						<TextField label='Ref No(external if applicable)' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)}  fullWidth />
-						<TextField label='Amount' type='number' value={ti_amount} onChange={e => {setTiAmount(e.target.value); if (ti_status === 'Unpaid') setTiPaidAmount(0);}} required fullWidth />
-						<TextField select label='Status' value={ti_status} onChange={e => { const value = e.target.value; setTiStatus(value); if (value === 'Unpaid') setTiPaidAmount(0); if (value === 'Partially Paid') setTiPaidAmount(0); else if (value === 'Paid') setTiPaidAmount(ti_amount); }} required fullWidth>
+						<TextField label='Ref No(external if applicable)' value={ti_ext_inv} onChange={e => setTiExtInv(e.target.value)} fullWidth />
+						<TextField
+							label='Amount'
+							type='number'
+							value={ti_amount}
+							onChange={e => {
+								setTiAmount(e.target.value);
+								if (ti_status === 'Unpaid') setTiPaidAmount(0);
+							}}
+							required
+							fullWidth
+						/>
+						<TextField
+							select
+							label='Status'
+							value={ti_status}
+							onChange={e => {
+								const value = e.target.value;
+								setTiStatus(value);
+								if (value === 'Unpaid') setTiPaidAmount(0);
+								if (value === 'Partially Paid') setTiPaidAmount(0);
+								else if (value === 'Paid') setTiPaidAmount(ti_amount);
+							}}
+							required
+							fullWidth
+						>
 							<MenuItem value='Paid'>Paid</MenuItem>
 							<MenuItem value='Partially Paid'>Partially</MenuItem>
 							<MenuItem value='Unpaid'>Unpaid</MenuItem>
@@ -165,15 +213,18 @@ const Clients = () => {
 					</DialogContent>
 
 					<DialogActions>
-						<Button onClick={() => setShowInvoiceForm(false)} sx={{ color:'#035f77' }} >Cancel</Button>
-						<Button type='submit' variant='contained' sx={{ backgroundColor:'#019678', '&:hover': { backgroundColor: '#008F8F' } }}> 
-						{saving ? 'Saving...' : 'Save Invoice'}
+						<Button onClick={() => setShowInvoiceForm(false)} sx={{ color: '#035f77' }}>
+							Cancel
+						</Button>
+						<Button type='submit' variant='contained' sx={{ backgroundColor: '#019678', '&:hover': { backgroundColor: '#008F8F' } }}>
+							{saving ? 'Saving...' : 'Save Invoice'}
 						</Button>
 					</DialogActions>
 				</form>
 			</Dialog>
 
 			{editClient && isSliderOpen && <EditClientDetails selectedClient={editClient} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
+			{editClient && isDeleteSliderOpen && <DeleteClient selectedClient={editClient} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
 		</Box>
 	);
 };
