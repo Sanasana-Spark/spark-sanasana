@@ -1,35 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import VerticalSidebar from './sidebar';
 import TopBar from './topbar';
 import { useMediaQuery, useTheme, Box } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 
 const Layout = ({ children }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   return (
-    <Box sx={{ display: 'flex', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-
-      
-      <VerticalSidebar>
-        {/* Only render TopBar on desktop */}
-        {!isMobile && <TopBar />}
-        
-        <Box component="main"
-          sx={{
-            flexGrow: 1,
-            overflow: 'scroll',
-            backgroundColor: 'var(--faded-primary-color)',
-            marginTop: isMobile ? '64px' : 0,
-            padding: 0, // ✅ Remove internal spacing
-            height: `calc(100vh - ${isMobile ? 0 : 64}px)`,
-            width: `calc(100vw - ${isMobile ? 0 : 255}px)`,
-          }}
-        >
+    <div className="app-shell">
+      <TopBar onMenuClick={handleDrawerToggle} isMobile={isMobile} />
+      <div className="app-body">
+        <VerticalSidebar 
+          mobileOpen={mobileOpen} 
+          onDrawerToggle={handleDrawerToggle} 
+          isMobile={isMobile} 
+        />
+        <main className="main-content">
           {children}
-        </Box>
-      </VerticalSidebar>
-    </Box>
+        </main>
+
+      </div>
+      
+    </div>
   );
 };
 

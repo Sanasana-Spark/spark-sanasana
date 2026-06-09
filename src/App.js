@@ -1,4 +1,6 @@
 import React from 'react';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import theme from './theme';
 
 import {SignIn , SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
@@ -25,6 +27,8 @@ import './App.css';
 const App = () => {
   
   return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
     <Router>
       <div className="App">
 
@@ -58,6 +62,8 @@ const App = () => {
         </AuthProvider>
       </div>
     </Router>
+    </ThemeProvider>
+
    
   );
 }

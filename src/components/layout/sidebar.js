@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTheme } from '@mui/material/styles';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import ListItemWithLink from './ListItemWithLink';
 import Logo from '../../assets/logo.png';
@@ -23,17 +24,72 @@ import Settings_icon from '../../assets/settings_icon.png';
 import Operator_icon from '../../assets/operator_icon.png';
 import Fuel_icon from '../../assets/fuel_icon.png';
 import Routes_icon from '../../assets/routes_icon.png';
+import { useAuthContext } from "../onboarding/authProvider";
+import { UserButton } from "@clerk/clerk-react";
 
 const drawerWidth = 250;
+const NAV_CONFIG = [
+  { path: '/',            label: 'Dashboard',   icon: Dashboard_icon,   section: 'Overview' },
+  { path: '/assets',      label: 'Vehicles',    icon: Asset_icon,       section: 'Operations', badge: '18', badgeType: 'badge-green' },
+  { path: '/operators',   label: 'Drivers',     icon: Operator_icon,    section: 'Operations' },
+  { path: '/clients',     label: 'Clients',     icon: Operator_icon,    section: 'Operations' },
+  { path: '/trips',       label: 'Trips',       icon: Routes_icon,      section: 'Operations' },
+  { path: '/fuel',        label: 'Fuel Log',    icon: Fuel_icon,        section: 'Finance' },
+  { path: '/reports',     label: 'Reports',     icon: Reports_icon,     section: 'Finance' },
+  { path: '/maintenance', label: 'Maintenance', icon: Maintenance_icon, section: 'People', badge: '3', badgeType: 'badge-red' },
+  { path: '/settings',    label: 'Settings',    icon: Settings_icon,    section: 'Management' },
+  { path: '/helpcenter',  label: 'Help Center', icon: Helpcenter_icon,  section: 'Management' },
+];
 
-export default function VerticalSidebar({ children }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+export default function VerticalSidebar({mobileOpen, onDrawerToggle, isMobile, children }) {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { org_name } = useAuthContext();
+  const sections = [...new Set(NAV_CONFIG.map(item => item.section))];
+  const isRouteActive = (path) => path === '/' ? pathname === '/' : pathname.startsWith(path);
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const sidebarContent = (
+    <aside className="sidebar" style={{ height: '100%', borderRight: 'none' }}>
+      {!isMobile && (
+        <Box display="flex" justifyContent="space-between" alignItems="center" px={2} pb={2} pt={1}>
+          <img src={Logo} alt="logo" style={{ maxHeight: 42 }} />
+        </Box>
+      )}
+
+      {sections.map(section => (
+        <div key={section}>
+          <div className="sidebar-section">{section}</div>
+          {NAV_CONFIG.filter(n => n.section === section).map(n => (
+            <div
+              key={n.path}
+              className={`sidebar-item${isRouteActive(n.path) ? ' active' : ''}`}
+              onClick={() => {
+                navigate(n.path);
+                if (isMobile) onDrawerToggle();
+              }}
+            >
+              <span className="sidebar-icon">
+                <img src={n.icon} className="icon" alt="" style={{ width: 17, height: 17 }} />
+              </span>
+              {n.label}
+              {n.badge && <span className={`sidebar-badge ${n.badgeType}`}>{n.badge}</span>}
+              {isRouteActive(n.path) && !n.badge && <span className="sidebar-dot" />}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      <div className="sidebar-bottom">
+        <div className="user-row" style={{ padding: '4px 8px' }}>
+          <UserButton afterSignOutUrl="/signin" />
+          <div style={{ marginLeft: '4px' }}>
+            <div style={{ fontSize: 12, fontWeight: 600 }}>{org_name || 'Organization'}</div>
+            <div style={{ fontSize: 10.5, color: 'var(--ink4)' }}>Active Workspace</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
 
   const location = window.location; // Get the current location
 
@@ -65,51 +121,19 @@ export default function VerticalSidebar({ children }) {
     </div>
   );
 
-  return (
-    <Box sx={{ display: 'flex' }}>
-      {isMobile && (
-        <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1 ,
-           backgroundColor: 'var(--main-bg-color)'
-        }}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2,
-                 backgroundColor: 'var(--primary-color)'
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <img src={Logo} alt="logo" style={{ height: 40 }} />
-          </Toolbar>
-        </AppBar>
-      )}
-
+if (isMobile) {
+    return (
       <Drawer
-        variant={isMobile ? 'temporary' : 'persistent'}
-        open={isMobile ? mobileOpen : true}
-        onClose={handleDrawerToggle}
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: drawerWidth,
-            backgroundColor: 'var(--main-bg-color)',
-            paddingTop: isMobile ? '64px' : '15px',
-
-            border: 'none'
-          }
-        }}
+        variant="temporary"
+        open={mobileOpen}
+        onClose={onDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{ '& .MuiDrawer-paper': { width: 250, border: 'none', backgroundColor: 'var(--white)' } }}
       >
-        {drawerContent}
+        {sidebarContent}
       </Drawer>
+    );
+  }
 
-      <Box component="main" sx={{ flexGrow: 1, padding: '10px', marginTop: isMobile ? '64px' : 0 }}>
-        {children}
-      </Box>
-    </Box>
-  );
+  return sidebarContent;
 }
