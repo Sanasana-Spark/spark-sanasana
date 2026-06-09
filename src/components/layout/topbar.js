@@ -4,8 +4,6 @@ import {
   IconButton,
   Badge,
   Menu,
-  MenuItem,
-  Typography,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -15,18 +13,13 @@ import {
   ListItem,
   ListItemText,
   Button,
-  ListItemIcon,
-  Tooltip,
-  Divider,
   ListItemButton,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import Avatar from "@mui/material/Avatar";
-import Settings from "@mui/icons-material/Settings";
 import { useAuthContext } from "../onboarding/authProvider";
-import Logout from "@mui/icons-material/Logout";
+import Logo from '../../assets/logo.png';
 
 const TopBar = ({ onMenuClick, isMobile }) => {
   const TOP_NAV_ITEMS = [
@@ -42,7 +35,7 @@ const TopBar = ({ onMenuClick, isMobile }) => {
   const baseURL = process.env.REACT_APP_BASE_URL;
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { org_name, apiFetch } = useAuthContext();
+  const { apiFetch } = useAuthContext();
   const [notifications, setNotifications] = useState([]);
   const [tab, setTab] = useState(2);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -53,14 +46,6 @@ const TopBar = ({ onMenuClick, isMobile }) => {
   // State for notifications
 const [notifAnchorEl, setNotifAnchorEl] = useState(null);
 const notifOpen = Boolean(notifAnchorEl);
-
-// State for account menu
-const [accountAnchorEl, setAccountAnchorEl] = useState(null);
-const accountOpen = Boolean(accountAnchorEl);
-
-const handleClose = () => {
-    setAccountAnchorEl(null);
-};
 
 
 const fetchNotifications = useCallback(async (status = "unread") => {
@@ -130,9 +115,9 @@ useEffect(() => {
             <span style={{ fontSize: '20px' }}>☰</span>
           </IconButton>
         )}
+        
+        <img src={Logo} alt="logo" style={{ maxHeight: 42 }} />
         <span className="logo-badge">Spark</span>
-        <span className="logo-name">Sanasana</span>
-        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>{org_name || 'Organization'}</span>
       </div>
 
       {!isMobile && (
