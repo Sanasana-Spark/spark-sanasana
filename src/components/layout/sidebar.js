@@ -1,4 +1,4 @@
-import React, { } from 'react';
+import React, {useEffect, useState} from "react";
 import {
   Drawer
 } from '@mui/material';
@@ -7,28 +7,74 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from "../onboarding/authProvider";
 import { UserButton } from "@clerk/clerk-react";
 
-const NAV_CONFIG = [
-  { path: '/',            label: 'Dashboard',   icon: '⊞',   section: 'Overview' },
-  { path: '/reports',     label: 'Analytics',     icon: '📊',     section: 'Overview' },
-  { path: '/assets',      label: 'Vehicles',    icon: '🚐',       section: 'Operations', badge: '18', badgeType: 'badge-green' },
-  { path: '/operators',   label: 'Drivers',     icon: '↗',    section: 'Operations' },
-  { path: '/clients',     label: 'Clients',     icon: '↖',    section: 'Finance' },
-  { path: '/trips',       label: 'Trips',       icon: '🚗',      section: 'Operations' },
-  { path: '/fuel',        label: 'Fuel Log',    icon: '⛽',        section: 'Finance' },
-  { path: '/reports',     label: 'Reports',     icon: '📊',     section: 'Finance' },
-  { path: '/maintenance', label: 'Maintenance', icon: '🔧', section: 'People', badge: '3', badgeType: 'badge-red' },
-  { path: '/settings',    label: 'Settings',    icon: '⚙',    section: 'Management' },
-  { path: '/helpcenter',  label: 'Help Center', icon: '❓',  section: 'Management' },
-  { path: '/carbon',      label: 'Carbon',       icon: '🌿', section: 'People' },
-];
 
 export default function VerticalSidebar({mobileOpen, onDrawerToggle, isMobile, children }) {
+  const baseURL = process.env.REACT_APP_BASE_URL;
+  const { org_id, apiFetch } = useAuthContext();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { org_name } = useAuthContext();
-  const sections = [...new Set(NAV_CONFIG.map(item => item.section))];
+ 
   const isRouteActive = (path) => path === '/' ? pathname === '/' : pathname.startsWith(path);
 
+  const [, setLoading] = useState(true);
+  const [dashboardSummary, setDashboardSummary] = useState({
+    totalAssets: 0,
+    totalDrivers: 0,
+    totalMaintenanceAlerts: 0
+  });
+
+  const [, setPrevOrgId] = useState(null);
+  useEffect(() => {
+    if (!org_id) return;
+
+    setPrevOrgId((prev) => {
+      if (prev === org_id) return prev; // Prevent unnecessary state update
+      return org_id;
+    });
+
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    setLoading(true); // Ensure loading state is set correctly
+
+    apiFetch(`${baseURL}/summaries/`, { method: "GET", signal })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setDashboardSummary(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching data:", error);
+          setLoading(false);
+        }
+      });
+
+    return () => controller.abort(); // Cleanup previous fetch request
+  }, [apiFetch, org_id, baseURL]); // Runs only when org_id changes
+
+
+  const NAV_CONFIG = [
+    { path: '/',            label: 'Dashboard',   icon: '⊞',   section: 'Overview' },
+    { path: '/reports',     label: 'Analytics',     icon: '📊',     section: 'Overview' },
+    { path: '/assets',      label: 'Vehicles',    icon: '🚐',       section: 'Operations', badge: `${dashboardSummary.totalAssets}`, badgeType: 'badge-green' },
+    { path: '/operators',   label: 'Drivers',     icon: '↗',    section: 'Operations', badge: `${dashboardSummary.totalDrivers}`, badgeType: 'badge-green' },
+    { path: '/clients',     label: 'Clients',     icon: '↖',    section: 'Finance' },
+    { path: '/trips',       label: 'Trips',       icon: '🚗',      section: 'Operations' },
+    { path: '/fuel',        label: 'Fuel Log',    icon: '⛽',        section: 'Finance' },
+    { path: '/reports',     label: 'Reports',     icon: '📊',     section: 'Finance' },
+    { path: '/maintenance', label: 'Maintenance', icon: '🔧', section: 'People', badge: `${dashboardSummary.totalMaintenanceAlerts}`, badgeType: 'badge-red' },
+    { path: '/settings',    label: 'Settings',    icon: '⚙',    section: 'Management' },
+    { path: '/helpcenter',  label: 'Help Center', icon: '❓',  section: 'Management' },
+    { path: '/carbon',      label: 'Carbon',       icon: '🌿', section: 'People' },
+  ];
+ const sections = [...new Set(NAV_CONFIG.map(item => item.section))];
   const sidebarContent = (
     <aside className="sidebar" style={{ height: '100%' }}>
 
