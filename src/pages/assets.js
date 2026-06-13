@@ -11,11 +11,12 @@ import AssetDetails from '../components/assets/assetDetails';
 import EditAssetDetails from '../components/assets/editAssetDetails';
 import AssetIncome from '../components/assets/assetIncome';
 import { useAuthContext } from '../components/onboarding/authProvider';
-import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell } from '@mui/material';
+import { Container, Box, Grid, Typography, IconButton, TextField, Paper } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadIcon from '@mui/icons-material/Upload';
 import { Search } from '@mui/icons-material';
 import DeleteAsset from '../components/assets/deleteAsset';
+import KpiCard from '../components/ui/KpiCard';
 
 const Assets = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -27,11 +28,37 @@ const Assets = () => {
 	const [showBulkUploadForm, setShowBulkUploadForm] = useState(false);
 	const [search, setSearch] = useState('');
 	const [editAsset, setEditAsset] = useState(null);
-	const [filteredAssets, setFilteredAssets] = useState([]);
 	const [selectedAsset, setSelectedAsset] = useState(null);
 
 	const [isSliderOpen, setIsSliderOpen] = useState(false);
 	const [isDeleteSliderOpen, setIsDeleteSliderOpen] = useState(false);
+
+	const [filter, setFilter] = useState('all')
+	const filteredAssets = filter === 'all' ? assets : assets.filter(asset => asset.a_status === filter)
+	// 2. Dynamically calculate counts for the tabs (instead of hardcoding them)
+	const totalCount = assets.length;
+	const activeCount = assets.filter(asset => asset.a_status === 'active').length;
+	const idleCount = assets.filter(asset => asset.a_status === 'idle').length;
+	const serviceCount = assets.filter(asset => asset.a_status === 'service').length;
+	const TABS = [
+		['all',`All ${totalCount}`],
+		['active',`Active (${activeCount})`],
+		['idle',`Idle (${idleCount})`],
+		['service',`In Service (${serviceCount})`]
+	]
+
+	  const [searchedAssets, setSearchedAssets] = useState([]);
+	
+	//handling search by vehicle registration and driver/asset
+	useEffect(() => {
+		let searchResults = filteredAssets;
+		if (search) {
+			searchResults = searchResults.filter(asset => asset.a_license_plate.toLowerCase().includes(search.toLowerCase()));
+		}
+		setSearchedAssets(searchResults);
+	}, [search, filteredAssets]);
+
+
 	useEffect(() => {
 		const apiUrl = `${baseURL}/assets/`;
 		apiFetch(apiUrl, { method: 'GET' })
@@ -152,106 +179,33 @@ const Assets = () => {
 			});
 	};
 
-	//handling search by vehicle registration and driver/asset
-	useEffect(() => {
-		let filtered = assets;
-		if (search) {
-			filtered = filtered.filter(asset => asset.a_license_plate.toLowerCase().includes(search.toLowerCase()));
-		}
-		setFilteredAssets(filtered);
-	}, [search, assets]);
 
-	//handling search by vehicle registration and driver/asset
-	useEffect(() => {
-		let filtered = assets;
-		if (search) {
-			filtered = filtered.filter(asset => asset.a_license_plate.toLowerCase().includes(search.toLowerCase()));
-		}
-		setFilteredAssets(filtered);
-	}, [search, assets]);
 
 	const AssetView = () => (
-		<Container width='100%' sx={{ fontFamily: 'var(--font-family)', padding: 1 }}>
-			<Box>
-				<Grid item xs={12} marginBottom={5}>
-					<Box display='flex' justifyContent='space-between'>
-						<Typography variant='h6'>Vehicles</Typography>
+		<div className="page">
 
-						<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
-							{/* Bulk Button */}
-							<IconButton
-								onClick={handleBulkUploadClick}
-								sx={{
-									border: '1px solid #01947A',
-									borderRadius: '4px',
-									padding: '4.5px',
-								}}
-							>
-								<Box
-									sx={{
-										width: 30,
-										height: 32,
-										backgroundColor: '#01947A',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<UploadIcon sx={{ fontSize: 20, color: 'white' }} />
-								</Box>
-								<Typography
-									variant='body2'
-									sx={{
-										paddingLeft: '3px',
-										color: 'var(--primary-text-color)',
-									}}
-								>
-									Bulk Upload
-								</Typography>
-							</IconButton>
+					<div className="page-header">
+						<div className="page-title">Fleet</div>
+						 <div className="page-actions">
+						<button className="btn btn-secondary" onClick={handleBulkUploadClick}>+ Bulk Upload</button>
+          				<button className="btn btn-primary" onClick={handleAddPropertyClick}>+ Add Vehicle</button>
+						</div>
+			
+					</div>
+					
+					<div className="grid-3">
+						<KpiCard label="Total fleet"  value={totalCount} icon="🚐" color="var(--lime)"  chipColor="var(--lime-bg)"  footer="3 cities" />
+						<KpiCard label="Operational"  value={activeCount} icon="🟢" color="var(--blue)"  chipColor="var(--blue-bg)"  footer="↑ 89% uptime" footerType="up" />
+						<KpiCard label="In service"   value={serviceCount}  icon="🔧" color="var(--amber)" chipColor="var(--amber-bg)" footer="Est. 2 days" />
+					</div>
 
-							{/* Add button  */}
-							<IconButton
-								onClick={handleAddPropertyClick}
-								sx={{
-									border: '1px solid #047A9A',
-									borderRadius: ' 4px',
-									padding: '4.5px',
-								}}
-							>
-								<Box
-									sx={{
-										width: 30,
-										height: 32,
-										backgroundColor: '#047A9A',
-										display: 'flex',
-										justifyContent: 'center',
-										alignItems: 'center',
-									}}
-								>
-									<AddIcon sx={{ fontSize: 20, color: 'white' }} />
-								</Box>
-								<Typography
-									variant='body2'
-									sx={{
-										paddingLeft: '3px',
-										color: 'var(--primary-text-color)',
-									}}
-								>
-									Add Vehicle
-								</Typography>
-							</IconButton>
-						</Box>
-					</Box>
-				</Grid>
+			
 
-				<Grid item xs={12}>
-					<Box
-						sx={{
-							display: 'flex',
-							padding: '15px 25px',
-						}}
-					>
+						{assets.length > 0 ? (
+							<div className="card">
+
+							<div className="card-header">
+				<div className="card-title">
 						{/* Search Box */}
 						<TextField
 							label='Search'
@@ -266,45 +220,30 @@ const Assets = () => {
 								},
 							}}
 						/>
-
-						<Box
-							sx={{
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								backgroundColor: '#047A9A',
-								padding: '8px',
-								borderTopRightRadius: '5px',
-								borderBottomRightRadius: '5px',
-							}}
-						>
-							<Search sx={{ color: 'white' }} />
-						</Box>
-						{/* Icons */}
-						<Box>
+					
 							{icons.map((icon, index) => (
 								<IconButton key={index}>{icon}</IconButton>
 							))}
-						</Box>
-					</Box>
+					</div>
 
-					<Box>
-						{filteredAssets.length > 0 ? (
-							<Box>
-
-								<AssetsTable assets={filteredAssets.length > 0 ? filteredAssets : assets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} onDeleteClick={handleDeleteClick} />
+							<div className="tab-bar" style={{border:'none',padding:0,marginLeft:8}}>
+								{TABS.map(([key,label]) => (
+								<div key={key} className={`tab-item${filter===key?' active':''}`} onClick={() => setFilter(key) }>{label}</div>
+								))}
+							</div>
+							</div>
+							
+							<AssetsTable assets={searchedAssets.length > 0 ? searchedAssets : filteredAssets} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onNewAssetClick={handleNewAssetClick} onDeleteClick={handleDeleteClick} />
+							
 							<AssetIncome selectedAsset={selectedAsset} />
-							</Box>
+							</div>
 						) : (
-							<TableRow>
-								<TableCell align='center' colSpan={7}>
+							<tr>
+								<td align='center' colSpan={7}>
 									No records found
-								</TableCell>
-							</TableRow>
+								</td>
+							</tr>
 						)}
-					</Box>
-				</Grid>
-			</Box>
 
 			<AddAssetForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
@@ -314,7 +253,7 @@ const Assets = () => {
 
 			{editAsset && isDeleteSliderOpen && <DeleteAsset selectedAsset={editAsset} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
 
-		</Container>
+		</div>
 	);
 
 	const DetailView = ({ selectedAsset, isOpen }) => (
