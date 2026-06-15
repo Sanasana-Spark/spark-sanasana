@@ -67,7 +67,7 @@ export default function AppShell({
       <AppBody className="app-body">
         {/* ── Left Sidebar Segment ── */}
         {sidebarContent && (
-          <Box className="sidebar" sx={{ width: '240px', flexShrink: 0 }}>
+          <Box className="sidebar" sx={{ flexShrink: 0 }}>
             {sidebarContent}
           </Box>
         )}

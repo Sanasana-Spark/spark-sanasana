@@ -1,19 +1,15 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState} from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
   Button,
   TablePagination,
   IconButton,
-  Paper,
+  Paper
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { DeleteForever } from "@mui/icons-material";
+import Badge from "../ui/Badge";
 
 const AssetsTable = ({
   assets,
@@ -28,6 +24,14 @@ const AssetsTable = ({
   const [currentPage, setCurrentPage] = useState(0);
   const rowsPerPage = 5;
 
+
+  const statusBadge = (s) => {
+    if (s === 'active')  return <Badge type="green" dot>Active</Badge>
+    if (s === 'idle')    return <Badge type="amber" dot>Idle</Badge>
+    if (s === 'alert')   return <Badge type="red"   dot>Alert</Badge>
+    if (s === 'service') return <Badge type="neutral">🔧 Service</Badge>
+    return <Badge>{s}</Badge>
+  }
   const handleCellClick = (rowIndex) => {
     setIsDropdownOpen((prevState) => {
       const newDropdowns = [...prevState];
@@ -48,39 +52,16 @@ const AssetsTable = ({
   );
   return (
     <TableContainer component={Paper}>
-      <Table stickyHeader aria-label="sticky table">
-        <TableHead>
-          <TableRow
-            backgroundColor="var(--secondary-bg-color)"
-            style={{ backgroundColor: "var(--secondary-bg-color)" }}
-          >
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Reg
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Status
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Mileage
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Make
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Model
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Preview
-            </TableCell>
-            <TableCell sx={{ fontWeight: "bold", textAlign: "center" }}>
-              Edit
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+      <table className="data-table">
+        <thead>
+            <tr><th>Reg</th><th>Status</th><th>Odometer</th><th>Driver</th><th>Last service</th><th> Actions</th><th>Edit</th></tr>
+          </thead>
+
+  
+        <tbody>
           {/* Render a TableRowItem for each asset in the assets array */}
           {paginatedAssets.map((asset, index) => (
-            <TableRow
+            <tr
               key={asset.id}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.backgroundColor =
@@ -95,19 +76,18 @@ const AssetsTable = ({
                 onNewAssetClick(asset);
               }}
             >
-              <TableCell>{asset.a_license_plate}</TableCell>
-              <TableCell>{asset.a_status}</TableCell>
-              <TableCell>{asset.a_mileage}</TableCell>
-              <TableCell>{asset.a_make}</TableCell>
-              <TableCell>
-                {asset.a_model}-{asset.a_year}
-              </TableCell>
-              <TableCell>
+              <td><div className="vtag"><div className="vico">🚐</div><div><div className="vname">{asset.a_license_plate}</div><div className="vid">{asset.a_year} {asset.a_make}</div></div></div></td>
+                
+              <td>{statusBadge(asset.a_status)}</td>
+              <td style={{fontFamily:'var(--mono)',fontSize:12}} >{asset.a_mileage} KM</td>
+              <td>{asset.a_status}</td>
+              <td>{asset.a_status}</td>
+              <td>
                 <Button onClick={() => handleCellClick(asset.id)}>
-                  {isDropdownOpen[index] ? "Close Details" : "Details"}
+                  {isDropdownOpen[index] ? "Close Details" : "view details"}
                 </Button>
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <IconButton
                   onClick={() => onEditClick(asset.id)}
                   style={{ marginLeft: "10px" }}
@@ -120,11 +100,11 @@ const AssetsTable = ({
                 >
                   <DeleteForever sx={{ color: "red" }} />
                 </IconButton>
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
 
       {/* Pagination Component */}
       <TablePagination
