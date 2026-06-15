@@ -5,17 +5,14 @@ import DragIndicator from "@mui/icons-material/DragIndicator";
 import Reorder from "@mui/icons-material/Reorder";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 import AssetsTable from "./tripsTable"
-import AddAssetForm from "./addTripMap";
 import AssetDetails from "./tripDetails";
 import { useAuthContext } from '../onboarding/authProvider';
 import {
   Container,
   Box,
-  Typography,
   IconButton,
   TextField,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import { Search } from "@mui/icons-material";
 
 const Trips = () => {
@@ -27,7 +24,6 @@ const Trips = () => {
   const [trips, setTrips] = useState([]);
   const [, setLoading] = useState(true);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
-  const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   useEffect(() => {
     apiFetch(`${baseURL}/trips/?state=new`, { method: 'GET' })
       .then((response) => {
@@ -44,60 +40,13 @@ const Trips = () => {
         console.error("Error fetching data:", error);
         setLoading(false);
       });
-  },[baseURL,apiFetch, showAddPropertyForm] ); // Empty dependency array ensures this effect runs only once when the component mounts
+  },[baseURL,apiFetch] ); // Empty dependency array ensures this effect runs only once when the component mounts
 
 
-  const handleSubmit = (assetData) => {
-    // Define the URL for the POST request
-    const url = `${baseURL}/trips/`;
-    const data = {
-      stops: assetData.stops,
-      t_type: assetData.t_type,
-      t_start_lat: assetData.t_start_lat,
-      t_start_long: assetData.t_start_long,
-      t_start_elavation: assetData.t_start_elavation,
-      t_end_lat: assetData.t_end_lat,
-      t_end_long: assetData.t_end_long,
-      t_end_elavation: assetData.t_end_elavation,
-      t_start_date: assetData.t_start_date,
-      t_end_date: assetData.t_end_date,
-      t_operator_id: assetData.t_operator_id,
-      t_asset_id: assetData.t_asset_id,
-      t_status: assetData.t_status,
-      t_load: assetData.t_load,
-      t_origin_place_id:assetData.t_origin_place_id,
-      t_origin_place_query:assetData.t_origin_place_query,
-      t_destination_place_id:assetData.t_destination_place_id,
-      t_destination_place_query:assetData.t_destination_place_query,
-      t_directionsResponse:assetData.t_directionsResponse,
-      t_distance:assetData.t_distance,
-      t_duration:assetData.t_duration,
-      t_client_id: assetData.t_client_id,
-    };
 
-    apiFetch(url, { method: "POST", body: JSON.stringify(data) })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to add trip");
-        }
-        console.log("trip added successfully");
-        setShowAddPropertyForm(false);
-      })
-      .catch((error) => {
-        console.error("Error adding trip:", error);
-      });
-  };
   const selectedTrip = trips.filter(
     (trip) => trip["id"] === selectedTicket
   );
-
-  const handleCancel = () => {
-    setShowAddPropertyForm(false);
-  };
-
-  const handleAddPropertyClick = () => {
-    setShowAddPropertyForm(true);
-  };
 
 
 
@@ -171,40 +120,8 @@ flex: 1,
           ))}
         </Box>
         </Box>
-       
-        
-       {/* Add button  */}
-       <IconButton
-            onClick={handleAddPropertyClick}
-            sx={{
-              border: "1px solid #047A9A",
-              borderRadius: " 4px",
-              padding: "4.5px",
-            }}
-          >
-            <Box
-              sx={{
-                width: 30,
-                height: 32,
-                backgroundColor: "#047A9A",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <AddIcon sx={{ fontSize: 20, color: "white" }} />
-            </Box>
-            <Typography
-              variant="body2"
-              sx={{
-                paddingLeft: "3px",
-                color: "var(--primary-text-color)",
-              }}
-            >
-              Add Trip
-            </Typography>
-          </IconButton>
-
+         
+   
       </Box>
 
    
@@ -213,14 +130,7 @@ flex: 1,
         onViewUnitsClick={handleViewDetailsClick}
       />
     
-    
-
-<AddAssetForm
-  open={showAddPropertyForm}
-  onSubmit={handleSubmit}
-  onCancel={handleCancel}
-
-/>
+  
 
 
 </Container>
@@ -290,12 +200,6 @@ flex: 1,
         </div>
 
     
-
-      <AddAssetForm
-        open={showAddPropertyForm}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
     </Container>
   );
 

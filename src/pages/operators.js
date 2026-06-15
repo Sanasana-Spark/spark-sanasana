@@ -11,10 +11,9 @@ import BulkUploadForm from '../components/assets/upload';
 import OperatorDetails from '../components/operators/operatorDetails';
 import { useAuthContext } from '../components/onboarding/authProvider';
 import EditOperatorDetails from '../components/operators/editOperatorDetails';
-import { Container, Box, Grid, Typography, IconButton, TextField, Paper, TableRow, TableCell, Alert, Stack } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import UploadIcon from '@mui/icons-material/Upload';
+import { IconButton, TextField, Alert } from '@mui/material';
 import DeleteOperator from '../components/operators/deleteOperator';
+import KpiCard from '../components/ui/KpiCard';
 
 const Operators = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -32,6 +31,7 @@ const Operators = () => {
 	const [editOperator, setEditOperator] = useState(null);
 	const [successMsg, setSuccessMsg] = useState('');
 	const [errorMsg, setErrorMsg] = useState('');
+	const totalCount = operators.length;
 
 	useEffect(() => {
 		const apiUrl = `${baseURL}/operators/`;
@@ -180,7 +180,7 @@ const Operators = () => {
 	}, [search, operators]);
 
 	const AssetView = () => (
-		<Stack spacing={2}>
+		<div className="page">
 			{' '}
 			{errorMsg && (
 				<Alert severity='error' onClose={() => setErrorMsg(null)}>
@@ -192,90 +192,28 @@ const Operators = () => {
 					{successMsg}
 				</Alert>
 			)}
-			<Container width='100%' sx={{ fontFamily: 'var(--font-family)', padding: 1 }}>
-				<Box>
-					<Grid item xs={12} marginBottom={5}>
-						<Box display='flex' justifyContent='space-between'>
-							<Typography variant='h6' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold' }}>
-								Drivers
-							</Typography>
 
-							<Box display='flex' justifyContent='flex-end' gap={2} color='var(--primary-text-color)'>
-								{/* Bulk Button */}
-								<IconButton
-									onClick={handleBulkUploadClick}
-									sx={{
-										border: '1px solid #01947A',
-										borderRadius: '4px',
-										padding: '4.5px',
-									}}
-								>
-									<Box
-										sx={{
-											width: 30,
-											height: 32,
-											backgroundColor: '#01947A',
-											display: 'flex',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<UploadIcon sx={{ fontSize: 20, color: 'white' }} />
-									</Box>
-									<Typography
-										variant='body2'
-										sx={{
-											paddingLeft: '3px',
-											color: 'var(--primary-text-color)',
-										}}
-									>
-										Bulk Upload
-									</Typography>
-								</IconButton>
+			<div className="page-header">
+						<div className="page-title">Drivers</div>
+						 <div className="page-actions">
+						<button className="btn btn-secondary" onClick={handleBulkUploadClick}>+ Bulk Upload</button>
+          				<button className="btn btn-primary" onClick={handleAddPropertyClick}>+ Add Driver</button>
+						</div>
+			
+			</div>
 
-								{/* Add button  */}
-								<IconButton
-									onClick={handleAddPropertyClick}
-									sx={{
-										border: '1px solid #047A9A',
-										borderRadius: ' 4px',
-										padding: '4.5px',
-									}}
-								>
-									<Box
-										sx={{
-											width: 30,
-											height: 32,
-											backgroundColor: '#047A9A',
-											display: 'flex',
-											justifyContent: 'center',
-											alignItems: 'center',
-										}}
-									>
-										<AddIcon sx={{ fontSize: 20, color: 'white' }} />
-									</Box>
-									<Typography
-										variant='body2'
-										sx={{
-											paddingLeft: '3px',
-											color: 'var(--primary-text-color)',
-										}}
-									>
-										Add Driver
-									</Typography>
-								</IconButton>
-							</Box>
-						</Box>
-					</Grid>
+			 <div className="grid-4">
+				<KpiCard label="Total drivers" value={totalCount} icon="👤" color="var(--lime)"  chipColor="var(--lime-bg)"  footer="3 cities" />
+				<KpiCard label="Avg score"     value={totalCount} icon="⭐" color="var(--blue)"  chipColor="var(--blue-bg)"  footer="↑ 3 pts vs last month" footerType="up" />
+				<KpiCard label="Incidents"     value={totalCount}  icon="⚠"  color="var(--amber)" chipColor="var(--amber-bg)" footer="This month" />
+				<KpiCard label="Top driver"    value={totalCount} icon="🏆" color="var(--forest)" chipColor="var(--lime-bg)" footer="Score 96 · 4,220 km" />
+			</div>
 
-					<Grid item xs={12} component={Paper}>
-						<Box
-							sx={{
-								display: 'flex',
-								padding: '15px 25px',
-							}}
-						>
-							{/* Search Box */}
+							{filteredOperators.length > 0 ? (
+							<div className="card">
+								<div className="card-header">
+				<div className="card-title">
+					{/* Search Box */}
 							<TextField
 								placeholder='Search'
 								variant='outlined'
@@ -291,36 +229,31 @@ const Operators = () => {
 							/>
 
 							{/* Icons */}
-							<Box>
 								{icons.map((icon, index) => (
 									<IconButton key={index}>{icon}</IconButton>
 								))}
-							</Box>
-						</Box>
 
-						<Box>
-							{filteredOperators.length > 0 ? (
-
-								<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onDeleteClick={handleDeleteClick} />
-
+				</div>
+				</div>
+									<OperatorTable operators={filteredOperators} onViewUnitsClick={handleViewDetailsClick} onEditClick={handleEditClick} onDeleteClick={handleDeleteClick} />
+								</div>
+	
 							) : (
-								<TableRow>
-									<TableCell align='center' colSpan={7}>
+								<tr>
+									<td align='center' colSpan={7}>
 										No records found
-									</TableCell>
-								</TableRow>
+									</td>
+								</tr>
 							)}
-						</Box>
-					</Grid>
-				</Box>
 
+		
 				<AddOperatorForm open={showAddPropertyForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 
 				<BulkUploadForm open={showBulkUploadForm} onSubmit={handleSubmit} onCancel={handleCancel} />
 				{editOperator && isSliderOpen && <EditOperatorDetails selectedOperator={editOperator} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
 				{editOperator && isDeleteSliderOpen && <DeleteOperator selectedOperator={editOperator} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
-			</Container>
-		</Stack>
+		
+		</div>
 	);
 
 	const DetailView = ({ isOpen }) => (
