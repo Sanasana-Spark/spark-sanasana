@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination, IconButton } from '@mui/material';
+import {TableContainer, Paper, TablePagination, IconButton } from '@mui/material';
 import { DeleteForever } from '@mui/icons-material';
 
 const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, onDeleteClick }) => {
@@ -12,21 +12,12 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, o
 	const paginatedClients = clients.slice(currentPage * rowsPerPage, currentPage * rowsPerPage + rowsPerPage);
 	return (
 		<TableContainer component={Paper}>
-			<Table>
-				<TableHead sx={{ backgroundColor: '#FFFFFF' }}>
-					<TableRow>
-						{/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Summary</TableCell> */}
-						<TableCell sx={{ fontWeight: 'bold' }}>Name</TableCell>
-						<TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-						<TableCell sx={{ fontWeight: 'bold' }}>Phone</TableCell>
-						<TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-						<TableCell sx={{ fontWeight: 'bold' }}>Action</TableCell>
-						{/* <TableCell sx={{ fontWeight: 'bold', textAlign: 'center' }}>Edit</TableCell>  */}
-					</TableRow>
-				</TableHead>
-				<TableBody>
+			<table className="data-table">
+				<thead><tr><th>Action</th><th>Name</th><th>T.Balance</th><th>Email</th><th>Phone</th><th>Status</th><th>Delete</th> </tr></thead>
+    
+				<tbody>
 					{paginatedClients.map((client, index) => (
-						<TableRow
+						<tdr
 							key={index}
 							onClick={() => onClientClick(client)}
 							sx={{
@@ -37,66 +28,30 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, o
 								},
 							}}
 						>
-							{/* <TableCell>
-														<Button
-															size='small'
-															variant='contained'
-															sx={{
-																backgroundColor: '#01947A',
-																borderRadius: '20px',
-																textTransform: 'none',
-																fontSize: '0.8rem',
-																px: 2,
-																py: 0.5,
-																'&:hover': {
-																	backgroundColor: '#008F8F',
-																},
-															}}
-														>
-															View
-														</Button>
-													</TableCell> */}
-							<TableCell sx={{ border: 'none' }}>{client.c_name}</TableCell>
-							<TableCell sx={{ border: 'none' }}>{client.c_email}</TableCell>
-							<TableCell sx={{ border: 'none' }}>{client.c_phone}</TableCell>
-							<TableCell sx={{ border: 'none' }}>{client.c_status}</TableCell>
-							<TableCell>
-								<Button
-									size='small'
-									variant='contained'
-									sx={{
-										width: '80px',
-										height: '30px',
-										borderRadius: '100px',
-										backgroundColor: '#01947A',
-										textTransform: 'none',
-										fontSize: '0.78rem',
-										letterSpacing: '-0.3px',
-										whiteSpace: 'nowrap',
-										minHeight: 'unset',
-										gap: '8px',
-										display: 'inline-flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										'&:hover': {
-											backgroundColor: '#008F8F',
-										},
-									}}
+							<td>
+								<button
+								className="btn btn-primary"
 									onClick={e => {
 										e.stopPropagation();
 										onNewInvoiceClick(client);
 									}}
 								>
-									New Invoice
-								</Button>
-							</TableCell>
-							<TableCell>
+									+ Invoice
+								</button>
+							</td>
+							<td>{client.c_name}</td>
+							<td>{client.c_name}</td>
+							<td>{client.c_email}</td>
+							<td>{client.c_phone}</td>
+							<td>{client.c_status}</td>
+							
+							<td>
 								<IconButton onClick={() => onDeleteClick(client.id)} style={{ marginLeft: '10px' }}>
 									<DeleteForever sx={{ color: 'red' }} />
 								</IconButton>
-							</TableCell>
+							</td>
 
-							{/* <TableCell>
+							{/* <td>
 								<IconButton
 									sx={{ color: '#01947A' }}
 									size='small'
@@ -108,11 +63,11 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, o
 								>
 									<EditIcon />
 								</IconButton>
-							</TableCell> */}
-						</TableRow>
+							</td> */}
+						</tdr>
 					))}
-				</TableBody>
-			</Table>
+				</tbody>
+			</table>
 			{/* Pagination Component */}
 			<TablePagination rowsPerPageOptions={[]} component='div' count={clients.length} rowsPerPage={rowsPerPage} page={currentPage} onPageChange={handleChangePage} />
 		</TableContainer>
