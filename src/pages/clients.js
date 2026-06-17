@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthContext } from '../components/onboarding/authProvider';
-import { Box, Button, Typography } from '@mui/material';
 import ClientTable from '../components/clients/clientsTable';
 import EditClientDetails from '../components/clients/editClientDetails';
 import DeleteClient from '../components/clients/deleteClient';
@@ -161,13 +160,16 @@ const Clients = () => {
 	};
 
 	return (
-		<Box p={3}>
-			<Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
-				<Typography variant='h5'>Clients</Typography>
-				<Button onClick={handleAddPropertyClick} size='small' variant='contained' sx={{ backgroundColor: '#047A9A', borderRadius: '5px', textTransform: 'none', fontSize: '1rem', px: 2, py: 0.5, '&:hover': { backgroundColor: '#008F8F' } }}>
-					Add Client
-				</Button>
-			</Box>
+		<div className="page">
+
+			<div className="page-header">
+				<div className="page-title">Clients</div>
+				<div className="page-actions">
+				<button className="btn btn-primary" onClick={handleAddPropertyClick}>+ Add Client</button>
+				</div>
+			
+			</div>
+
 
 			<ClientTable clients={clients} onEditClick={handleEditClick} onClientClick={setSelectedClient} onNewInvoiceClick={handleNewInvoiceClick} onDeleteClick={handleDeleteClick} />
 
@@ -213,19 +215,19 @@ const Clients = () => {
 					</DialogContent>
 
 					<DialogActions>
-						<Button onClick={() => setShowInvoiceForm(false)} sx={{ color: '#035f77' }}>
+						<button onClick={() => setShowInvoiceForm(false)} sx={{ color: '#035f77' }}>
 							Cancel
-						</Button>
-						<Button type='submit' variant='contained' sx={{ backgroundColor: '#019678', '&:hover': { backgroundColor: '#008F8F' } }}>
+						</button>
+						<button type='submit' variant='contained' sx={{ backgroundColor: '#019678', '&:hover': { backgroundColor: '#008F8F' } }}>
 							{saving ? 'Saving...' : 'Save Invoice'}
-						</Button>
+						</button>
 					</DialogActions>
 				</form>
 			</Dialog>
 
 			{editClient && isSliderOpen && <EditClientDetails selectedClient={editClient} open={isSliderOpen} onCancel={handleEditCancel} onSave={handleSaveEdit} />}
 			{editClient && isDeleteSliderOpen && <DeleteClient selectedClient={editClient} open={isDeleteSliderOpen} onCancel={handleDeleteCancel} onSave={handleSaveDelete} />}
-		</Box>
+		</div>
 	);
 };
 
