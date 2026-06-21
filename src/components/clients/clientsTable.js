@@ -17,7 +17,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, o
     
 				<tbody>
 					{paginatedClients.map((client, index) => (
-						<tdr
+						<tr
 							key={index}
 							onClick={() => onClientClick(client)}
 							sx={{
@@ -51,20 +51,7 @@ const ClientTable = ({ clients, onEditClick, onClientClick, onNewInvoiceClick, o
 								</IconButton>
 							</td>
 
-							{/* <td>
-								<IconButton
-									sx={{ color: '#01947A' }}
-									size='small'
-									onClick={e => {
-										e.stopPropagation();
-										onEditClick(client.id);
-									}}
-									style={{ marginLeft: '10px' }}
-								>
-									<EditIcon />
-								</IconButton>
-							</td> */}
-						</tdr>
+						</tr>
 					))}
 				</tbody>
 			</table>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Container, Grid, Paper, Typography, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Pagination, TextField, MenuItem, InputAdornment } from '@mui/material';
+import {  Box, TableContainer,  Pagination, TextField, MenuItem, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuthContext } from '../components/onboarding/authProvider';
+import KpiCard from '../components/ui/KpiCard';
 
 const Fuel = () => {
 	const baseURL = process.env.REACT_APP_BASE_URL;
@@ -70,15 +71,28 @@ const Fuel = () => {
 	const totalFuelCost = filteredEntries.reduce((sum, entry) => sum + entry.f_total_cost, 0);
 
 	return (
-		<Container maxWidth={false} disableGutters sx={{ px: 2 }}>
+		 <div className="page">
+		<div className="page-header">
+			<div><div className="page-title">Fuel history</div></div>
+			<div className="page-actions">
+			<button className="btn btn-secondary" onClick='#'>+ bulk fuel purchase</button>
+			<button className="btn btn-primary" onClick="#">+ record fuel expense</button>
+			</div>
+      	</div>
 
-				<Typography variant='subtitle1' sx={{ fontFamily: 'Poppins, sans-serif', fontWeight: 'bold', marginBottom: 3 }} gutterBottom>
-					Fuel history
-				</Typography>
+		<div className="grid-4">
+			<KpiCard label="Total Fuel Cost" value= {`${org_currency} - ${totalFuelCost}`} icon="👤" color="var(--lime)"  chipColor="var(--lime-bg)"  footer="3 cities" />
+			<KpiCard label="Total Fuel (Litres)"     value={totalLitres} icon="⭐" color="var(--blue)"  chipColor="var(--blue-bg)"  footer="↑ 3 pts vs last month" footerType="up" />
+			<KpiCard label="Total Mileage(km)"     value={TotalMileage}  icon="⚠"  color="var(--amber)" chipColor="var(--amber-bg)" footer="This month" />
+			<KpiCard label="Total Request"    value={TotalRequests} icon="🏆" color="var(--forest)" chipColor="var(--lime-bg)" footer="Score 96 · 4,220 km" />
+		</div>
+
 			
 
+		 <div className="card">
+        <div className="card-header">
+			<div className="card-title">
 			{/* Search & Filters */}
-			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
 				<TextField
 					variant='outlined'
 					label='Search by Reg-No or Operator'
@@ -105,110 +119,55 @@ const Fuel = () => {
 						</MenuItem>
 					))}
 				</TextField>
-			</Box>
+			</div>
+		</div>
 
-			{/* Cards Grid */}
-			<Box sx={{ overflowX: 'auto', marginBottom: 3 }}>
-				<Grid container spacing={2}>
-					{[
-						{ label: 'Total Fuel Cost', value: `${org_currency}${totalFuelCost}`, bg: '#E3F5FF' },
-						{ label: 'Total Fuel (Litres)', value: totalLitres, bg: '#E5ECF6' },
-						{ label: 'Total Mileage(km)', value: TotalMileage, bg: '#E3F5FF' },
-						{ label: 'Total Request', value: TotalRequests, bg: '#E5ECF6' }
-					].map((card, index) => (
-						<Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-							<Paper
-								sx={{
-									backgroundColor: card.bg,
-									padding: 2,
-									textAlign: 'center',
-									display: 'flex',
-									flexDirection: 'column',
-									justifyContent: 'center',
-									alignItems: 'center',
-									minHeight: 100,
-									overflow: 'hidden',
-									wordBreak: 'break-word',
-								}}
-							>
-								<Typography
-									variant='subtitle1'
-									sx={{
-										fontWeight: 'bold',
-										fontSize: '1rem',
-										whiteSpace: 'nowrap',
-										overflow: 'hidden',
-										textOverflow: 'ellipsis',
-										maxWidth: '100%',
-									}}
-								>
-									{card.label}
-								</Typography>
-								<Typography
-									variant='h5'
-									sx={{
-										fontWeight: 'light',
-										fontSize: '1.5rem',
-										overflowWrap: 'break-word',
-										wordBreak: 'break-word',
-										maxWidth: '100%',
-									}}
-								>
-									{card.value}
-								</Typography>
-							</Paper>
-						</Grid>
-					))}
-				</Grid>
-			</Box>
 
 			{/* Table */}
 			<TableContainer >
-				<Table  stickyHeader aria-label="sticky table">
-					<TableHead>
-						<TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
-							{['Reg-No', 'Operator', 'Distance', 'Fuel Type', 'Litres', 'Total Cost', 'Km/Litre', 'Date'].map(header => (
-								<TableCell key={header} >
-									{header}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
+				<table className="data-table">
+					<thead><tr><th>Reg-No</th><th>Operator</th><th>Distance</th><th>Fuel Type</th><th>Litres</th><th> Total Cost</th><th>Km/Litre</th><th>Date</th></tr></thead>
+
+					<tbody>
 						{paginatedEntries.length > 0 ? (
 							paginatedEntries.map(entry => (
-								<TableRow key={entry.id}
+								<tr key={entry.id}
 								 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
             sx={{ border: 'none' }} 
 			>
 
-									<TableCell>{entry.a_license_plate}</TableCell>
-									<TableCell>{entry.o_name}</TableCell>
-									<TableCell>{entry.f_distance}</TableCell>
-									<TableCell>{entry.a_fuel_type}</TableCell>
-									<TableCell>{entry.f_litres.toFixed(2)}</TableCell>
-									<TableCell>{entry.f_total_cost}</TableCell>
-									<TableCell>{entry.f_litres > 0 ? (parseFloat(entry.f_distance) / entry.f_litres).toFixed(2) : '0.00'}</TableCell>
-									<TableCell>{new Date(entry.f_created_at).toLocaleDateString('en-GB')}</TableCell>
-								</TableRow>
+									<td>{entry.a_license_plate}</td>
+									<td>{entry.o_name}</td>
+									<td>{entry.f_distance}</td>
+									<td>{entry.a_fuel_type}</td>
+									<td>{entry.f_litres.toFixed(2)}</td>
+									<td>{entry.f_total_cost}</td>
+									<td>{entry.f_litres > 0 ? (parseFloat(entry.f_distance) / entry.f_litres).toFixed(2) : '0.00'}</td>
+									<td>{new Date(entry.f_created_at).toLocaleDateString('en-GB')}</td>
+								</tr>
 							))
 						) : (
-							<TableRow>
-								<TableCell colSpan={8} align='center'>
+							<tr>
+								<td colSpan={8} align='center'>
 									No records found
-								</TableCell>
-							</TableRow>
+								</td>
+							</tr>
 						)}
-					</TableBody>
-				</Table>
+					</tbody>
+				</table>
 			</TableContainer>
 
 			{/* Pagination */}
-			<Box sx={{ my: 4, display: 'flex', justifyContent: 'center' }}>
+			<Box sx={{ my: 1, display: 'flex', justifyContent: 'center' }}>
 				<Pagination count={totalPages} page={currentPage} onChange={(e, value) => setCurrentPage(value)} color='primary' />
 			</Box>
-		</Container>
+
+		
+		</div>
+
+
+		</div>
 	);
 };
 
