@@ -1,89 +1,61 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Tabs,
-  Tab,
-  Typography,
-  useMediaQuery,
-  useTheme
-} from "@mui/material";
-
 import Upcoming from "../components/maintenance/upcoming";
 import Summaries from "../components/maintenance/maintenance_summary";
 import History from "../components/maintenance/history";
+const TABS = [
+    ['Upcoming', 'Upcoming'],
+    ['History', 'History'],
+    ['Summaries', 'Summaries']
+];
 const Maintenance = () => {
-  const [activeTab, setActiveTab] = useState("upcoming");
+  const [activeTab, setActiveTab] = useState("Upcoming");
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
+  const TAB_PAGES = {
+    Upcoming: <Upcoming onNavigateTab={setActiveTab} />,
+    History: <History />,
+    Summaries: <Summaries />
   };
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const activeTabPage = TAB_PAGES[activeTab];
 
   return (
-    <Box sx={{ 
-      // p: isMobile ? 1 : 3,
-      margin : isMobile ? 0 : 0,
-      padding: isMobile ? 0 : 2,
-      display: "flex",
-      flexDirection: "column",
-      width: "100%",
-      minWidth: 0,  
-      height: "100%",
-      overflow: "scroll",
-      boxShadow: isMobile ? 1 : 3, }}>
+    <div className="page">
     
 
-<Typography
-        variant={isMobile ? "subtitle1" : "h6"}
-        sx={{ mb: 2, fontWeight: "bold" }}
-      >
-        Maintenance
-      </Typography>
+      <div className="page-header">
+      <div><div className="page-title">Maintenance</div><div className="page-subtitle">Schedule & service history</div></div>
+      <div className="page-actions">
+          <button className="btn btn-primary" onClick="">+ Log service</button>
+    </div>
 
+  </div>
 
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          textColor= "primary"
-          indicatorColor= "primary"
-          sx={{
-            ".MuiTab-root": {
-              fontSize: isMobile ? "0.75rem" : "1rem",
-              minWidth: 100,
-              
-           
-            "&.Mui-selected": {
-              color: "var(--secondary-color)", // selected tab text color
-              fontWeight: "bold",
-            },
-            "&:hover": {
-              color: "var(--primary-color)", // hover tab text color
-            },
-          },
-            ".MuiTabs-indicator": {
-              backgroundColor: "var(--secondary-color)", // underline indicator color
-            },
-            // color: "var(--secondary-color)",
-          }}
-        >
-          <Tab label="upcoming" value="upcoming" />
-          <Tab label="History" value="History" />
-          <Tab label="Summaries" value="Summaries" />
-          
-        </Tabs>
+      <div className="card">
 
-    
-          {activeTab === "upcoming" && <Upcoming />}
-          {activeTab === "History" && <History />}
-          {activeTab === "Summaries" && <Summaries />}
-         
+          <div className="card-header">
+          <div className="card-title">
+          </div>
+
+        <div className="tab-bar" style={{ border: 'none', padding: 0, marginLeft: 8 }}>
+            {TABS.map(([key, label]) => (
+              <div 
+                key={key} 
+                className={`tab-item${activeTab === key ? ' active' : ''}`} 
+                onClick={() => setActiveTab(key)}
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+
+          <div className="tab-content" style={{ flexGrow: 1 }}>
+            {activeTabPage}
+          </div>
+            
+    </div>
        
      
-    </Box>
+    </div>
   );
 };
 

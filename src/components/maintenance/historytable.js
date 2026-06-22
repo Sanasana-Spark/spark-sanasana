@@ -1,13 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Button,TablePagination,
+  TableContainer,TablePagination,
 } from "@mui/material";
 // import actionicon from "../../trips/actionicon.svg"
 
@@ -33,47 +27,38 @@ const HistoryMaintenanceTable = ({ maintenance, onViewUnitsClick }) => {
   return (
     <TableContainer  sx={{ height: "100%", width: "100%", overflow: "scroll",
      }} >
-       <Table stickyHeader aria-label="sticky table" >
-             <TableHead >
-               <TableRow backgroundColor='var(--secondary-bg-color)' style={{ backgroundColor: 'var(--secondary-bg-color)' }} >
-            <TableCell>Print out</TableCell>
-            <TableCell>Type</TableCell>
-            <TableCell>Description</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>date</TableCell>
-            <TableCell>Vehicle</TableCell>
-            <TableCell>Expected Cost</TableCell>
-            <TableCell>Actual Cost</TableCell>
-            <TableCell>Insurance Coverage</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+       <table className="data-table" >
+
+        <thead><tr><th>Print out</th><th>Type</th><th>Description</th><th>Status</th><th>date</th><th>Vehicle</th><th>Expected Cost</th><th>Actual Cost</th><th> Insurance Coverage </th></tr></thead>
+          
+      
+        <tbody>
           {/* Render a TableRowItem for each trip in the maintenance array */}
           {paginatedAssets.map((trip) => (
-            <TableRow key={trip.id}
+            <tr key={trip.id}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-bg-color)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--main-bg-color)' }
             sx={{ border: 'none' }} 
             >
 
 
-              <TableCell onClick={() => handleCellClick(trip.id)}  >
-                {!isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}> Preview </Button>}
+              <td onClick={() => handleCellClick(trip.id)}  >
+                {!isDropdownOpen[trip.id] && <button  className="btn btn-secondary"> Preview </button>}
 
-                {isDropdownOpen[trip.id] && <Button sx={{ color:'var(--secondary-color)'}}>Back </Button>}
-              </TableCell>
-              <TableCell>{trip.m_type}</TableCell>
-              <TableCell>{trip.m_description}</TableCell>
-              <TableCell>{trip.m_status}</TableCell>
-              <TableCell> {trip.m_date ? new Date(trip.m_date).toLocaleDateString('en-GB') : '-'} </TableCell>
-              <TableCell>{trip.m_asset_id}</TableCell>
-              <TableCell>{trip.m_expected_cost}</TableCell>
-              <TableCell>{trip.m_total_cost}</TableCell>
-              <TableCell> {trip.m_insurance_coverage}</TableCell>
-            </TableRow>
+                {isDropdownOpen[trip.id] && <button className="btn btn-secondary">Back </button>}
+              </td>
+              <td>{trip.m_type}</td>
+              <td>{trip.m_description}</td>
+              <td>{trip.m_status}</td>
+              <td> {trip.m_date ? new Date(trip.m_date).toLocaleDateString('en-GB') : '-'} </td>
+              <td>{trip.m_asset_id}</td>
+              <td>{trip.m_expected_cost}</td>
+              <td>{trip.m_total_cost}</td>
+              <td> {trip.m_insurance_coverage}</td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
       <TablePagination
         component="div"
         count={maintenance.length} // Total number of records
