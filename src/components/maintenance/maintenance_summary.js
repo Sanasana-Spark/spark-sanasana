@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
   CircularProgress,
 } from "@mui/material";
 import { useAuthContext } from "../onboarding/authProvider";
-import { TrendingUp, TrendingDown, DirectionsCar } from "@mui/icons-material";
+import KpiCard from "../ui/KpiCard"
 
 const MaintenanceSummary = () => {
   const baseURL = process.env.REACT_APP_BASE_URL;
@@ -56,66 +52,36 @@ const MaintenanceSummary = () => {
   }
 
   return (
-    <Box p={4}>
-      <Typography variant="h5" fontWeight="bold" mb={3}>
-        Maintenance Overview
-      </Typography>
+    <div className="page">
+        <div className="card-header">
+          <div className="card-title">Maintenance Overview</div>
+          </div>
 
-      <Grid container spacing={3}>
-        {/* 🟢 Maintenance Count Summary */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <DirectionsCar color="primary" />
-                <Typography variant="h6">Maintenance Counts</Typography>
-              </Box>
-              {Object.entries(tripCountSummary).map(([status, count]) => (
-                <Typography key={status} variant="body1">
-                  {status.toUpperCase()}: <strong>{count}</strong>
-                </Typography>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid>
 
-        {/* 🔵 Maintenance Income Summary */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <TrendingUp color="success" />
-                <Typography variant="h6">Maintenance Income</Typography>
-              </Box>
-              <Typography variant="body1">
-                Total Income: <strong>{org_currency} {tripIncomeSummary.total || 0}</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Average per maintenance: {org_currency} {tripIncomeSummary.average || 0}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+       <div className="grid-4">
 
-        {/* 🔴 Maintenance Expense Summary */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={1} mb={2}>
-                <TrendingDown color="error" />
-                <Typography variant="h6">Maintenance Expenses</Typography>
-              </Box>
-              <Typography variant="body1">
-                Total Expense: <strong>{org_currency} {tripExpenseSummary.total || 0}</strong>
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Average per maintenance: {org_currency} {tripExpenseSummary.average || 0}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
+        <KpiCard label="Maintenance Counts"
+         value={
+          Object.entries(tripCountSummary)
+          .map(([status, count]) => `${status}: ${count}`)
+          .join(' | ')} 
+         icon="👤" color="var(--lime)"
+           chipColor="var(--lime-bg)"   />
+      
+        <KpiCard label="Maintenance Income"  
+           value={`${org_currency} ${tripIncomeSummary.total || 0}`}
+           icon="⭐" 
+           color="var(--blue)"  chipColor="var(--blue-bg)" 
+            footer={`Avg: ${org_currency} ${tripIncomeSummary.average || 0}`}
+            footerType="up" />
+        <KpiCard label="Maintenance Expenses"     
+        value={`${org_currency} ${tripExpenseSummary.total || 0}`}
+        icon="⚠"  color="var(--amber)" chipColor="var(--amber-bg)" 
+        footer={`Avg: ${org_currency} ${tripExpenseSummary.average || 0}`}
+         />
+      </div>
+      
+    </div>
   );
 };
 
